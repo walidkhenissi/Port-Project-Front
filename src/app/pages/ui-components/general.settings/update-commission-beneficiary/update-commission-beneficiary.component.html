@@ -1,0 +1,54 @@
+<mat-card class="cardWithShadow" class="b-1 shadow-none">
+  <mat-card-header>
+    <mat-card-title>{{commissionBeneficiaryId ? 'Modifier un bénéficiaire de commission' : 'Ajouter un bénéficiaire de commission'}}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="b-t-1">
+    <div mat-subheader class="mat-body-2 m-y-16 f-w-600">Bénéficière de : {{commission.name}}</div>
+    <div class="example-container">
+      <form [formGroup]="updateForm">
+        <div class="row">
+          <div class="col-md-4">
+            <mat-form-field class="full-width-field">
+              <mat-select placeholder="Bénéficiaire" [(ngModel)]="commissionBeneficiary.beneficiaryId" required
+                          formControlName="beneficiaryFormControl">
+                <mat-option *ngFor="let beneficiary of beneficiaries" [value]="beneficiary.id">
+                  {{ beneficiary.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col-md-4">
+            <mat-form-field class="full-width-field">
+              <mat-label>Date début</mat-label>
+              <input matInput [matDatepicker]="startPicker" placeholder="Date début"
+                     [(ngModel)]="commissionBeneficiary.startDate" formControlName="startDateFormControl"
+                     required>
+              <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+              <mat-datepicker #startPicker></mat-datepicker>
+            </mat-form-field>
+          </div>
+          <div class="col-md-4">
+            <mat-form-field class="full-width-field">
+              <mat-label>Date fin</mat-label>
+              <input matInput [matDatepicker]="endPicker" placeholder="Date fin"
+                     [(ngModel)]="commissionBeneficiary.endDate"
+                     formControlName="endDateFormControl">
+              <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+              <mat-datepicker #endPicker></mat-datepicker>
+            </mat-form-field>
+          </div>
+        </div>
+      </form>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="row" style="margin-top: 5px;display: flow-root">
+      <button mat-raised-button color="primary" class="pull-right" (click)="save(false)" [disabled]="!isValidForm()">
+        {{commissionBeneficiaryId ? 'Enregistrer' : 'Ajouter'}}
+      </button>
+      <button mat-raised-button color="accent" class="pull-right"
+              [routerLink]="['/ui-components/commission/edit',commissionId, tab]">
+        Retourner
+      </button>
+    </div>
+  </mat-card-content>
+</mat-card>

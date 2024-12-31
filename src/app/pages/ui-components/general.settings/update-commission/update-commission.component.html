@@ -1,0 +1,142 @@
+<mat-card class="cardWithShadow" class="b-1 shadow-none">
+  <mat-card-header>
+    <mat-card-title>{{commissionId ? 'Modification d\'une commission' : 'Ajouter une commission'}} </mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="b-t-1">
+    <div mat-subheader class="mat-body-2 m-y-16 f-w-600">Description de la commission</div>
+    <form [formGroup]="updateForm">
+      <div class="row">
+        <div class="col-md-12">
+          <mat-form-field class="col-md-12">
+            <mat-label>Nom</mat-label>
+            <input matInput #input placeholder="Nom" [(ngModel)]="commission.name" formControlName="nameFormControl">
+          </mat-form-field>
+        </div>
+      </div>
+    </form>
+    <div class="row" style="display: flow-root">
+      <button mat-raised-button color="primary" class="pull-right" (click)="save()" [disabled]="!isValidForm()">
+        {{commissionId ? 'Enregistrer' : 'Ajouter'}}
+      </button>
+      <button mat-raised-button color="accent" class="pull-right"
+              [routerLink]="['/ui-components/general-settings', 1]">
+        Retourner
+      </button>
+    </div>
+    <mat-divider></mat-divider>
+    <mat-tab-group *ngIf="commissionId" (selectedTabChange)="switchChildTab($event.index)" [selectedIndex]="selectedTabIndex">
+      <mat-tab label="{{childrenToDisplay[0].label}}">
+        <div class="table-responsive">
+          <button mat-raised-button type="submit" color="accent" class="btn pull-right"
+                  (click)="goToAddCommissionHistory()">Ajouter
+          </button>
+          <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+            <ng-container matColumnDef="value">
+              <th mat-header-cell *matHeaderCellDef> Valeur</th>
+              <td mat-cell *matCellDef="let element"> {{element.isPercentValue ? (element.value| percent:'1.1-3'):(element.value|currency:'TND':'symbol':'1.3-3':'fr')}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="payer">
+              <th mat-header-cell *matHeaderCellDef> Payeur</th>
+              <td mat-cell
+                  *matCellDef="let element"> {{element.isSellerCommission ? 'Le producteur' : (element.isCustomerCommission ? 'Le client' : '')}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="startDate">
+              <th mat-header-cell *matHeaderCellDef> Date début</th>
+              <td mat-cell *matCellDef="let element"> {{element.startDate| date : 'dd/MM/YYYY'}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="endDate">
+              <th mat-header-cell *matHeaderCellDef> Date fin</th>
+              <td mat-cell *matCellDef="let element"> {{element.endDate| date : 'dd/MM/YYYY'}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="edit">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let element" class="grid-action-cell"
+                  [routerLink]="['/ui-components/commissionHistory/edit', element.id, commissionId, selectedTabIndex]">
+                <i class="material-icons" matTooltip="Editer"
+                   [matTooltipPosition]="'above'">{{element.endDate ? 'remove_red_eye' : 'edit'}}</i>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="delete">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let element" class="grid-action-cell"
+                  (click)="removeChild(element, false)">
+                <i class="material-icons" matTooltip="Supprimer" [matTooltipPosition]="'above'">delete</i>
+              </td>
+            </ng-container>
+
+            <tr class=" text-primary" mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+                [ngClass]="mouseOvered[row.id]?'table-active':''" (mouseover)="mouseOvered[row.id]=true"
+                (mouseout)="mouseOvered[row.id]=false"></tr>
+          </table>
+
+          <mat-paginator #paginator [length]="length"
+                         [pageSize]="pageSize"
+                         [pageSizeOptions]="pageSizeOptions"
+                         (page)="paginationEvent($event)">
+          </mat-paginator>
+        </div>
+      </mat-tab>
+      <mat-tab label="{{childrenToDisplay[1].label}}">
+        <div class="table-responsive">
+          <button mat-raised-button type="submit" color="accent" class="btn pull-right"
+                  (click)="goToAddBeneficiary()">Ajouter
+          </button>
+          <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef> Nom</th>
+              <td mat-cell *matCellDef="let element"> {{element.beneficiary?element.beneficiary.name:''}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="startDate">
+              <th mat-header-cell *matHeaderCellDef> Date début</th>
+              <td mat-cell *matCellDef="let element"> {{element.startDate| date : 'dd/MM/YYYY'}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="endDate">
+              <th mat-header-cell *matHeaderCellDef> Date fin</th>
+              <td mat-cell *matCellDef="let element"> {{element.endDate| date : 'dd/MM/YYYY'}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="edit">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let element" class="grid-action-cell"
+                  [routerLink]="['/ui-components/commissionBeneficiary/edit', element.id, commissionId, selectedTabIndex]">
+                <i class="material-icons" matTooltip="Editer"
+                   [matTooltipPosition]="'above'">{{element.endDate ? 'remove_red_eye' : 'edit'}}</i>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="delete">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let element" class="grid-action-cell"
+                  (click)="removeChild(element, false)">
+                <i class="material-icons" matTooltip="Supprimer" [matTooltipPosition]="'above'">delete</i>
+              </td>
+            </ng-container>
+
+            <tr class=" text-primary" mat-header-row *matHeaderRowDef="beneficiaryDisplayedColumns"></tr>
+
+            <tr mat-row *matRowDef="let row; columns: beneficiaryDisplayedColumns;"
+                [ngClass]="mouseOvered[row.id]?'table-active':''" (mouseover)="mouseOvered[row.id]=true"
+                (mouseout)="mouseOvered[row.id]=false"></tr>
+          </table>
+
+          <mat-paginator #paginator [length]="length"
+                         [pageSize]="pageSize"
+                         [pageSizeOptions]="pageSizeOptions"
+                         (page)="paginationEvent($event)">
+          </mat-paginator>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,82 @@
+<mat-card class="cardWithShadow" class="b-1 shadow-none">
+  <mat-card-header>
+    <mat-card-title>{{commissionHistoryId ? 'Modifier une valeur de commission' : 'Ajouter une valeur de commission'}}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="b-t-1">
+    <div mat-subheader class="mat-body-2 m-y-16 f-w-600">Valeur de commission pour : {{commission.name}}</div>
+    <div class="example-container">
+      <form [formGroup]="updateForm">
+        <div class="row">
+          <div class="col-md-4">
+            <mat-form-field class="full-width-field">
+              <mat-label>Valeur</mat-label>
+              <input matInput #input placeholder="Valeur" name="name" valid [(ngModel)]="commissionHistory.value"
+                     formControlName="commissionHistoryValueFormControl">
+            </mat-form-field>
+          </div>
+          <div class="col-md-4">
+            <mat-form-field class="full-width-field">
+              <mat-label>Date début d'application</mat-label>
+              <input matInput [matDatepicker]="startPicker" placeholder="Date début d'application"
+                     [(ngModel)]="commissionHistory.startDate" formControlName="startDateFormControl"
+                     required>
+              <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+              <mat-datepicker #startPicker></mat-datepicker>
+            </mat-form-field>
+          </div>
+          <div class="col-md-4">
+            <mat-form-field class="full-width-field">
+              <mat-label>Date fin d'application</mat-label>
+              <input matInput [matDatepicker]="endPicker" placeholder="Date fin d'application" [(ngModel)]="commissionHistory.endDate"
+                     formControlName="endDateFormControl">
+              <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+              <mat-datepicker #endPicker></mat-datepicker>
+            </mat-form-field>
+          </div>
+          <div class="col-md-3">
+            <mat-checkbox placeholder="à la charge du producteur" class="toolbar-checkbox"
+                          formControlName="isSellerFormControl"
+                          [checked]="commissionHistory.isSellerCommission"
+                          (change)='togglePayer(checkbox.checked, true)'>
+              à la charge du producteur
+            </mat-checkbox>
+          </div>
+          <div class="col-md-3">
+            <mat-checkbox #checkbox placeholder="à la charge du client" class="toolbar-checkbox"
+                          formControlName="isCustomerFormControl"
+                          [checked]="commissionHistory.isCustomerCommission"
+                          (change)='togglePayer(checkbox.checked, false)'>
+              à la charge du client
+            </mat-checkbox>
+          </div>
+          <div class="col-md-3">
+            <mat-checkbox placeholder="commission en pourcentage" class="toolbar-checkbox"
+                          formControlName="isPercentFormControl"
+                          [checked]="commissionHistory.isPercentValue"
+                          (change)='toggleCommissionType(checkbox2.checked, true)'>
+              commission en pourcentage
+            </mat-checkbox>
+          </div>
+          <div class="col-md-3">
+            <mat-checkbox #checkbox2 placeholder="commission par caisse" class="toolbar-checkbox"
+                          formControlName="isPerUnitFormControl"
+                          [checked]="commissionHistory.isPerUnitValue"
+                          (change)='toggleCommissionType(checkbox2.checked, false)'>
+              commission par caisse
+            </mat-checkbox>
+          </div>
+        </div>
+      </form>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="row" style="margin-top: 5px;display: flow-root">
+        <button mat-raised-button color="primary" class="pull-right" (click)="save(false)" [disabled]="!isValidForm()">
+          {{commissionHistoryId ? 'Enregistrer' : 'Ajouter'}}
+        </button>
+        <button mat-raised-button color="accent" class="pull-right"
+                [routerLink]="['/ui-components/commission/edit',commissionId, tab]">
+          Retourner
+        </button>
+    </div>
+  </mat-card-content>
+</mat-card>

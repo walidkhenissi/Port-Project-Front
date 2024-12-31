@@ -1,0 +1,160 @@
+<mat-card class="cardWithShadow">
+  <mat-card-content>
+    <div style="height: 45px;">
+      <mat-card-title>
+        Achats des commerçants
+        <div style="display: inline">
+          <button mat-raised-button *ngIf="length" class="btn totalButton pull-right" style="font-size: 18px; font-weight: bold; line-height: 12px;">Total à payer : {{totalToPayByMerchants | currency : 'TND' : true : '1.3-3':'fr'}}</button>
+        </div>
+      </mat-card-title>
+    </div>
+    <mat-divider></mat-divider>
+
+    <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortEvent($event)" class="mat-elevation-z8">
+
+      <ng-container matColumnDef="id" style="display: none;">
+        <th mat-header-cell *matHeaderCellDef> id</th>
+        <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="date">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="date"
+            (mouseover)="mouseOverHeader.date=true" (mouseout)="mouseOverHeader.date=false">
+          Date
+          <i class="material-icons pull-left" title="filtrer"
+             [ngStyle]="{visibility : showFilterIcon('date')?'':'hidden'}"
+             (click)="filterEvent('date','date');$event.stopPropagation()">search</i>
+        </th>
+        <td mat-cell *matCellDef="let element"> {{element.date | date : 'dd/MM/YYYY'}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="merchant">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="merchantId"
+            (mouseover)="mouseOverHeader.merchantId=true" (mouseout)="mouseOverHeader.merchantId=false">
+          Commerçant
+          <i class="material-icons pull-left" title="filtrer"
+             [ngStyle]="{visibility : showFilterIcon('merchantId')?'':'hidden'}"
+             (click)="filterEvent('merchantId','enumeration','Merchant','name');$event.stopPropagation()">search</i>
+        </th>
+        <td mat-cell *matCellDef="let element"> {{element.merchant ? element.merchant.name : ''}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="receiptNumber">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="receiptNumber"
+            (mouseover)="mouseOverHeader.receiptNumber=true" (mouseout)="mouseOverHeader.receiptNumber=false">
+          Quittance
+          <i class="material-icons pull-left" title="filtrer"
+             [ngStyle]="{visibility : showFilterIcon('receiptNumber')?'':'hidden'}"
+             (click)="filterEvent('receiptNumber','string');$event.stopPropagation()">search</i>
+        </th>
+        <td mat-cell *matCellDef="let element"> {{element.receiptNumber}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="transactionNumber">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="transactionNumber"
+            (mouseover)="mouseOverHeader.transactionNumber=true" (mouseout)="mouseOverHeader.transactionNumber=false">
+          Numéro
+          <i class="material-icons pull-left" title="filtrer"
+             [ngStyle]="{visibility : showFilterIcon('transactionNumber')?'':'hidden'}"
+             (click)="filterEvent('transactionNumber','string');$event.stopPropagation()">search</i>
+        </th>
+        <td mat-cell *matCellDef="let element"> {{element.transactionNumber}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="article">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="articleId"
+            (mouseover)="mouseOverHeader.articleId=true" (mouseout)="mouseOverHeader.articleId=false">
+          Article
+          <i class="material-icons pull-left" title="filtrer"
+             [ngStyle]="{visibility : showFilterIcon('articleId')?'':'hidden'}"
+             (click)="filterEvent('articleId','enumeration','article','name');$event.stopPropagation()">search</i>
+        </th>
+        <td mat-cell *matCellDef="let element"> {{element.article ? element.article.name : ''}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="boxes">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="boxes"
+            (mouseover)="mouseOverHeader.boxes=true" (mouseout)="mouseOverHeader.boxes=false">
+          Caisses
+          <i class="material-icons pull-left" title="filtrer"
+             [ngStyle]="{visibility : showFilterIcon('boxes')?'':'hidden'}"
+             (click)="filterEvent('boxes','number');$event.stopPropagation()">search</i>
+        </th>
+        <td mat-cell *matCellDef="let element"> {{element.boxes |number:'1.0-0':'fr'}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="netWeight">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="netWeight"
+            (mouseover)="mouseOverHeader.netWeight=true" (mouseout)="mouseOverHeader.netWeight=false">
+          Poids Net
+          <i class="material-icons pull-left" title="filtrer"
+             [ngStyle]="{visibility : showFilterIcon('netWeight')?'':'hidden'}"
+             (click)="filterEvent('netWeight','number');$event.stopPropagation()">search</i>
+        </th>
+        <td mat-cell *matCellDef="let element"> {{element.netWeight |number:'1.0-0':'fr'}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="unitPrice">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="unitPrice"
+            (mouseover)="mouseOverHeader.unitPrice=true" (mouseout)="mouseOverHeader.unitPrice=false">
+          Prix Unit.
+          <i class="material-icons pull-left" title="filtrer"
+             [ngStyle]="{visibility : showFilterIcon('unitPrice')?'':'hidden'}"
+             (click)="filterEvent('unitPrice','number');$event.stopPropagation()">search</i>
+        </th>
+        <td mat-cell *matCellDef="let element"> {{element.unitPrice |number:'1.0-0':'fr'}} </td>
+<!--        <td mat-cell *matCellDef="let element"> {{element.unitPrice |number:'1.0-0':'fr'}} </td>-->
+      </ng-container>
+
+      <ng-container matColumnDef="totalPrice">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="totalPrice"
+            (mouseover)="mouseOverHeader.totalPrice=true" (mouseout)="mouseOverHeader.totalPrice=false">
+          Total
+          <i class="material-icons pull-left" title="filtrer"
+             [ngStyle]="{visibility : showFilterIcon('totalPrice')?'':'hidden'}"
+             (click)="filterEvent('totalPrice','number');$event.stopPropagation()">search</i>
+        </th>
+        <td mat-cell *matCellDef="let element"> {{element.totalPrice |currency:'TND':true:'1.3-3':'fr'}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="totalToPayByMerchant">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="totalToPayByMerchant"
+            (mouseover)="mouseOverHeader.totalToPayByMerchant=true"
+            (mouseout)="mouseOverHeader.totalToPayByMerchant=false">
+          Total à payer
+          <i class="material-icons pull-left" title="filtrer"
+             [ngStyle]="{visibility : showFilterIcon('totalToPayByMerchant')?'':'hidden'}"
+             (click)="filterEvent('totalToPayByMerchant','number');$event.stopPropagation()">search</i>
+        </th>
+        <td mat-cell *matCellDef="let element"> {{element.totalToPayByMerchant |currency:'TND':true:'1.3-3':'fr'}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="paymentInfo">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="paymentInfoId"
+            (mouseover)="mouseOverHeader.paymentInfoId=true" (mouseout)="mouseOverHeader.paymentInfoId=false">
+          Etat
+          <i class="material-icons pull-left" title="filtrer"
+             [ngStyle]="{visibility : showFilterIcon('paymentInfoId')?'':'hidden'}"
+             (click)="filterEvent('paymentInfoId','enumeration','paymentInfo','name');$event.stopPropagation()">search</i>
+        </th>
+        <td mat-cell *matCellDef="let element"> {{element.paymentInfoId ? element.paymentInfo.name : ''}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="details">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let element" class="grid-action-cell" (click)="edit(element)">
+          <i class="material-icons" matTooltip="Détails" [matTooltipPosition]="'above'">remove_red_eye</i>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="mouseOvered[row.id]?'table-active':''"
+          (mouseover)="mouseOvered[row.id]=true" (mouseout)="mouseOvered[row.id]=false"></tr>
+    </table>
+    <mat-paginator #paginator [length]="length"
+                   [pageSize]="pageSize"
+                   [pageSizeOptions]="pageSizeOptions"
+                   (page)="paginationEvent($event)">
+    </mat-paginator>
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,166 @@
+<div class="fixActionRow">
+  <h1 mat-dialog-title>Filtre</h1>
+
+  <div mat-dialog-content>
+    <div class="col-md-12" *ngIf="data.type === 'string'">
+      <div class="col-md-12">
+        <mat-form-field class="example-full-width" name="rule">
+          <mat-select [(ngModel)]="config.rule" placeholder="Règle" required [ngModelOptions]="{standalone: true}">
+            <mat-option [value]="'equals'">Egale à</mat-option>
+            <mat-option [value]="'notEquals'">Différent de</mat-option>
+            <mat-option [value]="'contains'">Contient</mat-option>
+            <mat-option [value]="'startsWith'">Commence par</mat-option>
+            <mat-option [value]="'endsWith'">Se termine par</mat-option>
+            <mat-option [value]="'isNull'">Vide</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col-md-12">
+        <mat-form-field class="example-full-width">
+          <input matInput placeholder="mot recherché" type="text" name="value" required [(ngModel)]="config.value1">
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="col-md-12" *ngIf="data.type === 'number'">
+      <div class="col-md-12">
+        <mat-form-field class="example-full-width" name="profil">
+          <mat-select [(ngModel)]="config.rule" placeholder="Règle" required [ngModelOptions]="{standalone: true}">
+            <mat-option [value]="'equals'">Egale à</mat-option>
+            <mat-option [value]="'notEquals'">Différent de</mat-option>
+            <mat-option [value]="'lowerThan'">Inférieur à</mat-option>
+            <mat-option [value]="'greaterThan'">Superieur à</mat-option>
+            <mat-option [value]="'between'">Entre</mat-option>
+            <mat-option [value]="'isNull'">Vide</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col-md-12">
+        <mat-form-field class="example-full-width">
+          <input matInput placeholder="Nombre" type="number" name="value1" required [(ngModel)]="config.value1"
+                 required>
+        </mat-form-field>
+      </div>
+      <div class="col-md-12">
+        <ng-container *ngIf="config.rule === 'between'">
+          et<br/>
+          <mat-form-field class="example-full-width">
+            <input matInput placeholder="Nombre" type="number" name="value2" required [(ngModel)]="config.value2"
+                   required>
+          </mat-form-field>
+        </ng-container>
+      </div>
+    </div>
+    <div class="col-md-12" *ngIf="data.type === 'datetime' || data.type === 'date'">
+      <div class="col-md-12">
+        <mat-form-field class="example-full-width" name="profil" required>
+          <mat-select [(ngModel)]="config.rule" placeholder="Règle" required [ngModelOptions]="{standalone: true}">
+            <mat-option [value]="'equals'">Egale à</mat-option>
+            <mat-option [value]="'notEquals'">Différent de</mat-option>
+            <mat-option [value]="'lowerThan'">Inférieur à</mat-option>
+            <mat-option [value]="'greaterThan'">Superieur à</mat-option>
+            <mat-option [value]="'between'">Entre</mat-option>
+            <mat-option [value]="'isNull'">Vide</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col-md-12">
+        <mat-form-field>
+          <input matInput [matDatepicker]="picker" placeholder="Date" [(ngModel)]="config.date1" required>
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <form [formGroup]="timeForm1" *ngIf="data.type === 'datetime'">
+        <div class="col-md-12">
+          <mat-form-field>
+            <input matInput placeholder="Heure" type="number" name="hour1" required formControlName="hour1Control"
+                   [(ngModel)]="config.hour1">
+          </mat-form-field>
+        </div>
+        <div class="col-md-12">
+          <mat-form-field>
+            <input matInput placeholder="Minute" type="number" name="minute1" required formControlName="minute1Control"
+                   [(ngModel)]="config.minute1">
+          </mat-form-field>
+        </div>
+        <div class="col-md-12">
+          <mat-form-field>
+            <input matInput placeholder="Seconde" type="number" name="seconde1" required
+                   formControlName="seconde1Control"
+                   [(ngModel)]="config.seconde1">
+          </mat-form-field>
+        </div>
+      </form>
+      <ng-container *ngIf="config.rule === 'between'">
+        et<br/>
+        <div class="col-md-12">
+          <mat-form-field>
+            <input matInput [matDatepicker]="picker" placeholder="Date" [(ngModel)]="config.date2" required>
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+        </div>
+        <form [formGroup]="timeForm2" *ngIf="data.type === 'datetime'">
+          <div class="col-md-12">
+            <mat-form-field>
+              <input matInput placeholder="Heure" type="number" name="hour2" required formControlName="hour2Control"
+                     [(ngModel)]="config.hour2">
+            </mat-form-field>
+          </div>
+          <div class="col-md-12">
+            <mat-form-field>
+              <input matInput placeholder="Minute" type="number" name="minute2" required
+                     formControlName="minute2Control"
+                     [(ngModel)]="config.minute2">
+            </mat-form-field>
+          </div>
+          <div class="col-md-12">
+            <mat-form-field>
+              <input matInput placeholder="Seconde" type="number" name="seconde2" required
+                     formControlName="seconde2Control" [(ngModel)]="config.seconde2">
+            </mat-form-field>
+          </div>
+        </form>
+      </ng-container>
+    </div>
+    <div class="col-md-12" *ngIf="data.type === 'enumeration'">
+      <mat-form-field>
+        <input matInput (keyup.enter)="filterEvent($event.target)" placeholder="Filtre">
+      </mat-form-field>
+      <i class="material-icons pull-right row" style="cursor:pointer" title="trier"
+         (click)="sortEvent()">sort_by_alpha</i>
+      {{config.selectedOptions.length}} option(s) selectionné(s)
+      <mat-selection-list #enumerationList required>
+        <mat-list-option *ngFor="let item of enumeration" [selected]="isEnumSelected(item)" (click)="toggleEnum(item)">
+          {{item | getValue : data.enumLabel}}
+        </mat-list-option>
+      </mat-selection-list>
+      <mat-paginator #paginator [length]="length"
+                     [pageSize]="pageSize"
+                     [pageSizeOptions]="pageSizeOptions"
+                     (page)="paginationEvent($event)">
+      </mat-paginator>
+    </div>
+    <div class="col-md-12" *ngIf="data.type === 'boolean'">
+      <mat-form-field class="example-full-width" name="rule">
+        <mat-select [(ngModel)]="config.rule" placeholder="Règle" required [ngModelOptions]="{standalone: true}">
+          <mat-option [value]="'isChecked'">Est coché</mat-option>
+          <mat-option [value]="'isUnchecked'">Non coché</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+  <div class="spacer"></div>
+
+  <div mat-dialog-actions>
+    <button mat-raised-button (click)="confirm()" color="primary">
+      Filtrer
+    </button>
+    <button mat-raised-button color="warn" (click)="disable()">
+      Aucun filtre
+    </button>
+    <button mat-raised-button (click)="reject()" color="default">
+      Annuler
+    </button>
+  </div>
+</div>

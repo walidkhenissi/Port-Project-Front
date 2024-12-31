@@ -1,0 +1,62 @@
+/* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.table-active,
+.table-active > th,
+.table-active > td {
+  background-color: rgba(0, 0, 0, 0.075); }
+
+.table-hover .table-active:hover {
+  background-color: rgba(0, 0, 0, 0.075); }
+.table-hover .table-active:hover > td,
+.table-hover .table-active:hover > th {
+  background-color: rgba(0, 0, 0, 0.075); }
+.grid-action-cell{
+  cursor : pointer;
+  width : 5%;
+}
+.btn-success {
+  color: #fff;
+  background-color: #4caf50;
+  border-color: #4caf50;
+  -webkit-box-shadow: none;
+  box-shadow: none
+}
+.pull-right {
+  float: right;
+  margin-left: 5px;
+}
+
+.pull-left {
+  float: left
+}
+
+.full-width-field {
+  width: 100%;
+}
+.example-full-width {
+  width: 100%;
+}
+
+.btn,.mat-button.btn,.mat-raised-button.btn,.mat-raised-button.btn:not([class*=mat-elevation-z]) {
+  position: relative;
+  padding: 12px 30px;
+  margin: .3125rem 1px;
+  min-width: auto;
+  font-size: .75rem;
+  font-weight: 400;
+  line-height: 1.42857143;
+  text-decoration: none;
+  text-transform: uppercase;
+  vertical-align: middle;
+  letter-spacing: 0;
+  cursor: pointer;
+  border: 0;
+  border-radius: .2rem;
+  outline: 0;
+  -webkit-transition: background-color .2s cubic-bezier(.4,0,.2,1),-webkit-box-shadow .2s cubic-bezier(.4,0,1,1);
+  transition: box-shadow .2s cubic-bezier(.4,0,1,1),background-color .2s cubic-bezier(.4,0,.2,1),-webkit-box-shadow .2s cubic-bezier(.4,0,1,1);
+  will-change: box-shadow,transform
+}

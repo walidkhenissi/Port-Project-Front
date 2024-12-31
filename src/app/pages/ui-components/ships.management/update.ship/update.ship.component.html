@@ -1,0 +1,50 @@
+<mat-card class="cardWithShadow" class="b-1 shadow-none">
+  <mat-card-header>
+    <mat-card-title>{{shipId ? 'Mettre à jours un bateau' : 'Ajouter un bateau'}}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="b-t-1" [formGroup]="updateForm">
+    <div mat-subheader class="mat-body-2 m-y-16 f-w-600">Informations générales</div>
+    <div class="example-container">
+      <div class="row">
+        <div class="col-md-4">
+          <mat-form-field class="full-width-field">
+            <mat-label>Nom</mat-label>
+            <input matInput #input placeholder="Nom" name="Nom" [(ngModel)]="ship.name" formControlName="nameControl">
+          </mat-form-field>
+        </div>
+        <div class="col-md-4">
+          <mat-form-field class="full-width-field">
+            <mat-label>Numéro matricule</mat-label>
+            <input matInput #input placeholder="serialNumber" name="serialNumber" [(ngModel)]="ship.serialNumber"
+                   formControlName="serialNumberControl">
+          </mat-form-field>
+        </div>
+        <div class="col-md-4">
+          <mat-form-field class="full-width-field">
+            <mat-select placeholder="Activité" [(ngModel)]="ship.boatActivityType.id" required
+                        formControlName="activityTypeControl">
+              <mat-option *ngFor="let activityType of boatActivityTypes" [value]="activityType.id">
+                {{ activityType.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="row" style="margin-top: 5px;display: flow-root">
+        <button mat-raised-button color="primary" class="pull-right" (click)="updateShip()"
+                [ngStyle]="{display : shipId ?'':'none'}">
+          Mettre à jour
+        </button>
+        <button mat-raised-button color="primary" class="pull-right" (click)="addShip()"
+                [ngStyle]="{display : shipId ?'none':''}">
+          Ajouter
+        </button>
+        <button mat-raised-button color="accent" class="pull-right"
+                [routerLink]="['/ui-components/update-shipowner',shipOwnerId, tab]">
+          Retourner
+        </button>
+    </div>
+  </mat-card-content>
+</mat-card>

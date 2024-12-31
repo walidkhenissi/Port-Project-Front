@@ -1,0 +1,52 @@
+table {
+    width: 100%;
+}
+
+.mat-mdc-form-field {
+    font-size: 14px;
+    width: 80%;
+}
+
+
+.addButtonClass {
+    position: absolute;
+    right: 3%;         /* Style du texte */
+  }
+  .filter-container {
+    display: flex;
+    justify-content: space-between;  /* Espacement entre les éléments */
+    align-items: center;            /* Alignement vertical des éléments */
+    width: 100%;                     /* Prend toute la largeur disponible */
+    margin-bottom: 20px;             /* Optionnel : espace entre ce bloc et les autres éléments */
+  }
+  
+  /* Style pour le champ de filtre */
+  .filter-field {
+    flex: 1;  /* Prend toute la place restante */
+    margin-right: 20px;  /* Espace à droite du champ de filtre */
+  }
+  
+
+  
+  button {
+    padding: 10px 20px; /* Espacement interne des boutons */
+  }
+  .card-content {
+    display: flex;                     /* Active Flexbox */
+    justify-content: space-between;     /* Espacement entre les éléments */
+    align-items: center;                /* Aligne verticalement les éléments au centre */
+    width: 100%;                        /* Prend toute la largeur disponible */
+  }
+  
+  /* Titre de la carte */
+  mat-card-title {
+    flex: 1;                            /* Laisse le titre prendre toute la place restante */
+    font-weight: bold;                  /* Optionnel: met le titre en gras */
+  }
+  
+  /* Conteneur pour le bouton */
+  .button-container {
+    display: flex;                      /* Organise les éléments horizontalement */
+    align-items: center;                /* Aligne le bouton verticalement */
+  }
+  

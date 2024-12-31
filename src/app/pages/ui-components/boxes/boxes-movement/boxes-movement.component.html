@@ -1,0 +1,139 @@
+<mat-card class="cardWithShadow" class="b-1 shadow-none">
+  <mat-card-header>
+    <mat-card-title>{{toogleTitle()}}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="b-t-1" [formGroup]="updateForm" style="margin-top: 10px; padding-top: 10px;">
+    <div class="row">
+      <div class="col-sm-12 col-md-4">
+        <mat-form-field class="full-width-field">
+          <mat-label>{{isShipOwnerCase?'Caisses récupérées':'Caisses achetées'}}</mat-label>
+          <input matInput placeholder="{{isShipOwnerCase?'Caisses récupérées':'Caisses achetées'}}" type="text" name="debit"
+                 formControlName="debitFormControl" [(ngModel)]="boxesBalance.debit">
+        </mat-form-field>
+      </div>
+      <div class="col-sm-12 col-md-4">
+        <mat-form-field class="full-width-field">
+          <mat-label>{{isShipOwnerCase?'Caisses vendues':'Caisses remises'}}</mat-label>
+          <input matInput placeholder="{{isShipOwnerCase?'Caisses vendues':'Caisses remises'}}" type="text" name="credit"
+                 formControlName="creditFormControl" [(ngModel)]="boxesBalance.credit">
+        </mat-form-field>
+      </div>
+      <div class="col-sm-12 col-md-4">
+        <mat-form-field class="full-width-field">
+          <mat-label>Solde de caisses</mat-label>
+          <input matInput placeholder="Solde de caisses" type="text" name="balance"
+                 formControlName="balanceFormControl" [(ngModel)]="boxesBalance.balance">
+        </mat-form-field>
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="row" style="margin-top: 5px;display: flow-root">
+      <button mat-raised-button color="accent" class="pull-right"
+              [routerLink]="['/ui-components/boxes/', previousSelectedTabIndex]">
+        Retourner
+      </button>
+    </div>
+    <div style="margin-top: 5px;">
+      <mat-divider></mat-divider>
+      <mat-tab-group (selectedTabChange)="switchChildTab($event.index)" [selectedIndex]="selectedTabIndex">
+        <mat-tab label="{{childrenToDisplay[0].label}}">
+          <div class="table-responsive">
+            <button mat-raised-button type="submit" color="accent" class="btn pull-right"
+                    (click)="addChild()">Ajouter
+            </button>
+            <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortEvent($event)"
+                   class="mat-elevation-z8">
+
+              <ng-container matColumnDef="date">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header="date"
+                    (mouseover)="mouseOverHeader[displayedChild.entityName].date=true"
+                    (mouseout)="mouseOverHeader[displayedChild.entityName].date=false">
+                  Date
+                  <i class="material-icons pull-left" title="filtrer"
+                     [ngStyle]="{visibility : showFilterIcon('date')?'':'hidden'}"
+                     (click)="filterEvent('date','date');$event.stopPropagation()">search</i>
+                </th>
+                <td mat-cell *matCellDef="let element"> {{element.date | date : 'dd/MM/YYYY'}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="debit">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header="debit"
+                    (mouseover)="mouseOverHeader.debit=true"
+                    (mouseout)="mouseOverHeader.debit=false">
+                  {{isShipOwnerCase ? 'Caisses récupérées' : 'Caisses achetées'}}
+                  <i class="material-icons pull-left" title="filtrer"
+                     [ngStyle]="{visibility : showFilterIcon('debit')?'':'hidden'}"
+                     (click)="filterEvent('debit','float');$event.stopPropagation()">search</i>
+                </th>
+                <td mat-cell *matCellDef="let element"> {{element.debit |number:'1.0-0':'fr'}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="credit">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header="credit"
+                    (mouseover)="mouseOverHeader.credit=true"
+                    (mouseout)="mouseOverHeader.credit=false">
+                  {{isShipOwnerCase ? 'Caisses vendues' : 'Caisses remises'}}
+                  <i class="material-icons pull-left" title="filtrer"
+                     [ngStyle]="{visibility : showFilterIcon('credit')?'':'hidden'}"
+                     (click)="filterEvent('credit','float');$event.stopPropagation()">search</i>
+                </th>
+                <td mat-cell *matCellDef="let element"> {{element.credit |number:'1.0-0':'fr'}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="merchantSalesCredit" *ngIf="isMerchantCase">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header="merchantSalesCredit"
+                    (mouseover)="mouseOverHeader.merchantSalesCredit=true"
+                    (mouseout)="mouseOverHeader.merchantSalesCredit=false">
+                  Caisses vendues
+                  <i class="material-icons pull-left" title="filtrer"
+                     [ngStyle]="{visibility : showFilterIcon('merchantSalesCredit')?'':'hidden'}"
+                     (click)="filterEvent('merchantSalesCredit','float');$event.stopPropagation()">search</i>
+                </th>
+                <td mat-cell *matCellDef="let element"> {{element.merchantSalesCredit |number:'1.0-0':'fr'}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="balance">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header="balance"
+                    (mouseover)="mouseOverHeader.balance=true"
+                    (mouseout)="mouseOverHeader.balance=false">
+                  Solde
+                  <i class="material-icons pull-left" title="filtrer"
+                     [ngStyle]="{visibility : showFilterIcon('balance')?'':'hidden'}"
+                     (click)="filterEvent('balance','float');$event.stopPropagation()">search</i>
+                </th>
+                <td mat-cell *matCellDef="let element"> {{element.balance |number:'1.0-0':'fr'}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="edit">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let element" class="grid-action-cell" (click)="editChild(element)">
+                  <i class="material-icons" matTooltip="Editer" [matTooltipPosition]="'above'">edit</i>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="delete">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let element" class="grid-action-cell" (click)="removeChild(element, false)">
+                  <i class="material-icons" matTooltip="Supprimer" *ngIf="isProssibleRemove(element)"
+                     [matTooltipPosition]="'above'">delete</i>
+                </td>
+              </ng-container>
+
+              <tr class=" text-primary" mat-header-row *matHeaderRowDef="displayedChild.displayedColumns"></tr>
+
+              <tr mat-row *matRowDef="let row; columns: displayedChild.displayedColumns;"
+                  [ngClass]="mouseOvered[row.id]?'table-active':''" (mouseover)="mouseOvered[row.id]=true"
+                  (mouseout)="mouseOvered[row.id]=false"></tr>
+            </table>
+            <mat-paginator #paginator [length]="length"
+                           [pageSize]="pageSize"
+                           [pageSizeOptions]="pageSizeOptions"
+                           (page)="paginationEvent($event)">
+            </mat-paginator>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
+  </mat-card-content>
+</mat-card>
+

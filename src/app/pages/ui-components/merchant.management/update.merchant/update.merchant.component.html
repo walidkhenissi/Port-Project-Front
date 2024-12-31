@@ -1,0 +1,105 @@
+<mat-card class="cardWithShadow" class="b-1 shadow-none">
+  <mat-card-header>
+    <mat-card-title>{{merchantId ? 'Mettre à jours un commerçant' : 'Ajouter un commerçant'}}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="b-t-1" [formGroup]="updateForm">
+    <div mat-subheader class="mat-body-2 m-y-16 f-w-600">Informations générales</div>
+    <div class="row">
+      <div class="col-md-3">
+        <mat-form-field class="full-width-field">
+          <mat-select placeholder="Civilité" [(ngModel)]="merchant.civility.id" required
+                      formControlName="civilityControl">
+            <mat-option *ngFor="let civility of civilities" [value]="civility.id">
+              {{ civility.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col-md-3">
+        <mat-form-field class="full-width-field">
+          <mat-label>Nom</mat-label>
+          <input matInput #input placeholder="Nom" name="Nom" formControlName="lastName"
+                 [(ngModel)]="merchant.lastName">
+        </mat-form-field>
+      </div>
+      <div class="col-md-3">
+        <mat-form-field class="full-width-field">
+          <mat-label>Prénom</mat-label>
+          <input matInput #input placeholder="Prénom" name="Prénom" formControlName="firstName"
+                 [(ngModel)]="merchant.firstName">
+        </mat-form-field>
+      </div>
+      <div class="col-md-3">
+        <mat-form-field class="full-width-field">
+          <mat-label>Numéro de téléphone</mat-label>
+          <input type="number" matInput #input placeholder="Ex. 65 000 999" name="Tel"
+                 formControlName="phoneNumber" [(ngModel)]="merchant.phoneNumber">
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <mat-form-field class="full-width-field">
+          <mat-label>Raison Social</mat-label>
+          <input matInput #input placeholder="Raison Social" name="socialReason"
+                 formControlName="socialReason" [(ngModel)]="merchant.socialReason">
+        </mat-form-field>
+      </div>
+      <div class="col-md-4">
+        <mat-form-field class="full-width-field">
+          <mat-label>Matricule fiscale</mat-label>
+          <input matInput #input placeholder="Matricule fiscale" name="taxRegistrationNumber"
+                 formControlName="taxRegistrationNumber" [(ngModel)]="merchant.taxRegistrationNumber">
+        </mat-form-field>
+      </div>
+      <div class="col-md-4">
+        <mat-checkbox #checkbox placeholder="Activé" class="toolbar-checkbox"
+                      formControlName="enabled"
+                      [checked]="merchant.enabled"
+                      (change)='toggleAnabled(checkbox.checked)'>
+          Activé
+        </mat-checkbox>
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+    <div mat-subheader class="mat-body-2 m-y-16 f-w-600">Adresse du commerçant</div>
+    <div class="row">
+      <div class="col-md-4">
+        <mat-form-field class="full-width-field">
+          <mat-label>Rue</mat-label>
+          <input matInput #input placeholder="Rue" name="rue"
+                 formControlName="addressStreet" [(ngModel)]="merchant.address.street">
+        </mat-form-field>
+      </div>
+      <div class="col-md-4">
+        <mat-form-field class="full-width-field">
+          <mat-label>Ville</mat-label>
+          <input matInput #input placeholder="Ville" name="ville"
+                 formControlName="addressCity" [(ngModel)]="merchant.address.city">
+        </mat-form-field>
+      </div>
+      <div class="col-md-4">
+        <mat-form-field class="full-width-field">
+          <mat-label>Code postal</mat-label>
+          <input type="number" maxlength="4" matInput #input placeholder="Ex. 5080" name="codePostal"
+                 formControlName="addressPostalCode" [(ngModel)]="merchant.address.postalCode">
+        </mat-form-field>
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="row" style="margin-top: 5px;display: flow-root">
+      <button mat-raised-button color="primary" class="pull-right" (click)="updateMerchant()" [disabled]="!isValidForm()"
+              [ngStyle]="{display : merchantId ?'':'none'}">
+        Mettre à jours
+      </button>
+      <button mat-raised-button color="primary" class="pull-right" (click)="addMerchant()" [disabled]="!isValidForm()"
+              [ngStyle]="{display : merchantId ?'none':''}">
+        Ajouter
+      </button>
+      <button mat-raised-button color="accent" class="pull-right"
+              [routerLink]="['/ui-components/merchant-management']">
+        Retourner
+      </button>
+    </div>
+  </mat-card-content>
+</mat-card>

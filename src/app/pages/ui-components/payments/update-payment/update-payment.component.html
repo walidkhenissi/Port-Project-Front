@@ -1,0 +1,371 @@
+<mat-card class="cardWithShadow" class="b-1 shadow-none">
+  <mat-card-header>
+    <mat-card-title>{{title}}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="b-t-1" [formGroup]="updateForm" style="margin-top: 10px; padding-top: 10px;">
+    <div class="row">
+      <div class="col-sm-12 col-md-{{context==2?'4':'6'}}">
+        <mat-form-field class="full-width-field">
+          <mat-label>Paiement</mat-label>
+          <input matInput placeholder="Paiement" type="text"
+                 name="debit"
+                 formControlName="nameFormControl" [(ngModel)]="payment.name">
+        </mat-form-field>
+      </div>
+
+      <div class="col-sm-12 col-md-2" *ngIf="context==2">
+        <mat-form-field class="full-width-field">
+          <mat-label>Solde</mat-label>
+          <input matInput placeholder="Solde" type="number"
+                 name="balance"
+                 formControlName="balanceFormControl" [(ngModel)]="balance.balance">
+        </mat-form-field>
+      </div>
+
+      <div class="col-sm-12 col-md-2" *ngIf="context==2">
+        <mat-form-field class="full-width-field">
+          <mat-label>Solde provisoire</mat-label>
+          <input matInput placeholder="Solde provisoire" type="number"
+                 name="tempBalance"
+                 formControlName="tempBalanceFormControl" [(ngModel)]="provisionalBalance">
+        </mat-form-field>
+      </div>
+
+      <div class="col-sm-12 col-md-{{context==2?'2':'3'}}">
+        <mat-form-field class="full-width-field">
+          <mat-label>Consommé</mat-label>
+          <input matInput placeholder="Consommé" type="number"
+                 name="consumed"
+                 formControlName="consumedFormControl" [(ngModel)]="payment.consumed">
+        </mat-form-field>
+      </div>
+
+      <div class="col-sm-12 col-md-{{context==2?'2':'3'}}">
+        <mat-form-field class="full-width-field">
+          <mat-label>Reste</mat-label>
+          <input matInput placeholder="Reste" type="number"
+                 name="rest"
+                 formControlName="restFormControl" [(ngModel)]="payment.rest">
+        </mat-form-field>
+      </div>
+
+      <div class="col-sm-12 col-md-4" *ngIf="context==2">
+        <mat-form-field class="full-width-field" name="merchant">
+          <mat-label>Commerçant</mat-label>
+          <input type="text" name="searchMerchant" placeholder="Commerçant"
+                 aria-label="merchant" matInput required formControlName="merchantFormControl"
+                 [matAutocomplete]="autoMerchants" (keyup)="searchMerchants($event)"
+                 [(ngModel)]="tappedMerchantName">
+          <mat-autocomplete autoActiveFirstOption #autoMerchants="matAutocomplete"
+                            (optionSelected)="setSelectedMerchant($event.option.value)">
+            <mat-option *ngFor="let merchant of merchantList" [value]="merchant">
+              {{merchant.name}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+
+      <div class="col-sm-12 col-md-{{context==2?'2':'3'}}">
+        <mat-form-field class="full-width-field">
+          <mat-label>Valeur</mat-label>
+          <input matInput placeholder="Valeur" type="number"
+                 name="credit"
+                 formControlName="valueFormControl" [(ngModel)]="payment.value" (keyup)="generateLabel();verifyAmount()"
+                 (change)="generateLabel();verifyAmount()">
+        </mat-form-field>
+        <mat-error *ngIf="updateForm.controls['valueFormControl'].errors">
+          {{updateForm.controls['valueFormControl'].errors['error']}}
+        </mat-error>
+      </div>
+
+      <div class="col-sm-12 col-md-{{context==2?'2':'3'}}">
+        <mat-form-field class="full-width-field">
+          <mat-label>Date</mat-label>
+          <input matInput [matDatepicker]="datePicker" (dateChange)="generateLabel()" placeholder="Date"
+                 [(ngModel)]="payment.date"
+                 formControlName="dateFormControl">
+          <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
+          <mat-datepicker #datePicker></mat-datepicker>
+        </mat-form-field>
+      </div>
+
+      <div class="col-sm-12 col-md-{{context==2?'2':'3'}}">
+        <mat-form-field class="full-width-field">
+          <mat-label>Type</mat-label>
+          <mat-select placeholder="Type" [(ngModel)]="payment.paymentTypeId" required
+                      formControlName="typeFormControl" (selectionChange)="setSelectedPaymentType($event)">
+            <mat-option *ngFor="let type of paymentTypes" [value]="type.id">
+              {{ type.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="col-sm-12 col-md-{{context==2?'2':'3'}}">
+        <mat-form-field class="full-width-field">
+          <mat-label>Etat</mat-label>
+          <mat-select placeholder="Etat" [(ngModel)]="payment.consumptionInfoId" required
+                      formControlName="consumptionInfoFormControl"
+                      (selectionChange)="setSelectedConsumptionInfo($event)">
+            <mat-option *ngFor="let info of consumptionInfos" [value]="info.id">
+              {{ info.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="col-sm-12 col-md-3" *ngIf="isCheckType || isPromissoryType">
+        <mat-form-field class="full-width-field">
+          <mat-label>Numéro</mat-label>
+          <input matInput placeholder="Numéro" type="text"
+                 name="number"
+                 formControlName="numberFormControl" [(ngModel)]="payment.number">
+        </mat-form-field>
+      </div>
+
+      <div class="col-sm-12 col-md-3" *ngIf="isCheckType || isPromissoryType">
+        <mat-form-field class="full-width-field">
+          <mat-label>Echéance</mat-label>
+          <input matInput [matDatepicker]="dueDatePicker" placeholder="Echéance" [(ngModel)]="payment.dueDate"
+                 formControlName="dueDateFormControl">
+          <mat-datepicker-toggle matSuffix [for]="dueDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #dueDatePicker></mat-datepicker>
+        </mat-form-field>
+      </div>
+
+      <div class="col-sm-12 col-md-3" *ngIf="isCheckType || isPromissoryType">
+        <mat-form-field class="full-width-field">
+          <mat-select placeholder="Banque" [(ngModel)]="payment.bankId" required
+                      formControlName="bankFormControl" (selectionChange)="setSelectedBank($event)">
+            <mat-option *ngFor="let bank of banks" [value]="bank.id">
+              {{ bank.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="col-sm-12 col-md-3" *ngIf="isCheckType || isPromissoryType">
+        <mat-form-field class="full-width-field">
+          <mat-label>Signataire</mat-label>
+          <input matInput placeholder="Signataire" type="text"
+                 name="signatory"
+                 formControlName="signatoryFormControl" [(ngModel)]="payment.signatory">
+        </mat-form-field>
+      </div>
+
+      <div class="col-sm-12 col-md-12">
+        <mat-form-field class="full-width-field">
+          <mat-label>Note</mat-label>
+          <textarea matInput placeholder="Note" [(ngModel)]="payment.note" name="note"
+                    formControlName="noteFormControl"></textarea>
+        </mat-form-field>
+      </div>
+
+    </div>
+    <mat-divider></mat-divider>
+    <div class="row" style="margin-top: 5px;display: flow-root">
+      <button mat-raised-button color="primary" class="pull-right" (click)="save()" [disabled]="!isValidForm()">
+        Enregistrer
+      </button>
+      <button mat-raised-button color="accent" class="pull-right" (click)="goBack()">
+        Retourner
+      </button>
+    </div>
+    <div style="margin-top: 5px;" *ngIf="paymentId">
+      <mat-divider></mat-divider>
+      <mat-tab-group (selectedTabChange)="switchChildTab($event.index)" [selectedIndex]="selectedTabIndex">
+<!--        Merchant case-->
+        <mat-tab label="{{childrenToDisplay[0].label}}" *ngIf="context==2">
+          <div class="table-responsive">
+            <button mat-raised-button *ngIf="payment.rest" type="submit" color="accent" class="btn pull-right"
+                    (click)="addChild()">Ajouter
+            </button>
+            <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortEvent($event)"
+                   *ngIf="selectedTabIndex==0"
+                   class="mat-elevation-z8">
+
+              <ng-container matColumnDef="date">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header="date"
+                    (mouseover)="mouseOverHeader[displayedChild.identifier].date=true"
+                    (mouseout)="mouseOverHeader[displayedChild.identifier].date=false">
+                  Date
+                  <i class="material-icons pull-left" title="filtrer"
+                     [ngStyle]="{visibility : showFilterIcon('date')?'':'hidden'}"
+                     (click)="filterEvent('date','date');$event.stopPropagation()">search</i>
+                </th>
+                <td mat-cell *matCellDef="let element"> {{element.date | date : 'dd/MM/YYYY'}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="value">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header="value"
+                    (mouseover)="mouseOverHeader[displayedChild.identifier].value=true"
+                    (mouseout)="mouseOverHeader[displayedChild.identifier].value=false">
+                  Montant
+                  <i class="material-icons pull-left" title="filtrer"
+                     [ngStyle]="{visibility : showFilterIcon('value')?'':'hidden'}"
+                     (click)="filterEvent('value','number');$event.stopPropagation()">search</i>
+                </th>
+                <td mat-cell
+                    *matCellDef="let element"> {{element.value |number:'1.3-3':'fr'}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="transactionNumber">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header="salesTransactionId"
+                    (mouseover)="mouseOverHeader[displayedChild.identifier].salesTransactionId=true"
+                    (mouseout)="mouseOverHeader[displayedChild.identifier].salesTransactionId=false">
+                  Achat
+                  <i class="material-icons pull-left" title="filtrer"
+                     [ngStyle]="{visibility : showFilterIcon('salesTransactionId')?'':'hidden'}"
+                     (click)="filterEvent('salesTransactionId','enumeration','salesTransaction','transactionNumber');$event.stopPropagation()">search</i>
+                </th>
+                <!--                <td mat-cell *matCellDef="let element"> {{element.salesTransaction.sale.date| date : 'dd/MM/YYYY'}} _ {{element.salesTransaction.totalToPayByMerchant|currency:'TND':'symbol':'1.3-3':'fr'}} _ {{element.salesTransaction.article.name}} ({{element.salesTransaction.sale.producerName}} _ {{element.salesTransaction.sale.boatReference}})</td>-->
+                <td mat-cell
+                    *matCellDef="let element"> {{element.salesTransaction.transactionNumber + ' | ' + (element.salesTransaction.date| date : 'dd-MM-YYYY')}}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="paymentType">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header="paymentTypeId"
+                    (mouseover)="mouseOverHeader[displayedChild.identifier].paymentTypeId=true"
+                    (mouseout)="mouseOverHeader[displayedChild.identifier].paymentTypeId=false">
+                  Type
+                  <i class="material-icons pull-left" title="filtrer"
+                     [ngStyle]="{visibility : showFilterIcon('paymentTypeId')?'':'hidden'}"
+                     (click)="filterEvent('paymentTypeId','enumeration','paymentType','name');$event.stopPropagation()">search</i>
+                </th>
+                <td mat-cell *matCellDef="let element"> {{element.paymentType.name}}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="edit">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let element" class="grid-action-cell" (click)="editChild(element)">
+                  <i class="material-icons" matTooltip="Détails"
+                     [matTooltipPosition]="'above'">edit</i>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="delete">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let element" class="grid-action-cell"
+                    (click)="removeChild(element, false)">
+                  <i class="material-icons" matTooltip="Supprimer" [matTooltipPosition]="'above'">delete</i>
+                </td>
+              </ng-container>
+
+              <tr class=" text-primary" mat-header-row *matHeaderRowDef="displayedChild.displayedColumns"></tr>
+
+              <tr mat-row *matRowDef="let row; columns: displayedChild.displayedColumns;"
+                  [ngClass]="mouseOvered[row.id]?'table-active':''" (mouseover)="mouseOvered[row.id]=true"
+                  (mouseout)="mouseOvered[row.id]=false"></tr>
+            </table>
+            <mat-paginator #paginator [length]="length"
+                           [pageSize]="pageSize"
+                           [pageSizeOptions]="pageSizeOptions"
+                           (page)="paginationEvent($event)">
+            </mat-paginator>
+          </div>
+        </mat-tab>
+        <!--        Commissionnary case-->
+        <mat-tab label="{{childrenToDisplay[1].label}}" *ngIf="context==1">
+          <div class="table-responsive">
+            <button mat-raised-button *ngIf="payment.rest" type="submit" color="accent" class="btn pull-right"
+                    (click)="addChild()">Ajouter
+            </button>
+            <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortEvent($event)"
+                   *ngIf="selectedTabIndex==1"
+                   class="mat-elevation-z8">
+
+              <ng-container matColumnDef="date">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header="date"
+                    (mouseover)="mouseOverHeader[displayedChild.identifier].date=true"
+                    (mouseout)="mouseOverHeader[displayedChild.identifier].date=false">
+                  Date
+                </th>
+                <td mat-cell *matCellDef="let element"> {{element.date | date : 'dd/MM/YYYY'}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="producerName">
+                <th mat-header-cell *matHeaderCellDef
+                    (mouseover)="mouseOverHeader[displayedChild.identifier].producerName=true"
+                    (mouseout)="mouseOverHeader[displayedChild.identifier].producerName=false">
+                  Producteur
+                </th>
+                <td mat-cell
+                    *matCellDef="let element"> {{element.sale ? element.sale.producerName : ''}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="boatReference">
+                <th mat-header-cell *matHeaderCellDef
+                    (mouseover)="mouseOverHeader[displayedChild.identifier].boatReference=true"
+                    (mouseout)="mouseOverHeader[displayedChild.identifier].boatReference=false">
+                  Bateau
+                </th>
+                <td mat-cell
+                    *matCellDef="let element"> {{element.sale ? element.sale.boatReference : ''}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="saleNumber">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header="saleId"
+                    (mouseover)="mouseOverHeader[displayedChild.identifier].saleId=true"
+                    (mouseout)="mouseOverHeader[displayedChild.identifier].saleId=false">
+                  N° Vente
+                  <i class="material-icons pull-left" title="filtrer"
+                     [ngStyle]="{visibility : showFilterIcon('saleId')?'':'hidden'}"
+                     (click)="filterEvent('saleId','enumeration','sale','number');$event.stopPropagation()">search</i>
+                </th>
+                <td mat-cell
+                    *matCellDef="let element"> {{element.sale ? element.sale.number : ''}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="saleValue">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header="saleValue"
+                    (mouseover)="mouseOverHeader[displayedChild.identifier].saleValue=true"
+                    (mouseout)="mouseOverHeader[displayedChild.identifier].saleValue=false">
+                  Montant Vente
+                </th>
+                <td mat-cell
+                    *matCellDef="let element"> {{element.sale ? (element.sale.totalToPay |number:'1.3-3':'fr'):''}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="payedValue">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header="payedValue"
+                    (mouseover)="mouseOverHeader[displayedChild.identifier].payedValue=true"
+                    (mouseout)="mouseOverHeader[displayedChild.identifier].payedValue=false">
+                  Montant Payé
+                </th>
+                <td mat-cell
+                    *matCellDef="let element"> {{element.value |number:'1.3-3':'fr'}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="edit">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let element" class="grid-action-cell" (click)="editChild(element)">
+                  <i class="material-icons" matTooltip="Détails"
+                     [matTooltipPosition]="'above'">edit</i>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="delete">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let element" class="grid-action-cell"
+                    (click)="removeChild(element, false)">
+                  <i class="material-icons" matTooltip="Supprimer" [matTooltipPosition]="'above'">delete</i>
+                </td>
+              </ng-container>
+
+              <tr class=" text-primary" mat-header-row *matHeaderRowDef="displayedChild.displayedColumns"></tr>
+
+              <tr mat-row *matRowDef="let row; columns: displayedChild.displayedColumns;"
+                  [ngClass]="mouseOvered[row.id]?'table-active':''" (mouseover)="mouseOvered[row.id]=true"
+                  (mouseout)="mouseOvered[row.id]=false"></tr>
+            </table>
+            <mat-paginator #paginator [length]="length"
+                           [pageSize]="pageSize"
+                           [pageSizeOptions]="pageSizeOptions"
+                           (page)="paginationEvent($event)">
+            </mat-paginator>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
+  </mat-card-content>
+</mat-card>

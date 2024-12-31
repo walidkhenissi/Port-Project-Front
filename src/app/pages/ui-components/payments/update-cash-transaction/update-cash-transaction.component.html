@@ -1,0 +1,83 @@
+<mat-card class="cardWithShadow" class="b-1 shadow-none">
+  <mat-card-header>
+    <mat-card-title>{{transactionId ? 'Mettre à jour une transaction' : 'Ajouter une transaction'}}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="b-t-1" [formGroup]="updateForm">
+    <div mat-subheader class="mat-body-2 m-y-16 f-w-600">Informations générales</div>
+    <div class="row">
+      <div class="col-md-2">
+        <mat-form-field class="full-width-field">
+          <mat-select placeholder="Transaction" [(ngModel)]="transaction.accountId" required
+                      formControlName="accountFormControl">
+            <mat-option *ngFor="let transaction of transactionAccounts" [value]="transaction.id">
+              {{ transaction.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col-md-2">
+        <mat-form-field class="full-width-field">
+          <mat-label>Date</mat-label>
+          <input matInput [matDatepicker]="datePicker" placeholder="Date"
+                 [(ngModel)]="transaction.date"
+                 formControlName="dateFormControl">
+          <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
+          <mat-datepicker #datePicker></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="col-md-4">
+        <mat-form-field class="full-width-field">
+          <mat-label>Libellé</mat-label>
+          <input matInput #input placeholder="Libellé" name="label" formControlName="labelFormControl"
+                 [(ngModel)]="transaction.name">
+        </mat-form-field>
+      </div>
+      <div class="col-md-2">
+        <mat-form-field class="full-width-field">
+          <mat-label>Crédit</mat-label>
+          <input matInput placeholder="Crédit" type="number"
+                 name="credit"
+                 formControlName="creditValueFormControl" [(ngModel)]="transaction.credit"
+                 (keyup)="verifyCreditAmount()" (change)="verifyCreditAmount()">
+        </mat-form-field>
+        <mat-error *ngIf="updateForm.controls['creditValueFormControl'].errors">
+          {{updateForm.controls['creditValueFormControl'].errors['error']}}
+        </mat-error>
+      </div>
+      <div class="col-md-2">
+        <mat-form-field class="full-width-field">
+          <mat-label>Débit</mat-label>
+          <input matInput placeholder="Débit" type="number"
+                 name="debit"
+                 formControlName="debitValueFormControl" [(ngModel)]="transaction.debit" (keyup)="verifyDebitAmount()"
+                 (change)="verifyDebitAmount()">
+        </mat-form-field>
+        <mat-error *ngIf="updateForm.controls['debitValueFormControl'].errors">
+          {{updateForm.controls['debitValueFormControl'].errors['error']}}
+        </mat-error>
+      </div>
+      <div class="col-sm-12 col-md-12">
+        <mat-form-field class="full-width-field">
+          <mat-label>Note</mat-label>
+          <textarea matInput placeholder="Note" [(ngModel)]="transaction.note" name="note"
+                    formControlName="noteFormControl"></textarea>
+        </mat-form-field>
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="row" style="margin-top: 5px;display: flow-root">
+      <button mat-raised-button color="primary" class="pull-right" (click)="updateTransaction()"
+              [disabled]="!isValidForm()" *ngIf="transactionId">
+        Mettre à jours
+      </button>
+      <button mat-raised-button color="primary" class="pull-right" (click)="addTransaction()"
+              [disabled]="!isValidForm()" *ngIf="!transactionId">
+        Ajouter
+      </button>
+      <button mat-raised-button color="accent" class="pull-right"
+              [routerLink]="['/ui-components/cashTransaction']">
+        Retourner
+      </button>
+    </div>
+  </mat-card-content>
+</mat-card>

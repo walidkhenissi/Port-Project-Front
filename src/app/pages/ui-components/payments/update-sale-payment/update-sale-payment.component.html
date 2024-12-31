@@ -1,0 +1,143 @@
+<mat-card class="cardWithShadow" class="b-1 shadow-none">
+  <mat-card-header>
+    <mat-card-title>Paiement {{saleId ? 'de la ' : 'd\'une '}}
+      vente {{selectedSale.id ? selectedSale.name : ''}} {{selectedPayment.id ? ('depuis le règlement ' + selectedPayment.name) : ''}}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="b-t-1" [formGroup]="updateForm">
+    <div mat-subheader
+         class="mat-body-2 m-y-16 f-w-600">{{saleId ? ('Vente numéro : ' + selectedSale.number) : 'Détails'}}</div>
+    <div class="row">
+      <div class="col-sm-12 col-md-5">
+        <mat-form-field class="full-width-field" name="payment">
+          <mat-label>Règlement</mat-label>
+          <input type="text" name="searchPayment" placeholder="Règlement" [disabled]="fromPayment"
+                 aria-label="payment" matInput required formControlName="paymentFormControl"
+                 [matAutocomplete]="autoPayments" (keyup)="searchPayments($event)"
+                 [(ngModel)]="tappedPaymentName">
+          <mat-autocomplete autoActiveFirstOption #autoPayments="matAutocomplete"
+                            (optionSelected)="setSelectedPayment($event.option.value)">
+            <mat-option *ngFor="let payment of payments" [value]="payment">
+              {{payment.name}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+      <div class="col-sm-12 col-md-5">
+        <mat-form-field class="full-width-field" name="sale">
+          <mat-label>Vente</mat-label>
+          <input type="text" name="searchSale" placeholder="Vente"
+                 aria-label="sale" matInput formControlName="saleFormControl"
+                 [matAutocomplete]="autoSales" (keyup)="searchSales($event)"
+                 [(ngModel)]="tappedSaleName">
+          <mat-autocomplete autoActiveFirstOption #autoSales="matAutocomplete"
+                            (optionSelected)="setSelectedSale($event.option.value)">
+            <mat-option *ngFor="let sale of sales" [value]="sale">
+              {{sale.name}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+      <div class="col-sm-12 col-md-2">
+        <mat-form-field>
+          <input matInput [matDatepicker]="picker" placeholder="Date"
+                 [(ngModel)]="salePayment.date" required
+                 formControlName="dateFormControl">
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="row">
+      <div class="{{showProvisional()?'col-md-4':'col-md-6'}}">
+        <mat-form-field class="full-width-field">
+          <mat-label>Montant total du réglement</mat-label>
+          <input matInput
+                 placeholder="Montant total du réglement"
+                 type="number" [value]="selectedPayment.value" name="totalPayment"
+                 required formControlName="totalPaymentFormControl">
+        </mat-form-field>
+      </div>
+      <div class="col-md-{{showProvisional()?'4':'6'}}">
+        <mat-form-field class="full-width-field">
+          <mat-label>Montant consommé du réglement</mat-label>
+          <input matInput
+                 placeholder="Montant consommé du réglement"
+                 type="number" [value]="selectedPayment.consumed" name="consumedPayment"
+                 required formControlName="consumedFormControl">
+        </mat-form-field>
+      </div>
+      <div class="col-md-4" *ngIf="showProvisional()">
+        <mat-form-field class="full-width-field">
+          <mat-label>Montant consommé provisoire du réglement</mat-label>
+          <input matInput
+                 placeholder="Montant consommé provisoire du réglement"
+                 type="number" [value]="consumedPayment" name="consumed" required
+                 formControlName="totalSaleFormControl">
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-{{showProvisional()?'4':'6'}}">
+        <mat-form-field class="full-width-field">
+          <mat-label>Montant total de la vente</mat-label>
+          <input matInput
+                 placeholder="Montant total de la vente"
+                 type="number" [value]="selectedSale.totalToPay" name="totalDelivery"
+                 required formControlName="payedSaleFormControl">
+        </mat-form-field>
+      </div>
+      <div class="col-md-{{showProvisional()?'4':'6'}}">
+        <mat-form-field class="full-width-field">
+          <mat-label>Montant réglé de la vente</mat-label>
+          <input matInput
+                 placeholder="Montant réglé de la vente"
+                 type="number" [value]="selectedSale.totalPaid" name="payedDelivery"
+                 required formControlName="consumedTempFormControl">
+        </mat-form-field>
+      </div>
+      <div class="col-md-4" *ngIf="showProvisional()">
+        <mat-form-field class="full-width-field">
+          <mat-label>Montant réglé provisoire de la vente</mat-label>
+          <input matInput
+                 placeholder="Montant réglé provisoire de la vente"
+                 type="number" [value]="payedDelivery" name="payed" required
+                 formControlName="payedFormControl">
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <mat-form-field class="full-width-field" name="type">
+          <mat-label>Type</mat-label>
+          <mat-select [(ngModel)]="salePayment.paymentTypeId" placeholder="Type" required
+                      formControlName="typeFormControl">
+            <mat-option *ngFor="let type of paymentTypes" [value]="type.id">
+              {{ type.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col-md-6">
+        <mat-form-field class="full-width-field">
+          <mat-label>Montant</mat-label>
+          <input matInput placeholder="Montant" type="number"
+                 [(ngModel)]="salePayment.value" name="value" required
+                 formControlName="valueFormControl" (keyup)="calculate()"
+                 (change)="calculate()">
+        </mat-form-field>
+        <mat-error *ngIf="updateForm.controls['valueFormControl'].errors">
+          {{updateForm.controls['valueFormControl'].errors['error']}}
+        </mat-error>
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="row" style="margin-top: 5px;display: flow-root">
+      <button mat-raised-button color="primary" class="pull-right" (click)="save()" [disabled]="!isValidForm()">
+        Enregistrer
+      </button>
+      <button mat-raised-button color="accent" class="pull-right" (click)="goBack()">
+        Retourner
+      </button>
+    </div>
+  </mat-card-content>
+</mat-card>

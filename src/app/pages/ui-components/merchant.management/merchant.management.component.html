@@ -1,0 +1,92 @@
+<mat-card class="cardWithShadow">
+    <mat-card-content>
+        <mat-card-title>Gestion des commerçants</mat-card-title>
+        <div>
+            <mat-form-field>
+                <mat-label>Filter</mat-label>
+                <input matInput (keyup)="applyFilter($event)" placeholder="Ex: Foulén" #input>
+            </mat-form-field>
+            <button mat-flat-button class="addButtonClass" color="primary"
+                [routerLink]="['/ui-components/add-merchant']">
+                Ajouter un commerçant
+            </button>
+        </div>
+
+        <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortEvent($event)" class="mat-elevation-z8">
+
+            <ng-container matColumnDef="id" style="display: none;">
+                <th mat-header-cell *matHeaderCellDef> id </th>
+                <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="civility">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header="civilityId"
+                    (mouseover)="mouseOverHeader.civilityId=true" (mouseout)="mouseOverHeader.civilityId=false">
+                  Civilité
+                  <i class="material-icons pull-left" title="filtrer"
+                     [ngStyle]="{visibility : showFilterIcon('civilityId')?'':'hidden'}"
+                     (click)="filterEvent('civilityId','enumeration','Civility','name');$event.stopPropagation()">search</i>
+                </th>
+                <td mat-cell *matCellDef="let element"> {{element.civility.name}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="firstName">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header="firstName"
+                    (mouseover)="mouseOverHeader.firstName=true" (mouseout)="mouseOverHeader.firstName=false">
+                  Nom
+                  <i class="material-icons pull-left" title="filtrer"
+                     [ngStyle]="{visibility : showFilterIcon('firstName')?'':'hidden'}"
+                     (click)="filterEvent('firstName','string');$event.stopPropagation()">search</i>
+                </th>
+                <td mat-cell *matCellDef="let element"> {{element.lastName}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="lastName">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header="lastName"
+                    (mouseover)="mouseOverHeader.lastName=true" (mouseout)="mouseOverHeader.lastName=false">
+                  Prénom
+                  <i class="material-icons pull-left" title="filtrer"
+                     [ngStyle]="{visibility : showFilterIcon('lastName')?'':'hidden'}"
+                     (click)="filterEvent('lastName','string');$event.stopPropagation()">search</i>
+                </th>
+                <td mat-cell *matCellDef="let element"> {{element.firstName}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="city">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header="addressId"
+                    (mouseover)="mouseOverHeader.addressId=true" (mouseout)="mouseOverHeader.addressId=false">
+                  Ville
+                  <i class="material-icons pull-left" title="filtrer"
+                     [ngStyle]="{visibility : showFilterIcon('addressId')?'':'hidden'}"
+                     (click)="filterEvent('addressId','enumeration','Address','city');$event.stopPropagation()">search</i>
+                </th>
+                <td mat-cell *matCellDef="let element"> {{element.address?element.address.city:''}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="update">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let element" class="grid-action-cell" [routerLink]="['/ui-components/update-merchant', element.id]">
+                  <i class="material-icons" matTooltip="Editer" [matTooltipPosition]="'above'">edit</i>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="delete">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let element" class="grid-action-cell" (click)="deleteMerchant(element.id, false)">
+                  <i class="material-icons" matTooltip="Supprimer" [matTooltipPosition]="'above'">delete</i>
+<!--                  <button mat-flat-button color="warn" class="w-100"-->
+<!--                        (click)="deleteMerchant(element.id, false)">Supprimer-->
+<!--                    </button>-->
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="mouseOvered[row.id]?'table-active':''" (mouseover)="mouseOvered[row.id]=true" (mouseout)="mouseOvered[row.id]=false"></tr>
+          </table>
+      <mat-paginator #paginator [length]="length"
+                     [pageSize]="pageSize"
+                     [pageSizeOptions]="pageSizeOptions"
+                     (page)="paginationEvent($event)">
+      </mat-paginator>
+    </mat-card-content>
+</mat-card>

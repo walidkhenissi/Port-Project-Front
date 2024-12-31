@@ -1,0 +1,282 @@
+<mat-card class="cardWithShadow">
+
+  <mat-tab-group (selectedTabChange)="switchChildTab($event.index)" [selectedIndex]="selectedTabIndex">
+    <mat-tab label="{{childrenToDisplay[0].label}}">
+      <div class="table-responsive">
+        <mat-card-content>
+          <mat-card-title>Gestion des types d'activités</mat-card-title>
+          <div>
+            <mat-form-field>
+              <mat-label>Filter</mat-label>
+              <input matInput (keyup)="applyFilter($event)" placeholder="Ex: Foulén" #input>
+            </mat-form-field>
+            <button mat-flat-button class="addButtonClass" color="primary"
+                    [routerLink]="['/ui-components/boat-activity-type/add', selectedTabIndex]">
+              Ajouter un type d'activité
+            </button>
+          </div>
+
+          <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+            <ng-container matColumnDef="name" style="display: none;">
+              <th mat-header-cell *matHeaderCellDef> Name</th>
+              <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="edit">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let element">
+                <button mat-flat-button color="primary" class="w-100"
+                        (click)="editChild(element)">Modifier
+                </button>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="delete">
+              <th mat-header-cell *matHeaderCellDef> Supprimer</th>
+              <td mat-cell *matCellDef="let element">
+                <button mat-flat-button color="warn" class="w-100"
+                        (click)="removeChild(element, false)">Supprimer
+                </button>
+              </td>
+            </ng-container>
+
+            <tr class=" text-primary" mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+                [ngClass]="mouseOvered[row.id]?'table-active':''" (mouseover)="mouseOvered[row.id]=true"
+                (mouseout)="mouseOvered[row.id]=false"></tr>
+          </table>
+          <mat-paginator #paginator [length]="length"
+                         [pageSize]="pageSize"
+                         [pageSizeOptions]="pageSizeOptions"
+                         (page)="paginationEvent($event)">
+          </mat-paginator>
+        </mat-card-content>
+      </div>
+    </mat-tab>
+    <mat-tab label="{{childrenToDisplay[1].label}}">
+      <div class="table-responsive">
+        <mat-card-content>
+          <mat-card-title>Gestion des commissions</mat-card-title>
+          <div>
+            <mat-form-field>
+              <mat-label>Filter</mat-label>
+              <input matInput (keyup)="applyFilter($event)" placeholder="Ex: Foulén" #input>
+            </mat-form-field>
+            <button mat-flat-button class="addButtonClass" color="primary"
+                    [routerLink]="['/ui-components/commission/add', 0]">
+              Ajouter une commission
+            </button>
+          </div>
+
+          <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef> Commission</th>
+              <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="value">
+              <th mat-header-cell *matHeaderCellDef> Valeur</th>
+              <td mat-cell
+                  *matCellDef="let element"> {{element.availableCommissionHistory ? (element.availableCommissionHistory.isPercentValue ? (element.availableCommissionHistory.value| percent:'1.1-3'):(element.availableCommissionHistory.value|currency:'TND':'symbol':'1.3-3':'fr')) : ''}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="payer">
+              <th mat-header-cell *matHeaderCellDef>Payeur</th>
+              <td mat-cell
+                  *matCellDef="let element"> {{element.availableCommissionHistory ? (element.availableCommissionHistory.isSellerCommission ? 'Le producteur' : (element.availableCommissionHistory.isCustomerCommission ? 'Le client' : '')) : ''}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="edit">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let element">
+                <button mat-flat-button color="primary" class="w-100"
+                        (click)="editChild(element)">Modifier
+                </button>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="delete">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let element">
+                <button mat-flat-button color="warn" class="w-100"
+                        (click)="removeChild(element, false)">Supprimer
+                </button>
+              </td>
+            </ng-container>
+
+            <tr class=" text-primary" mat-header-row *matHeaderRowDef="commissionsDisplayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: commissionsDisplayedColumns;"
+                [ngClass]="mouseOvered[row.id]?'table-active':''" (mouseover)="mouseOvered[row.id]=true"
+                (mouseout)="mouseOvered[row.id]=false"></tr>
+          </table>
+          <mat-paginator #paginator [length]="length"
+                         [pageSize]="pageSize"
+                         [pageSizeOptions]="pageSizeOptions"
+                         (page)="paginationEvent($event)">
+          </mat-paginator>
+        </mat-card-content>
+      </div>
+    </mat-tab>
+    <mat-tab label="{{childrenToDisplay[2].label}}">
+      <div class="table-responsive">
+        <mat-card-content>
+          <mat-card-title>Gestion des bénéficiaires des commission</mat-card-title>
+          <div>
+            <mat-form-field>
+              <mat-label>Filter</mat-label>
+              <input matInput (keyup)="applyFilter($event)" placeholder="Ex: Foulén" #input>
+            </mat-form-field>
+            <button mat-flat-button class="addButtonClass" color="primary"
+                    [routerLink]="['/ui-components/beneficiary/add',selectedTabIndex]">
+              Ajouter un bénéficiaire
+            </button>
+          </div>
+
+          <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef> Bénéficiaire</th>
+              <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="edit">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let element">
+                <button mat-flat-button color="primary" class="w-100"
+                        (click)="editChild(element)">Modifier
+                </button>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="delete">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let element">
+                <button mat-flat-button color="warn" class="w-100"
+                        (click)="removeChild(element, false)">Supprimer
+                </button>
+              </td>
+            </ng-container>
+
+            <tr class=" text-primary" mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+                [ngClass]="mouseOvered[row.id]?'table-active':''" (mouseover)="mouseOvered[row.id]=true"
+                (mouseout)="mouseOvered[row.id]=false"></tr>
+          </table>
+          <mat-paginator #paginator [length]="length"
+                         [pageSize]="pageSize"
+                         [pageSizeOptions]="pageSizeOptions"
+                         (page)="paginationEvent($event)">
+          </mat-paginator>
+        </mat-card-content>
+      </div>
+    </mat-tab>
+    <mat-tab label="{{childrenToDisplay[3].label}}">
+      <div class="table-responsive">
+        <mat-card-content>
+          <mat-card-title>Gestion des articles de vente</mat-card-title>
+          <div>
+            <mat-form-field>
+              <mat-label>Filter</mat-label>
+              <input matInput (keyup)="applyFilter($event)" placeholder="Ex: Foulén" #input>
+            </mat-form-field>
+            <button mat-flat-button class="addButtonClass" color="primary"
+                    [routerLink]="['/ui-components/article/add',selectedTabIndex]">
+              Ajouter un article
+            </button>
+          </div>
+
+          <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef> Article</th>
+              <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="edit">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let element">
+                <button mat-flat-button color="primary" class="w-100"
+                        (click)="editChild(element)">Modifier
+                </button>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="delete">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let element">
+                <button mat-flat-button color="warn" class="w-100"
+                        (click)="removeChild(element, false)">Supprimer
+                </button>
+              </td>
+            </ng-container>
+
+            <tr class=" text-primary" mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+                [ngClass]="mouseOvered[row.id]?'table-active':''" (mouseover)="mouseOvered[row.id]=true"
+                (mouseout)="mouseOvered[row.id]=false"></tr>
+          </table>
+          <mat-paginator #paginator [length]="length"
+                         [pageSize]="pageSize"
+                         [pageSizeOptions]="pageSizeOptions"
+                         (page)="paginationEvent($event)">
+          </mat-paginator>
+        </mat-card-content>
+      </div>
+    </mat-tab>
+    <mat-tab label="{{childrenToDisplay[4].label}}">
+      <div class="table-responsive">
+        <mat-card-content>
+          <mat-card-title>Gestion des banques</mat-card-title>
+          <div>
+            <mat-form-field>
+              <mat-label>Filter</mat-label>
+              <input matInput (keyup)="applyFilter($event)" placeholder="Ex: Foulén" #input>
+            </mat-form-field>
+            <button mat-flat-button class="addButtonClass" color="primary"
+                    [routerLink]="['/ui-components/bank/add',selectedTabIndex]">
+              Ajouter une banque
+            </button>
+          </div>
+
+          <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef> Banque</th>
+              <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="edit">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let element">
+                <button mat-flat-button color="primary" class="w-100"
+                        (click)="editChild(element)">Modifier
+                </button>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="delete">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let element">
+                <button mat-flat-button color="warn" class="w-100"
+                        (click)="removeChild(element, false)">Supprimer
+                </button>
+              </td>
+            </ng-container>
+
+            <tr class=" text-primary" mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+                [ngClass]="mouseOvered[row.id]?'table-active':''" (mouseover)="mouseOvered[row.id]=true"
+                (mouseout)="mouseOvered[row.id]=false"></tr>
+          </table>
+          <mat-paginator #paginator [length]="length"
+                         [pageSize]="pageSize"
+                         [pageSizeOptions]="pageSizeOptions"
+                         (page)="paginationEvent($event)">
+          </mat-paginator>
+        </mat-card-content>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</mat-card>

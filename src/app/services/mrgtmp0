@@ -1,0 +1,269 @@
+import { Injectable } from '@angular/core';
+import {IService} from "./IService";
+import {HttpClientService} from "../utils/http-client.service";
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { HttpParams } from '@angular/common/http';
+@Injectable({
+  providedIn: 'root'
+})
+export class SalesTransactionService implements IService {
+
+  constructor(protected httpClient: HttpClientService,
+              private http: HttpClient) {
+
+  }
+
+  list() {
+    return this.httpClient.get('/salesTransaction/list');
+  }
+
+  public find(criteria: any) {
+    return this.httpClient.post('/salesTransaction/find', criteria);
+  }
+
+  public getOne(id: string | number) {
+    return this.httpClient.get('/salesTransaction/get?id=' + id);
+  }
+
+  public update(salesTransaction: any) {
+    return this.httpClient.put('/salesTransaction/update', salesTransaction);
+  }
+
+  create(salesTransaction: any) {
+    return this.httpClient.post('/salesTransaction/create', salesTransaction);
+  }
+
+  remove(id: string | number) {
+    return this.httpClient.delete('/salesTransaction/remove?id=' + id);
+  }
+  // Fonction pour récupérer les transactions
+ suivi(){
+    return this.httpClient.get('/salesTransaction/filter');
+  }
+
+//   public filter(criteria: any) {
+//     console.log("The criteria data is:", criteria);
+
+//     // Construct the date filter with the correct operator
+//     const dateQuery = criteria.operator && criteria.date 
+//         ? `date${criteria.operator === 'greaterThan' ? '>=' : 
+//             criteria.operator === 'lowerThan' ? '<=' : 
+//             criteria.operator === 'notEquals' ? '!=' : '='}${criteria.date}` 
+//         : criteria.date ? `date=${criteria.date}` 
+//         : null;
+
+//     const queryParams = [
+//       criteria.date && !criteria.date2 ? dateQuery :null,
+//         criteria.date && criteria.date2 ? `startDate=${criteria.date}` : null,
+//         criteria.date2 ? `endDate=${criteria.date2}` : null,
+//         criteria.producteur ? `producteur=${criteria.producteur}` : null,
+//         criteria.article ? `article=${criteria.article}` : null,
+//         criteria.commercant ? `commercant=${criteria.commercant}` : null
+//     ]
+//     .filter(param => param !== null) // Remove null values
+//     .join('&'); // Join with '&' to form query string
+
+//     console.log('criteria:', criteria);
+//     console.log('queryParams:', queryParams);
+
+//     // Construct the URL manually
+//     const url = `/salesTransaction/filter?${queryParams}`;
+//     console.log('Generated URL:', url);
+
+//     // Make the GET request
+//     return this.httpClient.get(url); // Single argument for older versions
+// }
+
+//   public filter(criteria: any) {
+//     console.log("The criteria data is:", criteria);
+
+//     // Determine the operator to apply for the date filter
+//     const dateQuery = criteria.operator && criteria.date 
+//         ? `date${criteria.operator === 'greaterThan' ? '>=' : 
+//             criteria.operator === 'lowerThan' ? '<=' : 
+//             criteria.operator === 'notEquals' ? '!=' : '='}${criteria.date}` 
+//         : criteria.date ? `date=${criteria.date}` 
+//         : null;
+
+//     const queryParams = [
+//         dateQuery,
+//         criteria.date2 ? `endDate=${criteria.date2}` : null,
+//         criteria.producteur ? `producteur=${criteria.producteur}` : null,
+//         criteria.article ? `article=${criteria.article}` : null,
+//         criteria.commercant ? `commercant=${criteria.commercant}` : null
+//     ]
+//     .filter(param => param !== null) // Remove null values
+//     .join('&'); // Join with '&' to form query string
+
+//     console.log('criteria:', criteria);
+//     console.log('queryParams:', queryParams);
+
+//     // Construct and return the GET request
+//     return this.httpClient.get(`/salesTransaction/filter?${queryParams}`);
+// }
+
+  public filter(criteria: any) {
+    const dateQuery = criteria.operator && criteria.date 
+    ? `date${criteria.operator === 'greaterThan' ? '>=' : 
+        criteria.operator === 'lowerThan' ? '<=' : 
+        criteria.operator === 'notEquals' ? '!=' : '='}${criteria.date}` 
+    : criteria.date ? `date=${criteria.date}` 
+    : null;
+
+    const queryParams = [
+      criteria.date && !criteria.date2 && criteria.operator === 'equals' 
+            ? `date=${criteria.date}` : null,
+        criteria.date && criteria.operator === 'greaterThan' 
+            ? `startDate=${criteria.date}` : null,
+        criteria.date && criteria.operator === 'lowerThan' 
+            ? `endDate=${criteria.date}` : null,
+        criteria.date && criteria.date2 
+            ? `startDate=${criteria.date}&endDate=${criteria.date2}` : null,
+      
+        // criteria.date && !criteria.date2   ? dateQuery : null,
+        // criteria.date && criteria.date2 ? `startDate=${criteria.date}` : null,
+        // criteria.date2 ? `endDate=${criteria.date2}` : null,
+        criteria.producerName ? `producerName=${criteria.producerName}` : null,
+        criteria.articleName ? `articleName=${criteria.articleName}` : null,
+        criteria.merchantName ? `merchantName=${criteria.merchantName}` : null,
+        criteria.format ? `format=${criteria.format}`: null
+    ]
+    .filter(param => param !== null) // Remove null values
+    .join('&'); // Join with '&' to form query string
+    console.log('queryParams:', queryParams);
+    console.log("the criteria data is",criteria)
+    console.log('URL complète:', `/salesTransaction/filter?${queryParams}`);
+    // Construct and return the GET request
+    //return this.httpClient.get(`/salesTransaction/filter?${queryParams}`);
+    return this.http.get(`http://localhost:3000/salesTransaction/filter?${queryParams}`, {
+      responseType: 'blob' // Important pour gérer les fichiers
+  });
+}
+
+
+
+
+
+// public filter(criteria: any) {
+//   console.log("The criteria data is", criteria);
+
+//   // Constructing the date query manually to handle operators
+//   const dateQuery = criteria.operator && criteria.date 
+//       ? `date${criteria.operator === 'greaterThan' ? '>=' : 
+//           criteria.operator === 'lowerThan' ? '<=' : 
+//           criteria.operator === 'notEquals' ? '!=' : '='}${criteria.date}` 
+//       : criteria.date ? `date=${criteria.date}` 
+//       : null;
+
+//   // Manually constructing query parameters without relying on automatic encoding
+//   const queryParams = [
+//       criteria.date && !criteria.date2 ? dateQuery : null,
+//       criteria.date && criteria.date2 ? `startDate=${criteria.date}` : null,
+//       criteria.date2 ? `endDate=${criteria.date2}` : null,
+//       criteria.producteur ? `producteur=${criteria.producteur}` : null,
+//       criteria.article ? `article=${criteria.article}` : null,
+//       criteria.commercant ? `commercant=${criteria.commercant}` : null
+//   ]
+//   .filter(param => param !== null) // Remove null values
+//   .join('&'); // Join with '&' to form query string
+
+//   console.log('Criteria:', criteria);
+//   console.log('Query Params:', queryParams);
+
+//   // Constructing the URL manually to prevent encoding of special characters
+//   const url = `/salesTransaction/filter?${queryParams}`;
+//   console.log('Constructed URL:', url);
+
+//   // Return the GET request
+//   return this.httpClient.get(url);
+// }
+
+
+// public filter(criteria: any) {
+//   console.log("The criteria data is", criteria);
+
+//   // Construct the date query string
+//   const dateQuery = criteria.operator && criteria.date 
+//       ? `date${criteria.operator === 'greaterThan' ? '>=' : 
+//           criteria.operator === 'lowerThan' ? '<=' : 
+//           criteria.operator === 'notEquals' ? '!=' : '='}${criteria.date}` 
+//       : criteria.date ? `date=${criteria.date}` 
+//       : null;
+
+//   // Construct query parameters manually
+//   const queryParams = [
+//       criteria.date && !criteria.date2 ? dateQuery : null,
+//       criteria.date && criteria.date2 ? `startDate=${criteria.date}` : null,
+//       criteria.date2 ? `endDate=${criteria.date2}` : null,
+//       criteria.producteur ? `producteur=${criteria.producteur}` : null,
+//       criteria.article ? `article=${criteria.article}` : null,
+//       criteria.commercant ? `commercant=${criteria.commercant}` : null
+//   ]
+//   .filter(param => param !== null) // Remove null values
+//   .join('&'); // Join with '&' to form query string
+
+//   console.log('Criteria:', criteria);
+//   console.log('Query Params:', queryParams);
+
+//   // Construct the full URL as a string
+//   const url = `http://localhost:3000/salesTransaction/filter?${queryParams}`;
+//   console.log('Constructed URL:', url);
+
+//   // Use HttpClient to send the GET request with the manually constructed URL
+//   return this.httpClient.get(url);
+// }
+
+  // public filter(criteria: any) {
+  //   // Construct query parameters manually
+  //   const queryParams = [
+  //     criteria.date ? `date=${criteria.date}` : null,
+  //     criteria.producteur ? `producteur=${criteria.producteur}` : null,
+  //     criteria.article ? `article=${criteria.article}` : null,
+  //     criteria.commercant ? `commercant=${criteria.commercant}` : null
+  //   ]
+  //     .filter(param => param !== null) // Remove null values
+  //     .join('&'); // Join with '&' to form query string
+  
+  //   console.log('criteria:', criteria);
+  //   console.log('queryParams:', queryParams);
+  
+  //   // Construct and return the GET request
+  //   return this.httpClient.get(`/salesTransaction/filter?${queryParams}`);
+  // }
+
+  // public filter(criteria: any) {
+  //   const params = new HttpParams({ fromObject: criteria });
+  //   console.log('criteria:',criteria);
+  //   return this.httpClient.get('/salesTransaction/filter?date='+ criteria.date
+  //     +'&producteur='+criteria.producteur
+  //     +'&article='+criteria.article
+  //     +'&commercant='+criteria.commercant
+  //   );
+  // }
+
+  // public filter(criteria: any) {
+  //   let params = new HttpParams();
+  
+  //   // Dynamically add parameters if they exist in the criteria
+  //   if (criteria.producteur) {
+  //     params = params.set('producteur', criteria.producteur);
+  //   }
+  //   if (criteria.date) {
+  //     params = params.set('date', criteria.date);
+  //   }
+  //   if (criteria.article) {
+  //     params = params.set('article', criteria.article);
+  //   }
+  //   if (criteria.commercant) {
+  //     params = params.set('commercant', criteria.commercant);
+  //   }
+  
+  //   console.log('criteria:', criteria);
+  //   console.log('params:', params.toString());
+  
+  //   // Use the constructed HttpParams object for the GET request
+  //   return this.httpClient.post('/salesTransaction/filter', { params });
+  // }
+
+}

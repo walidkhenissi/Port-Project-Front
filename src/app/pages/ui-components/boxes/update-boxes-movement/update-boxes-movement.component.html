@@ -1,0 +1,56 @@
+<mat-card class="cardWithShadow" class="b-1 shadow-none">
+  <mat-card-header>
+    <mat-card-title>Transaction de mouvement de caisse</mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="b-t-1" [formGroup]="updateForm" style="margin-top: 10px; padding-top: 10px;">
+    <div class="row">
+      <div class="col-sm-12 col-md-3">
+        <mat-form-field class="full-width-field">
+          <mat-label>Date</mat-label>
+          <input matInput [matDatepicker]="datePicker" placeholder="Date" [max]="toDay"
+                 [(ngModel)]="boxesTransaction.date" formControlName="dateFormControl"
+                 required>
+          <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
+          <mat-datepicker #datePicker></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="col-sm-12 col-md-3">
+        <mat-form-field class="full-width-field">
+          <mat-label>{{isShipOwnerCase?'Caisses récupérées':'Caisses achetées'}}</mat-label>
+          <input matInput placeholder="{{isShipOwnerCase?'Caisses récupérées':'Caisses achetées'}}" type="text" name="debit"
+                 formControlName="debitFormControl" [(ngModel)]="boxesTransaction.debit">
+        </mat-form-field>
+      </div>
+      <div class="col-sm-12 col-md-3">
+        <mat-form-field class="full-width-field">
+          <mat-label>{{isShipOwnerCase?'Caisses vendues':'Caisses remises'}}</mat-label>
+          <input matInput placeholder="{{isShipOwnerCase?'Caisses vendues':'Caisses remises'}}" type="text" name="credit"
+                 formControlName="creditFormControl" [(ngModel)]="boxesTransaction.credit">
+        </mat-form-field>
+      </div>
+      <div class="col-sm-12 col-md-3">
+        <mat-form-field class="full-width-field">
+          <mat-label>Solde de caisses</mat-label>
+          <input matInput placeholder="Solde de caisses" type="text" name="balance"
+                 formControlName="balanceFormControl" [(ngModel)]="boxesTransaction.balance">
+        </mat-form-field>
+      </div>
+      <div class="col-sm-12 col-md-12">
+        <mat-form-field class="full-width-field">
+          <mat-label>Note</mat-label>
+          <textarea matInput placeholder="Note" [(ngModel)]="boxesTransaction.note" name="note"
+                    formControlName="noteFormControl"></textarea>
+        </mat-form-field>
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="row" style="margin-top: 5px;display: flow-root">
+      <button mat-raised-button color="primary" class="pull-right" (click)="save()" [disabled]="!isValidForm()">
+        {{boxesTransactionId ? 'Enregistrer' : 'Ajouter'}}
+      </button>
+      <button mat-raised-button color="accent" class="pull-right" (click)="goBack()">
+        Retourner
+      </button>
+    </div>
+  </mat-card-content>
+</mat-card>

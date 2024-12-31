@@ -1,0 +1,152 @@
+<mat-card class="cardWithShadow" class="b-1 shadow-none">
+  <mat-card-header>
+    <mat-card-title>Balances</mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="b-t-1" style="margin-top: 10px; padding-top: 10px;">
+    <mat-tab-group (selectedTabChange)="switchChildTab($event.index)" [selectedIndex]="selectedTabIndex">
+      <mat-tab label="{{childrenToDisplay[0].label}}">
+        <div class="table-responsive">
+<!--          <button mat-raised-button type="submit" color="accent" class="btn pull-right"-->
+<!--                  (click)="addChild()">Ajouter-->
+<!--          </button>-->
+          <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortEvent($event)" *ngIf="selectedTabIndex==0"
+                 class="mat-elevation-z8">
+
+            <ng-container matColumnDef="shipOwner">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header="shipOwnerId"
+                  (mouseover)="mouseOverHeader[displayedChild.identifier].shipOwnerId=true"
+                  (mouseout)="mouseOverHeader[displayedChild.identifier].shipOwnerId=false">
+                Armateur
+                <i class="material-icons pull-left" title="filtrer"
+                   [ngStyle]="{visibility : showFilterIcon('shipOwnerId')?'':'hidden'}"
+                   (click)="filterEvent('shipOwnerId','enumeration','Shipowner','name');$event.stopPropagation()">search</i>
+              </th>
+              <td mat-cell *matCellDef="let element"> {{element.shipOwner ? element.shipOwner.name : ''}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="balance">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header="balance"
+                  (mouseover)="mouseOverHeader[displayedChild.identifier].balance=true"
+                  (mouseout)="mouseOverHeader[displayedChild.identifier].balance=false">
+                Balance
+                <i class="material-icons pull-left" title="filtrer"
+                   [ngStyle]="{visibility : showFilterIcon('balance')?'':'hidden'}"
+                   (click)="filterEvent('balance','number');$event.stopPropagation()">search</i>
+              </th>
+              <td mat-cell *matCellDef="let element"> {{element.balance |currency:'TND':'symbol':'1.3-3':'fr'}} </td>
+            </ng-container>
+
+            <tr class=" text-primary" mat-header-row *matHeaderRowDef="displayedChild.displayedColumns"></tr>
+
+            <tr mat-row *matRowDef="let row; columns: displayedChild.displayedColumns;"
+                [ngClass]="mouseOvered[row.id]?'table-active':''" (mouseover)="mouseOvered[row.id]=true"
+                (mouseout)="mouseOvered[row.id]=false"></tr>
+          </table>
+          <mat-paginator #paginator [length]="length"
+                         [pageSize]="pageSize"
+                         [pageSizeOptions]="pageSizeOptions"
+                         (page)="paginationEvent($event)">
+          </mat-paginator>
+        </div>
+      </mat-tab>
+      <mat-tab label="{{childrenToDisplay[1].label}}">
+        <div class="table-responsive">
+<!--          <button mat-raised-button type="submit" color="accent" class="btn pull-right"-->
+<!--                  (click)="addChild()">Ajouter-->
+<!--          </button>-->
+          <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortEvent($event)" *ngIf="selectedTabIndex==1"
+                 class="mat-elevation-z8">
+
+            <ng-container matColumnDef="merchant">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header="merchantId"
+                  (mouseover)="mouseOverHeader[displayedChild.identifier].merchantId=true"
+                  (mouseout)="mouseOverHeader[displayedChild.identifier].merchantId=false">
+                Commerçant
+                <i class="material-icons pull-left" title="filtrer"
+                   [ngStyle]="{visibility : showFilterIcon('merchantId')?'':'hidden'}"
+                   (click)="filterEvent('merchantId','enumeration','Merchant','name');$event.stopPropagation()">search</i>
+              </th>
+              <td mat-cell *matCellDef="let element"> {{element.merchant ? element.merchant.name : ''}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="balance">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header="balance"
+                  (mouseover)="mouseOverHeader[displayedChild.identifier].balance=true"
+                  (mouseout)="mouseOverHeader[displayedChild.identifier].balance=false">
+                Balance
+                <i class="material-icons pull-left" title="filtrer"
+                   [ngStyle]="{visibility : showFilterIcon('balance')?'':'hidden'}"
+                   (click)="filterEvent('balance','number');$event.stopPropagation()">search</i>
+              </th>
+              <td mat-cell *matCellDef="let element"> {{element.balance |currency:'TND':'symbol':'1.3-3':'fr'}} </td>
+            </ng-container>
+
+            <tr class=" text-primary" mat-header-row *matHeaderRowDef="displayedChild.displayedColumns"></tr>
+
+            <tr mat-row *matRowDef="let row; columns: displayedChild.displayedColumns;"
+                [ngClass]="mouseOvered[row.id]?'table-active':''" (mouseover)="mouseOvered[row.id]=true"
+                (mouseout)="mouseOvered[row.id]=false"></tr>
+          </table>
+          <mat-paginator #paginator [length]="length"
+                         [pageSize]="pageSize"
+                         [pageSizeOptions]="pageSizeOptions"
+                         (page)="paginationEvent($event)">
+          </mat-paginator>
+        </div>
+      </mat-tab>
+      <mat-tab label="{{childrenToDisplay[2].label}}">
+        <div class="table-responsive">
+<!--          <button mat-raised-button type="submit" color="accent" class="btn pull-right"-->
+<!--                  (click)="addChild()">Ajouter-->
+<!--          </button>-->
+          <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortEvent($event)" *ngIf="selectedTabIndex==2"
+                 class="mat-elevation-z8">
+
+            <ng-container matColumnDef="beneficiary">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header="beneficiaryId"
+                  (mouseover)="mouseOverHeader[displayedChild.identifier].beneficiaryId=true"
+                  (mouseout)="mouseOverHeader[displayedChild.identifier].beneficiaryId=false">
+                Bénéficiaire
+                <i class="material-icons pull-left" title="filtrer"
+                   [ngStyle]="{visibility : showFilterIcon('beneficiaryId')?'':'hidden'}"
+                   (click)="filterEvent('beneficiaryId','enumeration','beneficiary','name');$event.stopPropagation()">search</i>
+              </th>
+              <td mat-cell *matCellDef="let element"> {{element.beneficiary ? element.beneficiary.name : ''}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="balance">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header="balance"
+                  (mouseover)="mouseOverHeader[displayedChild.identifier].balance=true"
+                  (mouseout)="mouseOverHeader[displayedChild.identifier].balance=false">
+                Balance
+                <i class="material-icons pull-left" title="filtrer"
+                   [ngStyle]="{visibility : showFilterIcon('balance')?'':'hidden'}"
+                   (click)="filterEvent('balance','number');$event.stopPropagation()">search</i>
+              </th>
+              <td mat-cell *matCellDef="let element"> {{element.balance |currency:'TND':'symbol':'1.3-3':'fr'}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="details">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let element" class="grid-action-cell" (click)="goToDetails(element)">
+                <i class="material-icons" matTooltip="Editer" [matTooltipPosition]="'above'">remove_red_eye</i>
+              </td>
+            </ng-container>
+
+            <tr class=" text-primary" mat-header-row *matHeaderRowDef="displayedChild.displayedColumns"></tr>
+
+            <tr mat-row *matRowDef="let row; columns: displayedChild.displayedColumns;"
+                [ngClass]="mouseOvered[row.id]?'table-active':''" (mouseover)="mouseOvered[row.id]=true"
+                (mouseout)="mouseOvered[row.id]=false"></tr>
+          </table>
+          <mat-paginator #paginator [length]="length"
+                         [pageSize]="pageSize"
+                         [pageSizeOptions]="pageSizeOptions"
+                         (page)="paginationEvent($event)">
+          </mat-paginator>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>
+

@@ -1,0 +1,172 @@
+<mat-card class="cardWithShadow" class="b-1 shadow-none">
+  <mat-card-header>
+    <mat-card-title>{{shipownerId ? 'Mettre à jours un armateur' : 'Ajouter un armateur'}}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="b-t-1" [formGroup]="updateForm">
+    <div mat-subheader class="mat-body-2 m-y-16 f-w-600">Informations générales</div>
+    <div class="row">
+      <div class="col-md-3">
+        <mat-form-field class="full-width-field">
+          <mat-select placeholder="Civilité" [(ngModel)]="shipOwner.civility.id" required
+                      formControlName="civilityControl">
+            <mat-option *ngFor="let civility of civilities" [value]="civility.id">
+              {{ civility.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col-md-3">
+        <mat-form-field class="full-width-field">
+          <mat-label>Nom</mat-label>
+          <input matInput #input placeholder="Nom" name="Nom" formControlName="lastName"
+                 [(ngModel)]="shipOwner.lastName">
+        </mat-form-field>
+      </div>
+      <div class="col-md-3">
+        <mat-form-field class="full-width-field">
+          <mat-label>Prénom</mat-label>
+          <input matInput #input placeholder="Prénom" name="Prénom" formControlName="firstName"
+                 [(ngModel)]="shipOwner.firstName">
+        </mat-form-field>
+      </div>
+      <div class="col-md-3">
+        <mat-form-field class="full-width-field">
+          <mat-label>Numéro de téléphone</mat-label>
+          <input type="number" matInput #input placeholder="Ex. 65 000 999" name="Tel"
+                 formControlName="phoneNumber" [(ngModel)]="shipOwner.phoneNumber">
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <mat-form-field class="full-width-field">
+          <mat-label>Raison Social</mat-label>
+          <input matInput #input placeholder="Raison Social" name="socialReason"
+                 formControlName="socialReason" [(ngModel)]="shipOwner.socialReason">
+        </mat-form-field>
+      </div>
+      <div class="col-md-4">
+        <mat-form-field class="full-width-field">
+          <mat-label>Matricule fiscale</mat-label>
+          <input matInput #input placeholder="Matricule fiscale" name="taxRegistrationNumber"
+                 formControlName="taxRegistrationNumber" [(ngModel)]="shipOwner.taxRegistrationNumber">
+        </mat-form-field>
+      </div>
+      <div class="col-md-4">
+        <mat-checkbox #checkbox placeholder="Activé" class="toolbar-checkbox"
+                      formControlName="enabled"
+                      [checked]="shipOwner.enabled"
+                      (change)='toggleAnabled(checkbox.checked)'>
+          Activé
+        </mat-checkbox>
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+    <div mat-subheader class="mat-body-2 m-y-16 f-w-600">Adresse de l'armateur</div>
+    <div class="row">
+      <div class="col-md-4">
+        <mat-form-field class="full-width-field">
+          <mat-label>Rue</mat-label>
+          <input matInput #input placeholder="Rue" name="rue"
+                 formControlName="addressStreet" [(ngModel)]="shipOwner.address.street">
+        </mat-form-field>
+      </div>
+      <div class="col-md-4">
+        <mat-form-field class="full-width-field">
+          <mat-label>Ville</mat-label>
+          <input matInput #input placeholder="Ville" name="ville"
+                 formControlName="addressCity" [(ngModel)]="shipOwner.address.city">
+        </mat-form-field>
+      </div>
+      <div class="col-md-4">
+        <mat-form-field class="full-width-field">
+          <mat-label>Code postal</mat-label>
+          <input type="number" maxlength="4" matInput #input placeholder="Ex. 5080" name="codePostal"
+                 formControlName="addressPostalCode" [(ngModel)]="shipOwner.address.postalCode">
+        </mat-form-field>
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="row" style="margin-top: 5px;display: flow-root">
+      <button mat-raised-button color="primary" class="pull-right" (click)="updateShipowner()"
+              [ngStyle]="{display : shipownerId ?'':'none'}">
+        Mettre à jours
+      </button>
+      <button mat-raised-button color="primary" class="pull-right" (click)="addShipowner()"
+              [disabled]="!isValidForm()"
+              [ngStyle]="{display : shipownerId ?'none':''}">
+        Ajouter
+      </button>
+      <button mat-raised-button color="accent" class="pull-right"
+              [routerLink]="['/ui-components/shipowner-management']">
+        Retourner
+      </button>
+    </div>
+    <mat-divider></mat-divider>
+    <mat-tab-group (selectedTabChange)="switchChildTab($event.index)" [selectedIndex]="selectedTabIndex"
+                   *ngIf="shipownerId">
+      <mat-tab label="{{childrenToDisplay[0].label}}">
+        <div class="table-responsive">
+          <mat-card-content>
+            <mat-card-title>Gestion des bateaux</mat-card-title>
+            <div class="row">
+              <div class="col-md-10">
+                <mat-form-field class="full-width-field">
+                  <mat-label>Filter</mat-label>
+                  <input matInput (keyup)="applyFilter($event)" placeholder="Ex: Foulén" #input>
+                </mat-form-field>
+              </div>
+              <div class="col-md-2">
+                <button mat-raised-button class="addButtonClass pull" color="primary"
+                        [routerLink]="['/ui-components/ship/add',shipownerId, selectedTabIndex]">
+                  Ajouter un bateau
+                </button>
+              </div>
+            </div>
+
+            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef> Nom</th>
+                <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="serialNumber">
+                <th mat-header-cell *matHeaderCellDef> Numéro</th>
+                <td mat-cell *matCellDef="let element"> {{element.serialNumber}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="edit">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let element">
+                  <button mat-flat-button color="primary" class="w-100"
+                          (click)="editChild(element)">Modifier
+                  </button>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="delete">
+                <th mat-header-cell *matHeaderCellDef> Supprimer</th>
+                <td mat-cell *matCellDef="let element">
+                  <button mat-flat-button color="warn" class="w-100"
+                          (click)="removeChild(element, false)">Supprimer
+                  </button>
+                </td>
+              </ng-container>
+
+              <tr class=" text-primary" mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+                  [ngClass]="mouseOvered[row.id]?'table-active':''" (mouseover)="mouseOvered[row.id]=true"
+                  (mouseout)="mouseOvered[row.id]=false"></tr>
+            </table>
+            <mat-paginator #paginator [length]="length"
+                           [pageSize]="pageSize"
+                           [pageSizeOptions]="pageSizeOptions"
+                           (page)="paginationEvent($event)">
+            </mat-paginator>
+          </mat-card-content>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>
