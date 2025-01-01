@@ -321,7 +321,16 @@ export class SalesComponent implements OnInit {
   }
 
   public generateReport() {
-    return this.saleService.generateSalesReport({}).subscribe((response: any) => {
+    return this.saleService.generateSalesReport({
+      startDate: this.date1 || new Date(),
+      endDate: this.date2 || new Date(),
+      dateRule:this.rule,
+      producer: this.selectedProducer ? this.selectedProducer.id : null,
+      merchant: this.selectedMerchant ? this.selectedMerchant.id : null,
+      article: this.selectedArticle ? this.selectedArticle.id : null,
+      excelType: this.excelType,
+      pdfType: this.pdfType
+    }).subscribe((response: any) => {
       // alert(response.data);
       saveAs(Constants.API_DOWNLOAD_URL + "/" + response.data, response.data);
       this.dialogRef.close();
@@ -330,7 +339,8 @@ export class SalesComponent implements OnInit {
         data: {
           message: 'Une erreur s\'est produite ',
           title: 'Attention!',
-          confirm: () => {},
+          confirm: () => {
+          },
           hideReject: true
         }
       });
@@ -338,7 +348,7 @@ export class SalesComponent implements OnInit {
   }
 
   public openDialog() {
-    this.dialogRef=this.dialog.open(this.salesStatsDialg, {
+    this.dialogRef = this.dialog.open(this.salesStatsDialg, {
       width: '500px',
     });
 
