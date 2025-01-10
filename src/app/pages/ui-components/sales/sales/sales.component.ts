@@ -320,9 +320,32 @@ export class SalesComponent implements OnInit {
     setTimeout(() => this.tappedMerchantName = merchant.name);
   }
 
+
   public generateReport() {
-    return this.saleService.generateSalesReport({}).subscribe((response: any) => {
-      // alert(response.data);
+  const formatDate=(date: any)=>{
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = (d.getMonth() + 1).toString().padStart(2, '0'); // mois de 01 à 12
+    const day = d.getDate().toString().padStart(2, '0'); // jour de 01 à 31
+    return `${year}-${month}-${day}`;
+    };
+
+const options={
+      dateRule: this.rule,
+      startDate: formatDate(this.date1) || new Date(),
+      endDate: this.rule == "equals"? null : (formatDate(this.date2) || new Date()),
+      article: this.selectedArticle ? this.selectedArticle.id: null,
+      producer: this.selectedProducer ? this.selectedProducer.id: null,
+      merchant: this.selectedMerchant ? this.selectedMerchant.id: null,
+      excelType: this.excelType,
+      pdfType: this.pdfType
+
+};
+
+
+    return this.saleService.generateSalesReport(options).subscribe((response: any) => {
+      alert(response.data);
+      console.log("response.data :", response.data);
       saveAs(Constants.API_DOWNLOAD_URL + "/" + response.data, response.data);
       this.dialogRef.close();
     }, (response: any) => {

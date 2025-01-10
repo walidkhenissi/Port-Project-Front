@@ -1,13 +1,17 @@
 import {Injectable} from '@angular/core';
 import {IService} from "./IService";
 import {HttpClientService} from "../utils/http-client.service";
+import {Observable} from "rxjs";
+import * as Constants from "constants";
+import {HttpClient} from "@angular/common/http";
 
 @Injectable({
   providedIn: 'root'
 })
 export class SaleService implements IService {
 
-  constructor(protected httpClient: HttpClientService) {
+  constructor(protected httpClient: HttpClientService,
+              public http:HttpClient) {
 
   }
 
@@ -39,7 +43,8 @@ export class SaleService implements IService {
     return this.httpClient.get('/sale/getSaleWithDetails?id=' + id);
   }
 
-  public generateSalesReport(options: any) {
+ public generateSalesReport(options: any) {
     return this.httpClient.post('/sale/generateSalesReport', options);
   }
+
 }

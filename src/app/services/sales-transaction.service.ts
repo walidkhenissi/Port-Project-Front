@@ -38,6 +38,9 @@ export class SalesTransactionService implements IService {
  suivi(){
     return this.httpClient.get('/salesTransaction/filter');
   }
+  public generateSalesTransactionReport(options: any) {
+    return this.httpClient.post('/salesTransaction/generateSalestransactionReport', options);
+  }
 
 
 //   public filter(criteria: any) {
