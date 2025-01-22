@@ -34,4 +34,10 @@ export class BalanceService implements IService {
   remove(id: string | number) {
     return this.httpClient.delete('/balance/remove?id=' + id);
   }
+  public generateReportSoldeProducteur(options: any) {
+    return this.httpClient.post('/balance/generateReportSoldeProducteur', options);
+  }
+  public generateReportSoldeCommercant(options: any) {
+    return this.httpClient.post('/balance/generateReportSoldeCommercant', options);
+  }
 }

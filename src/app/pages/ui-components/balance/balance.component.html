@@ -6,9 +6,9 @@
     <mat-tab-group (selectedTabChange)="switchChildTab($event.index)" [selectedIndex]="selectedTabIndex">
       <mat-tab label="{{childrenToDisplay[0].label}}">
         <div class="table-responsive">
-<!--          <button mat-raised-button type="submit" color="accent" class="btn pull-right"-->
-<!--                  (click)="addChild()">Ajouter-->
-<!--          </button>-->
+          <button mat-raised-button color="accent" class="btn pull-right" (click)="openDialogP()">
+            Solde
+          </button>
           <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortEvent($event)" *ngIf="selectedTabIndex==0"
                  class="mat-elevation-z8">
 
@@ -54,6 +54,9 @@
 <!--          <button mat-raised-button type="submit" color="accent" class="btn pull-right"-->
 <!--                  (click)="addChild()">Ajouter-->
 <!--          </button>-->
+          <button mat-raised-button color="accent" class="btn pull-right" (click)="openDialogC()">
+            Solde
+          </button>
           <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortEvent($event)" *ngIf="selectedTabIndex==1"
                  class="mat-elevation-z8">
 
@@ -150,3 +153,134 @@
   </mat-card-content>
 </mat-card>
 
+<!-- Etat de solde producteur -->
+
+<ng-template #soldeProducerStatsPopup>
+  <h1 mat-dialog-title>Solde de Client</h1>
+  <mat-dialog-content>
+    <div class="col-md-12">
+      <mat-form-field class="example-full-width" name="rule" required>
+        <mat-select [(ngModel)]="rule" placeholder="Règle" required [ngModelOptions]="{standalone: true}">
+          <mat-option [value]="'equals'">Egale à</mat-option>
+          <mat-option [value]="'notEquals'">Différent de</mat-option>
+          <mat-option [value]="'lowerThan'">Inférieur à</mat-option>
+          <mat-option [value]="'greaterThan'">Superieur à</mat-option>
+          <mat-option [value]="'between'">Entre</mat-option>
+          <mat-option [value]="'readAll'">Exporter tout</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="col-md-12" *ngIf="rule !== 'readAll'">
+      <mat-form-field class="example-full-width">
+        <input matInput type ="number" placeholder="Montant" [(ngModel)]="solde1" required>
+       </mat-form-field>
+      <ng-container *ngIf="rule === 'between'">
+        et<br/>
+        <mat-form-field class="example-full-width">
+          <input matInput type ="number" placeholder="Montant" [(ngModel)]="solde2" required>
+        </mat-form-field>
+      </ng-container>
+    </div>
+    <!-- filter-->
+    <div class="col-md-12">
+      <mat-form-field class="example-full-width">
+        <input type="text" name="searchProducers" placeholder="Producteur" aria-label="Producteur" matInput
+               [matAutocomplete]="autoProducers" (keyup)="searchProducers(null, $event)"
+               [(ngModel)]="tappedProducerName" [ngModelOptions]="{standalone: true}">
+        <mat-autocomplete autoActiveFirstOption #autoProducers="matAutocomplete"
+                          (optionSelected)="setSelectedProducer($event.option.value)">
+          <mat-option *ngFor="let producer of producers" [value]="producer">
+            {{producer.name}}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </div>
+
+    <!-- export-->
+    <div class="row">
+      <div class="col-md-6">
+        <mat-checkbox #checkboxDebiteur placeholder="C.Debuteur" class="debit-color" [checked]="debitType"
+                      (change)='toggledebitType(checkboxDebiteur.checked)'>
+
+          <span>C.Debuteur</span>
+        </mat-checkbox>
+      </div>
+      <div class="col-md-6">
+        <mat-checkbox #checkboxCrediteur placeholder="C.Crediteur" class="toolbar-checkbox credit-color" [checked]="creditType"
+                      (change)='togglecreditType(checkboxCrediteur.checked)'>
+          <span>C.Crediteur</span>
+        </mat-checkbox>
+      </div>
+    </div>
+
+  </mat-dialog-content>
+  <mat-dialog-actions class="pull-right">
+    <button mat-button mat-raised-button color="warn" [mat-dialog-close]="false">Annuler</button>
+    <button mat-button mat-raised-button color="primary" (click)="generateReportProducteur()">Ok</button>
+  </mat-dialog-actions>
+</ng-template>
+
+
+<!-- Etat de solde Commercant -->
+
+<ng-template #soldeCommercantStatsPopup>
+  <h1 mat-dialog-title>Solde de Client</h1>
+  <mat-dialog-content>
+    <div class="col-md-12">
+      <mat-form-field class="example-full-width" name="rule" required>
+        <mat-select [(ngModel)]="rule" placeholder="Règle" required [ngModelOptions]="{standalone: true}">
+          <mat-option [value]="'equals'">Egale à</mat-option>
+          <mat-option [value]="'notEquals'">Différent de</mat-option>
+          <mat-option [value]="'lowerThan'">Inférieur à</mat-option>
+          <mat-option [value]="'greaterThan'">Superieur à</mat-option>
+          <mat-option [value]="'between'">Entre</mat-option>
+          <mat-option [value]="'readAll'">Exporter tout</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="col-md-12" *ngIf="rule !== 'readAll'">
+      <mat-form-field class="example-full-width">
+        <input matInput type ="number" placeholder="Montant" [(ngModel)]="solde1" required>
+      </mat-form-field>
+      <ng-container *ngIf="rule === 'between'">
+        et<br/>
+        <mat-form-field class="example-full-width">
+          <input matInput type ="number" placeholder="Montant" [(ngModel)]="solde2" required>
+        </mat-form-field>
+      </ng-container>
+    </div>
+    <!-- filter-->
+    <div class="col-md-12">
+      <mat-form-field class="example-full-width">
+        <input type="text" name="searchMerchant" placeholder="Commerçant" aria-label="Commerçant" matInput
+               [matAutocomplete]="autoMerchants" (keyup)="searchMerchant(null, $event)"
+               [(ngModel)]="tappedMerchantName" [ngModelOptions]="{standalone: true}">
+        <mat-autocomplete autoActiveFirstOption #autoMerchants="matAutocomplete"
+                          (optionSelected)="setSelectedMerchant($event.option.value)">
+          <mat-option *ngFor="let merchant of merchants" [value]="merchant">
+            {{merchant.name}}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </div>
+    <!-- export-->
+    <div class="row">
+      <div class="col-md-6">
+        <mat-checkbox #checkboxDebiteur placeholder="C.Debuteur" class="debit-color" [checked]="debitType"
+                      (change)='toggledebitType(checkboxDebiteur.checked)'>
+          <span>C.Debuteur</span>
+        </mat-checkbox>
+      </div>
+      <div class="col-md-6">
+        <mat-checkbox #checkboxCrediteur placeholder="C.Crediteur" class="toolbar-checkbox credit-color" [checked]="creditType"
+                      (change)='togglecreditType(checkboxCrediteur.checked)'>
+          <span>C.Crediteur</span>
+        </mat-checkbox>
+      </div>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions class="pull-right">
+    <button mat-button mat-raised-button color="warn" [mat-dialog-close]="false">Annuler</button>
+    <button mat-button mat-raised-button color="primary" (click)="generateReportCommercant()">Ok</button>
+  </mat-dialog-actions>
+</ng-template>

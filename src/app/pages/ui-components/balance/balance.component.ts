@@ -1,4 +1,4 @@
-import {Component, ViewChild} from '@angular/core';
+import {Component, TemplateRef, ViewChild} from '@angular/core';
 import {MatTableDataSource} from "@angular/material/table";
 import {MatPaginator, PageEvent} from "@angular/material/paginator";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -12,6 +12,10 @@ import {BalanceService} from "../../../services/balance.service";
 import {BeneficiaryBalanceService} from "../../../services/beneficiary-balance.service";
 import {ConfirmDialogComponent} from "../dialogs/confirm-dialog/confirm-dialog.component";
 import {FilterDialogComponent} from "../dialogs/filter-dialog/filter-dialog.component";
+import {FormControl, Validators} from "@angular/forms";
+import {Constants} from "../../../constants";
+// @ts-ignore
+import {saveAs} from 'file-saver';
 
 @Component({
   selector: 'app-balance',
@@ -19,6 +23,15 @@ import {FilterDialogComponent} from "../dialogs/filter-dialog/filter-dialog.comp
   styleUrls: ['./balance.component.scss']
 })
 export class BalanceComponent {
+
+
+  producerFormControl: FormControl;
+  commercantFormControl: FormControl;
+
+  public merchants: any;
+  public producers: any;
+
+
 
   selectedTabIndex: number = 0;
   dataSource = new MatTableDataSource<any>();
@@ -36,6 +49,24 @@ export class BalanceComponent {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   // MatPaginator Output
   public pageEvent: PageEvent;
+ @ViewChild('soldeProducerStatsPopup') soldeProducerStatsDialg: TemplateRef<any>;
+  @ViewChild('soldeCommercantStatsPopup') soldeCommercantStatsDialg: TemplateRef<any>;
+  public rule: string;
+  public solde1 : number| null = null;
+  public solde2 : number| null = null;
+  public producerName: string;
+  public merchantName: string;
+  private enumCriteria: any = {where: {}};
+  selectedProducer: any
+  tappedProducerName: string;
+  selectedMerchant: any
+  tappedMerchantName: string;
+  public dialogRef: any;
+
+  public creditType: boolean = true;
+  public debitType: boolean = true;
+
+  /*************************/
 
   constructor(private route: ActivatedRoute,
               private beneficiaryBalanceService: BeneficiaryBalanceService,
@@ -81,6 +112,9 @@ export class BalanceComponent {
   }
 
   ngOnInit() {
+    this.producerFormControl = new FormControl('', Validators.required);// Formulaire pour gérer tous les filtres
+    this.commercantFormControl = new FormControl('', Validators.required);
+
     if (!this.gridsStateService.loadState(this.router.url + '/' + this.selectedTabIndex, this)) {
       // if (!this.gridsStateService.loadState(this.router.url, this)) {
       this.criteria[this.displayedChild.identifier].where = this.criteria[this.displayedChild.identifier].where || {};
@@ -220,4 +254,145 @@ export class BalanceComponent {
   goToDetails(element: any) {
     this.router.navigate(["/ui-components/balanceDetails/", element.beneficiary.id]);
   }
+  /***********Producteur ***********/
+  public searchProducers(id = null, event: any = null) {
+    if (event && event.key === 'Enter')
+      return;
+    this.selectedProducer = null;
+    let value = this.tappedProducerName;
+    let criteria: any = {limit: 5, hideSpinner: true};
+    if (id !== null) {
+      criteria.where = {id: id};
+    } else {
+      criteria.where = {name: {'like': '%' + value + '%'}};
+    }
+    this.shipownerService.findProducer(criteria).subscribe((response: any) => {
+      this.producers = response.data;
+      this.producers.sort(function (producer1: any, producer2: any) {
+        return producer1.name.localeCompare(producer2.name);
+      });
+      if (id !== null) {
+        this.setSelectedProducer(response.data[0]);
+      }
+    });
+  }
+
+  public setSelectedProducer(producer: any): void {
+    this.selectedProducer = producer;
+    setTimeout(() => this.tappedProducerName = producer.name);
+  }
+
+
+  public generateReportProducteur() {
+
+    const options={
+      soldeRule: this.rule,
+      solde1: this.solde1,
+      solde2: this.solde2,
+      producer: this.selectedProducer ? this.selectedProducer.id: null,
+      creditType: this.creditType,
+      debitType: this.debitType
+
+    };
+
+
+    return this.balanceService.generateReportSoldeProducteur(options).subscribe((response: any) => {
+      alert(response.data);
+      console.log("response.data :", response.data);
+      saveAs(Constants.API_DOWNLOAD_URL + "/" + response.data, response.data);
+      this.dialogRef.close();
+    }, (response: any) => {
+      this.dialog.open(ConfirmDialogComponent, {
+        data: {
+          message: 'Une erreur s\'est produite ',
+          title: 'Attention!',
+          confirm: () => {},
+          hideReject: true
+        }
+      });
+    });
+  }
+
+  public openDialogP() {
+    this.dialogRef=this.dialog.open(this.soldeProducerStatsDialg, {
+      width: '500px',
+    });
+
+  }
+
+  toggledebitType(checked: boolean) {
+    this.debitType = !this.debitType;
+    this.creditType = false;
+  }
+
+  togglecreditType(checked: boolean) {
+    this.creditType = !this.creditType;
+    this.debitType = false;
+  }
+/*******************Commercant ********************/
+  public searchMerchant(id = null, event: any = null) {
+    if (event && event.key === 'Enter')
+      return;
+    this.selectedMerchant = null;
+    let value = this.tappedMerchantName;
+    let criteria: any = {limit: 5, hideSpinner: true};
+    if (id !== null) {
+      criteria.where = {id: id};
+    } else {
+      criteria.where = {name: {'like': '%' + value + '%'}};
+    }
+    this.merchantService.find(criteria).subscribe((response: any) => {
+      this.merchants = response.data;
+      if (id !== null) {
+        this.setSelectedProducer(response.data[0]);
+      }
+    });
+  }
+
+  public setSelectedMerchant(merchant: any): void {
+    this.selectedMerchant = merchant;
+    setTimeout(() => this.tappedMerchantName = merchant.name);
+  }
+
+
+  public generateReportCommercant() {
+
+    const options={
+      soldeRule: this.rule,
+      solde1:  this.solde1,
+      solde2: this.solde2,
+      merchant: this.selectedMerchant ? this.selectedMerchant.id: null,
+      creditType: this.creditType,
+      debitType: this.debitType
+
+    };
+
+
+    return this.balanceService.generateReportSoldeCommercant(options).subscribe((response: any) => {
+      alert(response.data);
+      console.log("response.data :", response.data);
+      saveAs(Constants.API_DOWNLOAD_URL + "/" + response.data, response.data);
+      this.dialogRef.close();
+    }, (response: any) => {
+      this.dialog.open(ConfirmDialogComponent, {
+        data: {
+          message: 'Une erreur s\'est produite ',
+          title: 'Attention!',
+          confirm: () => {},
+          hideReject: true
+        }
+      });
+    });
+  }
+
+  public openDialogC() {
+    this.dialogRef=this.dialog.open(this.soldeCommercantStatsDialg, {
+      width: '500px',
+    });
+
+  }
+
+
+
+
 }
