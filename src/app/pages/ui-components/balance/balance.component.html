@@ -196,7 +196,7 @@
       </mat-form-field>
     </div>
 
-    <!-- export-->
+    <!-- debit credit -->
     <div class="row">
       <div class="col-md-6">
         <mat-checkbox #checkboxDebiteur placeholder="C.Debuteur" class="debit-color" [checked]="debitType"
@@ -209,6 +209,23 @@
         <mat-checkbox #checkboxCrediteur placeholder="C.Crediteur" class="toolbar-checkbox credit-color" [checked]="creditType"
                       (change)='togglecreditType(checkboxCrediteur.checked)'>
           <span>C.Crediteur</span>
+        </mat-checkbox>
+      </div>
+    </div>
+    <!-- export-->
+    <div class="row">
+      <div class="col-md-6">
+        <mat-checkbox #checkboxPDF placeholder="PDF" class="pdf-color" [checked]="pdfType"
+                      (change)='togglePDFType(checkboxPDF.checked)'>
+          <mat-icon color='#AF0B09'>picture_as_pdf</mat-icon>
+          <span>PDF</span>
+        </mat-checkbox>
+      </div>
+      <div class="col-md-6">
+        <mat-checkbox #checkboxExcel placeholder="Excel" class="toolbar-checkbox excel-color" [checked]="excelType"
+                      (change)='toggleExcelType(checkboxExcel.checked)'>
+          <mat-icon color='#227447'>insert_drive_file</mat-icon>
+          <span>Excel</span>
         </mat-checkbox>
       </div>
     </div>
@@ -263,7 +280,7 @@
         </mat-autocomplete>
       </mat-form-field>
     </div>
-    <!-- export-->
+    <!-- credit /debit-->
     <div class="row">
       <div class="col-md-6">
         <mat-checkbox #checkboxDebiteur placeholder="C.Debuteur" class="debit-color" [checked]="debitType"
@@ -275,6 +292,22 @@
         <mat-checkbox #checkboxCrediteur placeholder="C.Crediteur" class="toolbar-checkbox credit-color" [checked]="creditType"
                       (change)='togglecreditType(checkboxCrediteur.checked)'>
           <span>C.Crediteur</span>
+        </mat-checkbox>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <mat-checkbox #checkboxPDF placeholder="PDF" class="pdf-color" [checked]="pdfType"
+                      (change)='togglePDFType(checkboxPDF.checked)'>
+          <mat-icon color='#AF0B09'>picture_as_pdf</mat-icon>
+          <span>PDF</span>
+        </mat-checkbox>
+      </div>
+      <div class="col-md-6">
+        <mat-checkbox #checkboxExcel placeholder="Excel" class="toolbar-checkbox excel-color" [checked]="excelType"
+                      (change)='toggleExcelType(checkboxExcel.checked)'>
+          <mat-icon color='#227447'>insert_drive_file</mat-icon>
+          <span>Excel</span>
         </mat-checkbox>
       </div>
     </div>

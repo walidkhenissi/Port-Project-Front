@@ -65,7 +65,8 @@ export class BalanceComponent {
 
   public creditType: boolean = true;
   public debitType: boolean = true;
-
+  public excelType: boolean = false;  // Excel est coché par défaut
+  public pdfType: boolean = true;
   /*************************/
 
   constructor(private route: ActivatedRoute,
@@ -291,7 +292,9 @@ export class BalanceComponent {
       solde2: this.solde2,
       producer: this.selectedProducer ? this.selectedProducer.id: null,
       creditType: this.creditType,
-      debitType: this.debitType
+      debitType: this.debitType,
+      excelType: this.excelType,
+      pdfType: this.pdfType
 
     };
 
@@ -329,7 +332,18 @@ export class BalanceComponent {
     this.creditType = !this.creditType;
     this.debitType = false;
   }
-/*******************Commercant ********************/
+  togglePDFType(checked: boolean) {
+    this.pdfType = !this.pdfType;
+    this.excelType = false;
+  }
+
+  toggleExcelType(checked: boolean) {
+    this.excelType = !this.excelType;
+    this.pdfType = false;
+  }
+
+
+  /*******************Commercant ********************/
   public searchMerchant(id = null, event: any = null) {
     if (event && event.key === 'Enter')
       return;
@@ -363,7 +377,9 @@ export class BalanceComponent {
       solde2: this.solde2,
       merchant: this.selectedMerchant ? this.selectedMerchant.id: null,
       creditType: this.creditType,
-      debitType: this.debitType
+      debitType: this.debitType,
+      excelType: this.excelType,
+      pdfType: this.pdfType
 
     };
 
