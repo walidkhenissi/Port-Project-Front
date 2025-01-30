@@ -25,15 +25,14 @@ import {Constants} from "../../../../constants";
 export class SalesComponent implements OnInit {
   [x: string]: any;
 
-  articleFormControl: FormControl;
+
   producerFormControl: FormControl;
-  commercantFormControl: FormControl;
+
 
   filteredArticles: any[] = []; // Liste filtrée
 
 
-  public articles: any;
-  public merchants: any;
+
   public producers: any;
 
 
@@ -57,18 +56,17 @@ export class SalesComponent implements OnInit {
   totalSales = 0;
   @ViewChild('salesStatsPopup') salesStatsDialg: TemplateRef<any>;
   public rule: string;
+  public ruleSolde:string;
   public date1 = new Date();
   public date2 = new Date();
-  public articleName: string;
+  public solde1: number;
+  public solde2:number;
   public producerName: string;
-  public merchantName: string;
+
   private enumCriteria: any = {where: {}};
   selectedProducer: any
   tappedProducerName: string;
-  selectedMerchant: any
-  tappedMerchantName: string;
-  selectedArticle: any;
-  tappedArticleName: string;
+
   public dialogRef: any;
 
 
@@ -83,17 +81,16 @@ export class SalesComponent implements OnInit {
     private shipownerService: ShipownersService,
     private cdr: ChangeDetectorRef,
     private salesTransactionService: SalesTransactionService,
-    private articleService: ArticleService,
-    private merchantService: MerchantsService
+
   ) {
 
   }
 
   ngOnInit() {
 
-    this.articleFormControl = new FormControl('', Validators.required);
+
     this.producerFormControl = new FormControl('', Validators.required);// Formulaire pour gérer tous les filtres
-    this.commercantFormControl = new FormControl('', Validators.required);
+
 
 
     if (!this.gridsStateService.loadState(this.router.url, this)) {
@@ -228,45 +225,8 @@ export class SalesComponent implements OnInit {
     this.router.navigate(["/ui-components/sales/add", 0]);
   }
 
-  public suivi() {
-    this.router.navigate(["/ui-components/sales/suivi"]);
-  }
 
-  public applyCommercantFilter(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    const value = target ? target.value : '';
-    if (value.trim().length > 0) {
-      this.enumCriteria.where['merchantName'] = {'like': '%' + value + '%'};
-    } else {
-      delete this.enumCriteria.where['merchantName'];
-    }
-    this.resetPage();
 
-  }
-
-  public searchArticle(id = null, event: any = null) {
-    if (event && event.key === 'Enter')
-      return;
-    this.selectedArticle = null;
-    let value = this.tappedArticleName;
-    let criteria: any = {limit: 5, hideSpinner: true};
-    if (id !== null) {
-      criteria.where = {id: id};
-    } else {
-      criteria.where = {name: {'like': '%' + value + '%'}};
-    }
-    this.articleService.find(criteria).subscribe((response: any) => {
-      this.articles = response.data;
-      if (id !== null) {
-        this.setSelectedArticle(response.data[0]);
-      }
-    });
-  }
-
-  public setSelectedArticle(article: any): void {
-    this.selectedArticle = article;
-    setTimeout(() => this.tappedArticleName = article.name);
-  }
 
 
   public searchProducers(id = null, event: any = null) {
@@ -296,29 +256,6 @@ export class SalesComponent implements OnInit {
     setTimeout(() => this.tappedProducerName = producer.name);
   }
 
-  public searchMerchant(id = null, event: any = null) {
-    if (event && event.key === 'Enter')
-      return;
-    this.selectedMerchant = null;
-    let value = this.tappedMerchantName;
-    let criteria: any = {limit: 5, hideSpinner: true};
-    if (id !== null) {
-      criteria.where = {id: id};
-    } else {
-      criteria.where = {name: {'like': '%' + value + '%'}};
-    }
-    this.merchantService.find(criteria).subscribe((response: any) => {
-      this.merchants = response.data;
-      if (id !== null) {
-        this.setSelectedProducer(response.data[0]);
-      }
-    });
-  }
-
-  public setSelectedMerchant(merchant: any): void {
-    this.selectedMerchant = merchant;
-    setTimeout(() => this.tappedMerchantName = merchant.name);
-  }
 
 
   public generateReport() {
@@ -332,11 +269,12 @@ export class SalesComponent implements OnInit {
 
 const options={
       dateRule: this.rule,
+      soldeRule:this.ruleSolde,
       startDate: formatDate(this.date1) || new Date(),
       endDate: this.rule == "equals"? null : (formatDate(this.date2) || new Date()),
-      article: this.selectedArticle ? this.selectedArticle.id: null,
       producer: this.selectedProducer ? this.selectedProducer.id: null,
-      merchant: this.selectedMerchant ? this.selectedMerchant.id: null,
+      solde1:this.solde1,
+      solde2:this.solde2,
       excelType: this.excelType,
       pdfType: this.pdfType
 
