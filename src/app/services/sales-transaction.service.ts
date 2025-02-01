@@ -1,13 +1,15 @@
 import { Injectable } from '@angular/core';
 import {IService} from "./IService";
 import {HttpClientService} from "../utils/http-client.service";
-
+import {HttpClient} from "@angular/common/http";
+import {Constants} from "../constants";
 @Injectable({
   providedIn: 'root'
 })
 export class SalesTransactionService implements IService {
 
-  constructor(protected httpClient: HttpClientService) {
+  constructor(protected httpClient: HttpClientService,
+              protected httpC:HttpClient) {
 
   }
 
@@ -38,8 +40,13 @@ export class SalesTransactionService implements IService {
  suivi(){
     return this.httpClient.get('/salesTransaction/filter');
   }
+  /*
   public generateSalesTransactionReport(options: any) {
-    return this.httpClient.post('/salesTransaction/generateSalestransactionReport', options);
+    return this.httpClient.post('/salesTransaction/generateSalestransactionReport', options,{ withCredentials: true });
+  }
+   */
+  public generateSalesTransactionReport(options: any) {
+    return this.httpC.post(`${Constants.API_URL}/salesTransaction/generateSalestransactionReport`, options,{ withCredentials: true });
   }
 
 

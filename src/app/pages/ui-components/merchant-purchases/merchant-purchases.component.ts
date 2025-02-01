@@ -234,7 +234,9 @@ export class MerchantPurchasesComponent  implements OnInit {
       pdfType: this.pdfType
 
     };
+    console.log("Options envoyées :", options);
 return this.salesTransactionService.generateSalesTransactionReport(options).subscribe((response: any) => {
+    console.log("Réponse reçue :", response);
   alert(response.data);
   console.log("response.data :", response.data);
   saveAs(Constants.API_DOWNLOAD_URL + "/" + response.data, response.data);

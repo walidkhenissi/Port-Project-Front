@@ -226,9 +226,6 @@ export class SalesComponent implements OnInit {
   }
 
 
-
-
-
   public searchProducers(id = null, event: any = null) {
     if (event && event.key === 'Enter')
       return;

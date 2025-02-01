@@ -2,9 +2,8 @@ import {Injectable} from '@angular/core';
 import {IService} from "./IService";
 import {HttpClientService} from "../utils/http-client.service";
 import {Observable} from "rxjs";
-import * as Constants from "constants";
 import {HttpClient} from "@angular/common/http";
-
+import {Constants} from "../constants";
 @Injectable({
   providedIn: 'root'
 })
@@ -44,7 +43,7 @@ export class SaleService implements IService {
   }
 
  public generateSalesReport(options: any) {
-    return this.httpClient.post('/sale/generateSalesReport', options);
+    return this.http.post(`${Constants.API_URL}/sale/generateSalesReport`, options,{ withCredentials: true });
   }
 
 }

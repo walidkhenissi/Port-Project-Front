@@ -1,13 +1,16 @@
 import { Injectable } from '@angular/core';
 import {IService} from "./IService";
 import {HttpClientService} from "../utils/http-client.service";
+import {Constants} from "../constants";
+import {HttpClient} from "@angular/common/http";
 
 @Injectable({
   providedIn: 'root'
 })
 export class BalanceService implements IService {
 
-  constructor(protected httpClient: HttpClientService) {
+  constructor(protected httpClient: HttpClientService,
+              protected httpC :HttpClient) {
 
   }
 
@@ -35,9 +38,9 @@ export class BalanceService implements IService {
     return this.httpClient.delete('/balance/remove?id=' + id);
   }
   public generateReportSoldeProducteur(options: any) {
-    return this.httpClient.post('/balance/generateReportSoldeProducteur', options);
+    return this.httpC.post(`${Constants.API_URL}/balance/generateReportSoldeProducteur`, options,{ withCredentials: true });
   }
   public generateReportSoldeCommercant(options: any) {
-    return this.httpClient.post('/balance/generateReportSoldeCommercant', options);
+    return this.httpC.post(`${Constants.API_URL}/balance/generateReportSoldeCommercant`, options,{ withCredentials: true });
   }
 }
