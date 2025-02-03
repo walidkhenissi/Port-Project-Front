@@ -56,7 +56,9 @@ export function jwtOptionsFactory() {
     FilterDialogComponent,
     GetValuePipe
   ],
- 
+  entryComponents: [
+    FilterDialogComponent
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,

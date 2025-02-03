@@ -6,9 +6,9 @@
     <mat-tab-group (selectedTabChange)="switchChildTab($event.index)" [selectedIndex]="selectedTabIndex">
       <mat-tab label="{{childrenToDisplay[0].label}}">
         <div class="table-responsive">
-<!--          <button mat-raised-button type="submit" color="accent" class="btn pull-right"-->
-<!--                  (click)="addChild()">Ajouter-->
-<!--          </button>-->
+          <button mat-raised-button color="primary" class="pull-right" (click)="openDialogP()" style="text-transform: uppercase; margin-right: 15px;">
+            états
+          </button>
           <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortEvent($event)" *ngIf="selectedTabIndex==0"
                  class="mat-elevation-z8">
 
@@ -54,6 +54,9 @@
 <!--          <button mat-raised-button type="submit" color="accent" class="btn pull-right"-->
 <!--                  (click)="addChild()">Ajouter-->
 <!--          </button>-->
+          <button mat-raised-button color="primary" class="pull-right" (click)="openDialogC()" style="text-transform: uppercase; margin-right: 15px;">
+            états
+          </button>
           <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortEvent($event)" *ngIf="selectedTabIndex==1"
                  class="mat-elevation-z8">
 
@@ -150,3 +153,166 @@
   </mat-card-content>
 </mat-card>
 
+<!-- Etat de solde producteur -->
+
+<ng-template #soldeProducerStatsPopup>
+  <h1 mat-dialog-title>Solde de Client</h1>
+  <mat-dialog-content>
+    <div class="col-md-12">
+      <mat-form-field class="example-full-width" name="rule" required>
+        <mat-select [(ngModel)]="rule" placeholder="Règle" required [ngModelOptions]="{standalone: true}">
+          <mat-option [value]="'equals'">Montant égale à</mat-option>
+          <mat-option [value]="'notEquals'">Montant différent de</mat-option>
+          <mat-option [value]="'lowerThan'">Montant inférieur à</mat-option>
+          <mat-option [value]="'greaterThan'">Montant superieur à</mat-option>
+          <mat-option [value]="'between'">Montant entre</mat-option>
+          <mat-option [value]="'readAll'">Exporter tout</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="col-md-12" *ngIf="rule !== 'readAll'">
+      <mat-form-field class="example-full-width">
+        <input matInput type ="number" placeholder="Montant" [(ngModel)]="solde1" required>
+       </mat-form-field>
+      <ng-container *ngIf="rule === 'between'">
+        et<br/>
+        <mat-form-field class="example-full-width">
+          <input matInput type ="number" placeholder="Montant" [(ngModel)]="solde2" required>
+        </mat-form-field>
+      </ng-container>
+    </div>
+    <!-- filter-->
+    <div class="col-md-12">
+      <mat-form-field class="example-full-width">
+        <input type="text" name="searchProducers" placeholder="Producteur" aria-label="Producteur" matInput
+               [matAutocomplete]="autoProducers" (keyup)="searchProducers(null, $event)"
+               [(ngModel)]="tappedProducerName" [ngModelOptions]="{standalone: true}">
+        <mat-autocomplete autoActiveFirstOption #autoProducers="matAutocomplete"
+                          (optionSelected)="setSelectedProducer($event.option.value)">
+          <mat-option *ngFor="let producer of producers" [value]="producer">
+            {{producer.name}}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </div>
+
+    <!-- debit credit -->
+    <div class="row">
+      <div class="col-md-6">
+        <mat-checkbox #checkboxDebiteur placeholder="Client débiteur" class="debit-color" [checked]="debitType"
+                      (change)='toggledebitType(checkboxDebiteur.checked)'>
+          <span>Client débiteur</span>
+        </mat-checkbox>
+      </div>
+      <div class="col-md-6">
+        <mat-checkbox #checkboxCrediteur placeholder="Client débiteur" class="toolbar-checkbox credit-color" [checked]="creditType"
+                      (change)='togglecreditType(checkboxCrediteur.checked)'>
+          <span>Client débiteur</span>
+        </mat-checkbox>
+      </div>
+    </div>
+    <!-- export-->
+    <div class="row">
+      <div class="col-md-6">
+        <mat-checkbox #checkboxPDF placeholder="PDF" class="pdf-color" [checked]="pdfType"
+                      (change)='togglePDFType(checkboxPDF.checked)'>
+          <mat-icon color='#AF0B09'>picture_as_pdf</mat-icon>
+          <span>PDF</span>
+        </mat-checkbox>
+      </div>
+      <div class="col-md-6">
+        <mat-checkbox #checkboxExcel placeholder="Excel" class="toolbar-checkbox excel-color" [checked]="excelType"
+                      (change)='toggleExcelType(checkboxExcel.checked)'>
+          <mat-icon color='#227447'>insert_drive_file</mat-icon>
+          <span>Excel</span>
+        </mat-checkbox>
+      </div>
+    </div>
+
+  </mat-dialog-content>
+  <mat-dialog-actions class="pull-right">
+    <button mat-button mat-raised-button color="warn" [mat-dialog-close]="false">Annuler</button>
+    <button mat-button mat-raised-button color="primary" (click)="generateReportProducteur()" [disabled]="isDisabled()">Ok</button>
+  </mat-dialog-actions>
+</ng-template>
+
+
+<!-- Etat de solde Commercant -->
+
+<ng-template #soldeCommercantStatsPopup>
+  <h1 mat-dialog-title>Solde de Client</h1>
+  <mat-dialog-content>
+    <div class="col-md-12">
+      <mat-form-field class="example-full-width" name="rule" required>
+        <mat-select [(ngModel)]="rule" placeholder="Règle" required [ngModelOptions]="{standalone: true}">
+          <mat-option [value]="'equals'">Egale à</mat-option>
+          <mat-option [value]="'notEquals'">Différent de</mat-option>
+          <mat-option [value]="'lowerThan'">Inférieur à</mat-option>
+          <mat-option [value]="'greaterThan'">Superieur à</mat-option>
+          <mat-option [value]="'between'">Entre</mat-option>
+          <mat-option [value]="'readAll'">Exporter tout</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="col-md-12" *ngIf="rule !== 'readAll'">
+      <mat-form-field class="example-full-width">
+        <input matInput type ="number" placeholder="Montant" [(ngModel)]="solde1" required>
+      </mat-form-field>
+      <ng-container *ngIf="rule === 'between'">
+        et<br/>
+        <mat-form-field class="example-full-width">
+          <input matInput type ="number" placeholder="Montant" [(ngModel)]="solde2" required>
+        </mat-form-field>
+      </ng-container>
+    </div>
+    <!-- filter-->
+    <div class="col-md-12">
+      <mat-form-field class="example-full-width">
+        <input type="text" name="searchMerchant" placeholder="Commerçant" aria-label="Commerçant" matInput
+               [matAutocomplete]="autoMerchants" (keyup)="searchMerchant(null, $event)"
+               [(ngModel)]="tappedMerchantName" [ngModelOptions]="{standalone: true}">
+        <mat-autocomplete autoActiveFirstOption #autoMerchants="matAutocomplete"
+                          (optionSelected)="setSelectedMerchant($event.option.value)">
+          <mat-option *ngFor="let merchant of merchants" [value]="merchant">
+            {{merchant.name}}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </div>
+    <!-- credit /debit-->
+    <div class="row">
+      <div class="col-md-6">
+        <mat-checkbox #checkboxDebiteur placeholder="C.Debuteur" class="debit-color" [checked]="debitType"
+                      (change)='toggledebitType(checkboxDebiteur.checked)'>
+          <span>C.Debuteur</span>
+        </mat-checkbox>
+      </div>
+      <div class="col-md-6">
+        <mat-checkbox #checkboxCrediteur placeholder="C.Crediteur" class="toolbar-checkbox credit-color" [checked]="creditType"
+                      (change)='togglecreditType(checkboxCrediteur.checked)'>
+          <span>C.Crediteur</span>
+        </mat-checkbox>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <mat-checkbox #checkboxPDF placeholder="PDF" class="pdf-color" [checked]="pdfType"
+                      (change)='togglePDFType(checkboxPDF.checked)'>
+          <mat-icon color='#AF0B09'>picture_as_pdf</mat-icon>
+          <span>PDF</span>
+        </mat-checkbox>
+      </div>
+      <div class="col-md-6">
+        <mat-checkbox #checkboxExcel placeholder="Excel" class="toolbar-checkbox excel-color" [checked]="excelType"
+                      (change)='toggleExcelType(checkboxExcel.checked)'>
+          <mat-icon color='#227447'>insert_drive_file</mat-icon>
+          <span>Excel</span>
+        </mat-checkbox>
+      </div>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions class="pull-right">
+    <button mat-button mat-raised-button color="warn" [mat-dialog-close]="false">Annuler</button>
+    <button mat-button mat-raised-button color="primary" (click)="generateReportCommercant()" [disabled]="isDisabled()">Ok</button>
+  </mat-dialog-actions>
+</ng-template>

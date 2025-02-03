@@ -39,8 +39,8 @@
       <div class="col-sm-6 col-md-{{salesTransactionId?'3':'4'}}">
         <mat-form-field class="full-width-field">
           <mat-label>N° quittance</mat-label>
-          <input matInput placeholder="N° quittance" type="string" name="receiptNumber"
-                 formControlName="receiptNumberFormControl" [(ngModel)]="salesTransaction.receiptNumber">
+          <input matInput placeholder="N° quittance" type="string" name="quittance"
+                 formControlName="quittanceFormControl" [(ngModel)]="salesTransaction.quittance">
         </mat-form-field>
       </div>
       <div *ngIf="salesTransactionId" class="col-sm-6 col-md-3">

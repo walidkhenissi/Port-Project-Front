@@ -93,7 +93,7 @@ export class UpdateSalesTransactionComponent {
     this.updateForm = new FormGroup({
       merchantFormControl: new FormControl('', Validators.required),
       articleFormControl: new FormControl('', Validators.required),
-      receiptNumberFormControl: new FormControl(''),
+      quittanceFormControl: new FormControl(''),
       totalToPayByMerchantFormControl: new FormControl({value: '', disabled: true}),
       boxesFormControl: new FormControl('', Validators.min(0)),
       grossWeightFormControl: new FormControl('', Validators.min(0)),
@@ -146,7 +146,7 @@ export class UpdateSalesTransactionComponent {
   public setSelectedMerchant(merchant: any) {
     this.selectedMerchant = merchant;
     this.salesTransaction.merchantId = merchant.id;
-    setTimeout(() => this.tappedMerchantName = merchant.firstName + ' ' + merchant.lastName);
+    setTimeout(() => this.tappedMerchantName = merchant. lastName+ ' ' + merchant.firstName);
     this.updateForm.controls['merchantFormControl'].setErrors(null);
   }
 

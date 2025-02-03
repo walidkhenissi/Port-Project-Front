@@ -9,7 +9,7 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-sm-12 {{saleId?'col-md-2':'col-md-4'}}">
+      <div class="col-sm-12 {{saleId?'col-md-2':'col-md-3'}}">
         <mat-form-field class="full-width-field">
           <mat-label>Date</mat-label>
           <input matInput [matDatepicker]="datePicker" placeholder="Date" [(ngModel)]="sale.date"
@@ -18,7 +18,7 @@
           <mat-datepicker #datePicker></mat-datepicker>
         </mat-form-field>
       </div>
-      <div class="col-sm-12 {{saleId?'col-md-3':'col-md-4'}}">
+      <div class="col-sm-12 {{saleId?'col-md-2':'col-md-3'}}">
         <mat-form-field class="full-width-field" name="producer">
           <mat-label>Producteur</mat-label>
           <input type="text" name="searchProducer" placeholder="Producteur"
@@ -33,7 +33,7 @@
           </mat-autocomplete>
         </mat-form-field>
       </div>
-      <div class="col-sm-12 {{saleId?'col-md-3':'col-md-4'}}">
+      <div class="col-sm-12 {{saleId?'col-md-2':'col-md-3'}}">
         <mat-form-field class="full-width-field" name="boat">
           <mat-label>Bateau</mat-label>
           <input type="text" name="searchBoat" placeholder="Bateau"
@@ -46,6 +46,13 @@
               {{boat.name + (boat.serialNumber ? (' | ' + boat.serialNumber) : '')}}
             </mat-option>
           </mat-autocomplete>
+        </mat-form-field>
+      </div>
+      <div class="col-sm-12 {{saleId?'col-md-2':'col-md-3'}}">
+        <mat-form-field class="full-width-field">
+          <mat-label>Numéro bon de vente</mat-label>
+          <input matInput placeholder="Numéro bon de vente" type="string" name="receiptNumber"
+                 formControlName="receiptNumberFormControl" [(ngModel)]="sale.receiptNumber">
         </mat-form-field>
       </div>
       <div class="col-sm-12 col-md-2" *ngIf="saleId">
@@ -224,17 +231,17 @@
                     *matCellDef="let element"> {{element.totalPrice |currency:'TND':'symbol':'1.3-3':'fr'}} </td>
               </ng-container>
 
-              <ng-container matColumnDef="receiptNumber">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header="receiptNumber"
-                    (mouseover)="mouseOverHeader[displayedChild.entityName].receiptNumber=true"
-                    (mouseout)="mouseOverHeader[displayedChild.entityName].receiptNumber=false">
+              <ng-container matColumnDef="quittance">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header="quittance"
+                    (mouseover)="mouseOverHeader[displayedChild.entityName].quittance=true"
+                    (mouseout)="mouseOverHeader[displayedChild.entityName].quittance=false">
                   N° Quittance
                   <i class="material-icons pull-left" title="filtrer"
-                     [ngStyle]="{visibility : showFilterIcon('receiptNumber')?'':'hidden'}"
-                     (click)="filterEvent('receiptNumber','string');$event.stopPropagation()">search</i>
+                     [ngStyle]="{visibility : showFilterIcon('quittance')?'':'hidden'}"
+                     (click)="filterEvent('quittance','string');$event.stopPropagation()">search</i>
                 </th>
                 <td mat-cell
-                    *matCellDef="let element"> {{element.receiptNumber}} </td>
+                    *matCellDef="let element"> {{element.quittance}} </td>
               </ng-container>
 
               <ng-container matColumnDef="edit">
@@ -273,7 +280,9 @@
               <div style="float: left"><h3>Total des règlements : {{totalPayments|number:'1.3-3':'fr'}}</h3></div>
               <div style="text-align: right"><h3>Reste à Payer : {{restTopay|number:'1.3-3':'fr'}}</h3></div>
             </div>
-            <button mat-raised-button type="submit" color="accent" class="btn pull-right" (click)="addChild()" *ngIf="sale.restToPay>0">Ajouter</button>
+            <button mat-raised-button type="submit" color="accent" class="btn pull-right" (click)="addChild()"
+                    *ngIf="sale.restToPay>0">Ajouter
+            </button>
             <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortEvent($event)"
                    *ngIf="selectedTabIndex==1"
                    class="mat-elevation-z8">

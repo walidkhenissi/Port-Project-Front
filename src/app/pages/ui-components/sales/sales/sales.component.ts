@@ -51,12 +51,12 @@ export class SalesComponent implements OnInit {
   public lastFilterConfig: any = {};
   public criteria: any = {where: {}};
 
-  displayedColumns: string[] = ['date', 'number', 'producerName', 'total', 'paymentInfo', 'update', 'delete'];
+  displayedColumns: string[] = ['date', 'number', 'receiptNumber', 'producerName', 'total', 'paymentInfo', 'update', 'delete'];
   dataSource = new MatTableDataSource<Merchant>();
   salesData: Merchant[];
   totalSales = 0;
   @ViewChild('salesStatsPopup') salesStatsDialg: TemplateRef<any>;
-  public rule: string;
+  public rule: string = 'readAll';
   public date1 = new Date();
   public date2 = new Date();
   public articleName: string;
@@ -320,18 +320,30 @@ export class SalesComponent implements OnInit {
     setTimeout(() => this.tappedMerchantName = merchant.name);
   }
 
+
   public generateReport() {
-    return this.saleService.generateSalesReport({
-      startDate: this.date1 || new Date(),
-      endDate: this.date2 || new Date(),
-      dateRule:this.rule,
-      producer: this.selectedProducer ? this.selectedProducer.id : null,
-      merchant: this.selectedMerchant ? this.selectedMerchant.id : null,
-      article: this.selectedArticle ? this.selectedArticle.id : null,
+  const formatDate=(date: any)=>{
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = (d.getMonth() + 1).toString().padStart(2, '0'); // mois de 01 à 12
+    const day = d.getDate().toString().padStart(2, '0'); // jour de 01 à 31
+    return `${year}-${month}-${day}`;
+    };
+
+const options={
+      dateRule: this.rule,
+      startDate: formatDate(this.date1) || new Date(),
+      endDate: this.rule == "equals"? null : (formatDate(this.date2) || new Date()),
+      article: this.selectedArticle ? this.selectedArticle.id: null,
+      producer: this.selectedProducer ? this.selectedProducer.id: null,
+      merchant: this.selectedMerchant ? this.selectedMerchant.id: null,
       excelType: this.excelType,
       pdfType: this.pdfType
-    }).subscribe((response: any) => {
-      // alert(response.data);
+
+};
+
+
+    return this.saleService.generateSalesReport(options).subscribe((response: any) => {
       saveAs(Constants.API_DOWNLOAD_URL + "/" + response.data, response.data);
       this.dialogRef.close();
     }, (response: any) => {
@@ -339,8 +351,7 @@ export class SalesComponent implements OnInit {
         data: {
           message: 'Une erreur s\'est produite ',
           title: 'Attention!',
-          confirm: () => {
-          },
+          confirm: () => {},
           hideReject: true
         }
       });
@@ -348,7 +359,7 @@ export class SalesComponent implements OnInit {
   }
 
   public openDialog() {
-    this.dialogRef = this.dialog.open(this.salesStatsDialg, {
+    this.dialogRef=this.dialog.open(this.salesStatsDialg, {
       width: '500px',
     });
 

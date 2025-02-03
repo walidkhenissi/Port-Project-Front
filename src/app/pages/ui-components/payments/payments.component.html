@@ -30,7 +30,7 @@
              [ngStyle]="{visibility : showFilterIcon('date')?'':'hidden'}"
              (click)="filterEvent('date','date');$event.stopPropagation()">search</i>
         </th>
-        <td mat-cell *matCellDef="let element"> {{element.date | date : 'dd/MM/YYYY'}} </td>
+        <td mat-cell *matCellDef="let element"> {{element.date | date : 'dd/MM/yyyy'}} </td>
       </ng-container>
 
       <ng-container matColumnDef="merchant" *ngIf="!commissionaryPayments">
@@ -85,7 +85,7 @@
              [ngStyle]="{visibility : showFilterIcon('dueDate')?'':'hidden'}"
              (click)="filterEvent('dueDate','date');$event.stopPropagation()">search</i>
         </th>
-        <td mat-cell *matCellDef="let element"> {{element.dueDate | date : 'dd/MM/YYYY'}} </td>
+        <td mat-cell *matCellDef="let element"> {{element.dueDate | date : 'dd/MM/yyyy'}} </td>
       </ng-container>
 
       <ng-container matColumnDef="consumptionInfo">

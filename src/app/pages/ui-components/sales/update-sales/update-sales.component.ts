@@ -73,7 +73,7 @@ export class UpdateSalesComponent {
       routePrefix: "/ui-components/salesTransaction",
       label: 'Lignes de vente',
       method: 'find',
-      displayedColumns: ['merchant', 'transactionNumber', 'article', 'boxes', 'grossWeight', 'subtractedWeight', 'netWeight', 'unitPrice', 'totalPrice', 'receiptNumber', 'edit', 'delete'],
+      displayedColumns: ['merchant', 'transactionNumber', 'article', 'boxes', 'grossWeight', 'subtractedWeight', 'netWeight', 'unitPrice', 'totalPrice', 'quittance', 'edit', 'delete'],
       service: this.salesTransactionService,
       defaultSort: {id: 'asc'}
     }, {
@@ -107,6 +107,7 @@ export class UpdateSalesComponent {
       producerFormControl: new FormControl('', Validators.required),
       boatFormControl: new FormControl(''),
       totalFormControl: new FormControl({value: '', disabled: true}),
+      receiptNumberFormControl: new FormControl('', Validators.required),
       totalToPayFormControl: new FormControl({value: '', disabled: true})
     });
     if (!this.saleId)
@@ -173,6 +174,9 @@ export class UpdateSalesComponent {
     }, (response: any) => {
       var msg;
       msg = response.error.msg;
+      if (response.error.error.errorCode == '#FOUND_RECEIPT_NUMBER_ERROR') {
+        msg = 'Impossible de continuer. Une autre vente est déjà enregistrée avec le même numéro de bon de vente!';
+      }
       if (msg)
         this.dialog.open(ConfirmDialogComponent, {
           data: {
@@ -375,7 +379,7 @@ export class UpdateSalesComponent {
 
   public setSelectedProducer(producer: any) {
     this.selectedProducer = producer;
-    setTimeout(() => this.tappedProducerName = producer.firstName + ' ' + producer.lastName + (producer.isShipOwner ? ' (Armateur)' : ' (Commerçant)'));
+    setTimeout(() => this.tappedProducerName = producer.lastName + ' ' + producer.firstName + (producer.isShipOwner ? ' (Armateur)' : ' (Commerçant)'));
     this.updateForm.controls['producerFormControl'].setErrors(null);
     if (producer.isMerchant) {
       this.sale.merchantId = producer.id;
