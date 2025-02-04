@@ -48,6 +48,10 @@ export class SalesTransactionService implements IService {
   public generateSalesTransactionReport(options: any) {
     return this.httpC.post(`${Constants.API_URL}/salesTransaction/generateSalestransactionReport`, options,{ withCredentials: true });
   }
+  public generateAccountReport(options: any) {
+    return this.httpC.post(`${Constants.API_URL}/salesTransaction/generateAccountReport`, options,{ withCredentials: true });
+  }
+
 
 
 //   public filter(criteria: any) {

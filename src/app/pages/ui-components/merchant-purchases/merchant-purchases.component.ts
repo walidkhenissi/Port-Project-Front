@@ -51,6 +51,8 @@ export class MerchantPurchasesComponent  implements OnInit {
   totalToPayByMerchants = 0;
 
   @ViewChild('salesTransactionStatsPopup') salesTransactionStatsDialg: TemplateRef<any>;
+  @ViewChild('accountStatsPopup') accountStatsDialg: TemplateRef<any>;
+
   public rule: string;
   public date1 = new Date();
   public date2 = new Date();
@@ -214,20 +216,18 @@ export class MerchantPurchasesComponent  implements OnInit {
     this.selectedMerchant = merchant;
     setTimeout(() => this.tappedMerchantName = merchant.name);
   }
-
+  public formatDate=(date: any)=>{
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = (d.getMonth() + 1).toString().padStart(2, '0'); // mois de 01 à 12
+    const day = d.getDate().toString().padStart(2, '0'); // jour de 01 à 31
+    return `${year}-${month}-${day}`;
+  };
   public generateReport() {
-    const formatDate=(date: any)=>{
-      const d = new Date(date);
-      const year = d.getFullYear();
-      const month = (d.getMonth() + 1).toString().padStart(2, '0'); // mois de 01 à 12
-      const day = d.getDate().toString().padStart(2, '0'); // jour de 01 à 31
-      return `${year}-${month}-${day}`;
-    };
-
     const options={
       dateRule: this.rule,
-      startDate: formatDate(this.date1) || new Date(),
-      endDate: this.rule == "equals"? null : (formatDate(this.date2) || new Date()),
+      startDate: this.formatDate(this.date1) || new Date(),
+      endDate: this.rule == "equals"? null : (this.formatDate(this.date2) || new Date()),
       article: this.selectedArticle ? this.selectedArticle.id: null,
       merchant: this.selectedMerchant ? this.selectedMerchant.id: null,
       excelType: this.excelType,
@@ -254,12 +254,49 @@ return this.salesTransactionService.generateSalesTransactionReport(options).subs
     });
   }
 
+  public generateReportState(){
+    const options={
+      dateRule: this.rule,
+      startDate: this.formatDate(this.date1) || new Date(),
+      endDate: this.rule == "equals"? null : (this.formatDate(this.date2) || new Date()),
+      merchant: this.selectedMerchant ? this.selectedMerchant.id: null,
+      excelType: this.excelType,
+      pdfType: this.pdfType
+
+    };
+    console.log("Options envoyées :", options);
+    return this.salesTransactionService.generateAccountReport(options).subscribe((response: any) => {
+        console.log("Réponse reçue :", response);
+        alert(response.data);
+        console.log("response.data :", response.data);
+        saveAs(Constants.API_DOWNLOAD_URL + "/" + response.data, response.data);
+        this.dialogRef.close();
+      }
+      , (response: any) => {
+        this.dialog.open(ConfirmDialogComponent, {
+          data: {
+            message: 'Une erreur s\'est produite ',
+            title: 'Attention!',
+            confirm: () => {},
+            hideReject: true
+          }
+        });
+      });
+
+  }
   public openDialog() {
     this.dialogRef=this.dialog.open(this.salesTransactionStatsDialg, {
       width: '500px',
     });
 
   }
+  public openDialogAccount() {
+    this.dialogRef=this.dialog.open(this.accountStatsDialg, {
+      width: '500px',
+    });
+
+  }
+
 
   togglePDFType(checked: boolean) {
     this.pdfType = !this.pdfType;
