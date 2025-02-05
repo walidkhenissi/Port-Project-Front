@@ -42,5 +42,7 @@ export class SalesTransactionService implements IService {
   public generateSalesTransactionReport(options: any) {
     return this.httpClient.post('/salesTransaction/generateSalestransactionReport', options);
   }
-
+public generateAccountReport(options: any) {
+    return this.httpClient.post('/salesTransaction/generateAccountReport', options);
+  }
 }

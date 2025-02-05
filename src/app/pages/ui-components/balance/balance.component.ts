@@ -301,8 +301,6 @@ export class BalanceComponent {
 
 
     return this.balanceService.generateReportSoldeProducteur(options).subscribe((response: any) => {
-      // alert(response.data);
-      // console.log("response.data :", response.data);
       saveAs(Constants.API_DOWNLOAD_URL + "/" + response.data, response.data);
       this.dialogRef.close();
     }, (response: any) => {
@@ -390,8 +388,6 @@ export class BalanceComponent {
 
 
     return this.balanceService.generateReportSoldeCommercant(options).subscribe((response: any) => {
-      // alert(response.data);
-      // console.log("response.data :", response.data);
       saveAs(Constants.API_DOWNLOAD_URL + "/" + response.data, response.data);
       this.dialogRef.close();
     }, (response: any) => {
