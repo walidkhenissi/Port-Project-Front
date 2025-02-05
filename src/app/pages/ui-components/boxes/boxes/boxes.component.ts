@@ -52,7 +52,7 @@ export class BoxesComponent {
       routePrefix: "/ui-components/boxes",
       label: 'Balance des Caisses vides des armateurs',
       service: this.boxesBalanceService,
-      defaultFilter: {merchantId: null},
+      defaultFilter: {merchantId: null, shipOwnerId: {'!': null}},
       defaultSort: {balance: 'desc'},
       displayedColumns: ['shipOwner', 'debit', 'credit', 'balance', 'edit']
     }, {
@@ -61,9 +61,9 @@ export class BoxesComponent {
       routePrefix: "/ui-components/boxes",
       label: 'Balance des Caisses vides des commerçants',
       service: this.boxesBalanceService,
-      defaultFilter: {shipOwnerId: null},
+      defaultFilter: {shipOwnerId: null, merchantId: {'!': null}},
       defaultSort: {balance: 'asc'},
-      displayedColumns: ['merchant', 'debit', 'credit', 'balance','edit']
+      displayedColumns: ['merchant', 'debit', 'credit', 'balance', 'edit']
     }, {
       identifier: 'transactions',
       entityName: 'boxesTransaction',
@@ -158,7 +158,7 @@ export class BoxesComponent {
       this.mouseOvered[this.childrenToDisplay[i].identifier] = {};
       if (this.childrenToDisplay[i].defaultSort)
         this.criteria[this.childrenToDisplay[i].identifier].sort = this.childrenToDisplay[i].defaultSort;
-      this.criteria[this.childrenToDisplay[i].identifier].where={};
+      this.criteria[this.childrenToDisplay[i].identifier].where = {};
       if (this.childrenToDisplay[i].defaultFilter)
         this.criteria[this.childrenToDisplay[i].identifier].where = this.childrenToDisplay[i].defaultFilter;
       this.criteria[this.childrenToDisplay[i].identifier].limit = this.pageSize;

@@ -171,10 +171,10 @@
         Retourner
       </button>
     </div>
-    <div style="margin-top: 5px;" *ngIf="paymentId">
+    <div style="margin-top: 5px;" *ngIf="paymentId && payment && !payment.isStartBalance">
       <mat-divider></mat-divider>
       <mat-tab-group (selectedTabChange)="switchChildTab($event.index)" [selectedIndex]="selectedTabIndex">
-<!--        Merchant case-->
+        <!--        Merchant case-->
         <mat-tab label="{{childrenToDisplay[0].label}}" *ngIf="context==2">
           <div class="table-responsive">
             <button mat-raised-button *ngIf="payment.rest" type="submit" color="accent" class="btn pull-right"
@@ -323,7 +323,7 @@
                   Montant Vente
                 </th>
                 <td mat-cell
-                    *matCellDef="let element"> {{element.sale ? (element.sale.totalToPay |number:'1.3-3':'fr'):''}} </td>
+                    *matCellDef="let element"> {{element.sale ? (element.sale.totalToPay |number:'1.3-3':'fr') : ''}} </td>
               </ng-container>
 
               <ng-container matColumnDef="payedValue">

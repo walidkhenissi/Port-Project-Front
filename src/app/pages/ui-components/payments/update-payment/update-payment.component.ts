@@ -142,6 +142,9 @@ export class UpdatePaymentComponent {
         this.genericService.find('bank', {sort: {name: 'asc'}}),
       ).subscribe(([response1, response2, response3, response4]: Array<any>) => {
         this.payment = response1.data;
+        if (this.payment.isStartBalance) {
+          this.disableAll();
+        }
         this.loadBalance(this.payment.merchantId);
         this.searchMerchants(null, this.payment.merchantId);
         this.paymentTypes = response2.data;
@@ -172,6 +175,12 @@ export class UpdatePaymentComponent {
         this.generateLabel();
       }
     }
+  }
+
+  public disableAll() {
+    for (let control in this.updateForm.controls)
+      if (!this.updateForm.controls[control].disabled)
+        this.updateForm.controls[control].disable();
   }
 
   checkPaymentType() {

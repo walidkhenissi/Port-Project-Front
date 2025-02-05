@@ -139,7 +139,9 @@ export class PaymentsComponent {
       this.criteria.where.merchantId = null;
       this.criteria.where.isCommissionnaryPayment = true;
     }
-    this.criteria.sort = {date: 'DESC'};
+    if (!this.criteria.sort) {
+      this.criteria.sort = {date: 'DESC'};
+    }
     this.paymentService.find(this.criteria).subscribe((response: any) => {
       this.length = response.metaData.count;
       this.paymentsData = response.data;
@@ -156,20 +158,23 @@ export class PaymentsComponent {
     this.router.navigate(["/ui-components/payment/edit/", payment.id, this.getContext(), 0]);
   }
 
-  public remove(id: number, confirm: boolean) {
+  public remove(payment: any, confirm: boolean) {
+    if (payment.isStartBalance) {
+      return;
+    }
     if (confirm === false) {
       this.dialog.open(ConfirmDialogComponent, {
         data: {
           message: 'Etes-vous sûr de vouloir supprimer ce règlement?',
           title: 'Attention!',
-          confirm: () => this.remove(id, true),
+          confirm: () => this.remove(payment, true),
           reject: () => {
           }
         }
       });
       return;
     }
-    this.paymentService.remove(id).subscribe(
+    this.paymentService.remove(payment.id).subscribe(
       (result: any) => {
         console.log('Sale deleted successfully');
         this.find();

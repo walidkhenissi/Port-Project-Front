@@ -156,7 +156,7 @@
 <!-- Etat de solde producteur -->
 
 <ng-template #soldeProducerStatsPopup>
-  <h1 mat-dialog-title>Solde de Client</h1>
+  <h1 mat-dialog-title>Solde des Armateurs</h1>
   <mat-dialog-content>
     <div class="col-md-12">
       <mat-form-field class="example-full-width" name="rule" required>
@@ -201,13 +201,13 @@
       <div class="col-md-6">
         <mat-checkbox #checkboxDebiteur placeholder="Client débiteur" class="debit-color" [checked]="debitType"
                       (change)='toggledebitType(checkboxDebiteur.checked)'>
-          <span>Client débiteur</span>
+          <span>Armateur débiteur</span>
         </mat-checkbox>
       </div>
       <div class="col-md-6">
         <mat-checkbox #checkboxCrediteur placeholder="Client débiteur" class="toolbar-checkbox credit-color" [checked]="creditType"
                       (change)='togglecreditType(checkboxCrediteur.checked)'>
-          <span>Client débiteur</span>
+          <span>Armateur créditeur</span>
         </mat-checkbox>
       </div>
     </div>
@@ -240,7 +240,7 @@
 <!-- Etat de solde Commercant -->
 
 <ng-template #soldeCommercantStatsPopup>
-  <h1 mat-dialog-title>Solde de Client</h1>
+  <h1 mat-dialog-title>Solde des Clients</h1>
   <mat-dialog-content>
     <div class="col-md-12">
       <mat-form-field class="example-full-width" name="rule" required>
@@ -284,13 +284,13 @@
       <div class="col-md-6">
         <mat-checkbox #checkboxDebiteur placeholder="C.Debuteur" class="debit-color" [checked]="debitType"
                       (change)='toggledebitType(checkboxDebiteur.checked)'>
-          <span>C.Debuteur</span>
+          <span>Client débiteur</span>
         </mat-checkbox>
       </div>
       <div class="col-md-6">
         <mat-checkbox #checkboxCrediteur placeholder="C.Crediteur" class="toolbar-checkbox credit-color" [checked]="creditType"
                       (change)='togglecreditType(checkboxCrediteur.checked)'>
-          <span>C.Crediteur</span>
+          <span>Client créditeur </span>
         </mat-checkbox>
       </div>
     </div>
