@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {ActivatedRoute, Router} from "@angular/router";
 import {MatDialog} from "@angular/material/dialog";
@@ -9,6 +9,7 @@ import {ConfirmDialogComponent} from "../../dialogs/confirm-dialog/confirm-dialo
 import {SalePaymentService} from "../../../../services/sale-payment.service";
 import {SaleService} from "../../../../services/sale.service";
 import 'lodash';
+
 declare var _: any;
 
 @Component({
@@ -72,7 +73,7 @@ export class UpdateSalePaymentComponent {
       valueFormControl: new FormControl('', Validators.required)
     });
     if (this.router.url.indexOf('paymentSaleFromSale') > 0)
-        this.fromSale = true;
+      this.fromSale = true;
     else if (this.router.url.indexOf('paymentSale') > 0)
       this.fromPayment = true;
     if (this.fromPayment)
@@ -83,12 +84,12 @@ export class UpdateSalePaymentComponent {
     if (this.salePaymentId)
       forkJoin(
         this.salePaymentService.getOne(this.salePaymentId),
-        this.genericService.find('paymentType', {where: {commissionnaryPayment: true}, sort: {order: 'asc'}}),
+        this.genericService.find('paymentType', {sort: {order: 'asc'}}),
         this.genericService.find('paymentInfo', {where: {reference: 'PAYED'}}),
         this.genericService.find('consumptionInfo', {where: {reference: 'CONSUMED'}})
       ).subscribe(([response1, response2, response3, response4]: Array<any>) => {
         this.salePayment = response1.data;
-        this.paymentTypes = response2.data;
+        this.filterPaymentTypes(response2.data, this.salePayment.payment.isCommissionnaryPayment);
         this.payedPaymentInfo = response3.data ? response3.data[0] : undefined;
         this.consumedConsumptionInfo = response4.data ? response4.data[0] : undefined;
         this.salePaymentBeforeEdition = JSON.parse(JSON.stringify(this.salePayment));
@@ -99,11 +100,11 @@ export class UpdateSalePaymentComponent {
     else if (this.paymentId)
       forkJoin(
         this.paymentService.getOne(this.paymentId),
-        this.genericService.find('paymentType', {where: {merchantPayment: true}, sort: {order: 'asc'}}),
+        this.genericService.find('paymentType', {sort: {order: 'asc'}}),
         this.genericService.find('paymentInfo', {where: {reference: 'PAYED'}}),
         this.genericService.find('consumptionInfo', {where: {reference: 'CONSUMED'}})
       ).subscribe(([response1, response2, response3, response4]: Array<any>) => {
-        this.paymentTypes = response2.data;
+        this.filterPaymentTypes(response2.data, response1.data.isCommissionnaryPayment);
         this.setSelectedPayment(response1.data);
         this.setSelectedPaymentType(null, this.selectedPayment.paymentTypeId);
         this.payedPaymentInfo = response3.data ? response3.data[0] : undefined;
@@ -117,10 +118,22 @@ export class UpdateSalePaymentComponent {
         this.genericService.find('consumptionInfo', {where: {reference: 'CONSUMED'}})
       ).subscribe(([response1, response2, response3, response4]: Array<any>) => {
         this.setSelectedSale(response1.data);
-        this.paymentTypes = response2.data;
+        this.filterPaymentTypes(response2.data, true);
         this.payedPaymentInfo = response3.data ? response3.data[0] : undefined;
         this.consumedConsumptionInfo = response4.data ? response4.data[0] : undefined;
       });
+  }
+
+  private filterPaymentTypes(paymentTypes: any, isCommissionnaryPayment: boolean = false) {
+    if (isCommissionnaryPayment) {
+      this.paymentTypes = _.filter(paymentTypes, function (paymentType: any) {
+        return paymentType.commissionnaryPayment;
+      });
+    } else {
+      this.paymentTypes = _.filter(paymentTypes, function (paymentType: any) {
+        return paymentType.merchantPayment;
+      });
+    }
   }
 
   public save() {
@@ -243,7 +256,7 @@ export class UpdateSalePaymentComponent {
         consumed -= this.salePaymentBeforeEdition.value;
       }
       consumed += this.salePayment.value || 0;
-      consumed=Number(parseFloat(consumed).toFixed(3));
+      consumed = Number(parseFloat(consumed).toFixed(3));
       this.consumedPayment = consumed;
       if (consumed > this.selectedPayment.value) {
         this.updateForm.controls['valueFormControl'].setErrors(
@@ -257,7 +270,7 @@ export class UpdateSalePaymentComponent {
         payed -= this.salePaymentBeforeEdition.value;
       }
       payed += this.salePayment.value || 0;
-      payed=Number(parseFloat(payed).toFixed(3));
+      payed = Number(parseFloat(payed).toFixed(3));
       this.payedDelivery = payed;
       if (!isError && this.payedDelivery > this.selectedSale.totalToPay) {
         this.updateForm.controls['valueFormControl'].setErrors(

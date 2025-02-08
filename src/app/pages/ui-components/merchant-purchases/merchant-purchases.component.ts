@@ -129,11 +129,12 @@ export class MerchantPurchasesComponent implements OnInit {
     this.criteria.skip = 0;
   }
 
-  public filterEvent(attr: string, type: string, entity: string | null = null, label: string | null = null) {
+  public filterEvent(attr: string, type: string, entity: string | null = null, label: string | null = null, size: number | null = null) {
     this.dialog.open(FilterDialogComponent, {
       data: {
         name: attr,
         type: type,
+        limit: size,
         enumEntity: entity,
         enumLabel: label,
         lastConfig: this.lastFilterConfig[attr],

@@ -99,6 +99,7 @@ export class SalesComponent implements OnInit {
     if (!this.gridsStateService.loadState(this.router.url, this)) {
       this.criteria.limit = this.pageSize;
       this.criteria.skip = 0;
+      this.criteria.sort = {date: 'desc'};
       this.find();
     }
   }

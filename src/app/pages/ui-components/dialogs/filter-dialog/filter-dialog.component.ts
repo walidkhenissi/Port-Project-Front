@@ -20,7 +20,7 @@ export class FilterDialogComponent implements OnInit {
   // MatPaginator Inputs
   length = 0;
   pageSize = 5;
-  pageSizeOptions: number[] = [5];
+  pageSizeOptions: number[] = [5,10,15];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   // MatPaginator Output
@@ -82,13 +82,13 @@ export class FilterDialogComponent implements OnInit {
     if (this.data.enumLabel.indexOf('+') === -1) {
       let x = this.data.enumLabel.split('|');
       x = x[0].split(':');
-      this.enumCriteria.sort[x[0]] = 1;
+      this.enumCriteria.sort[x[0]] = 'ASC';
     } else {
       let x = this.data.enumLabel.split('|');
       x = x[0].split('+');
       for (let attr of x) {
         let key = attr.split(':')[0];
-        this.enumCriteria.sort[key] = 1;
+        this.enumCriteria.sort[key] = 'ASC';
       }
     }
   }
@@ -155,6 +155,9 @@ export class FilterDialogComponent implements OnInit {
     }
     if (this.data.type === 'enumeration') {
       this.dialogRef.updateSize('30%', '82%');
+      if (this.data.limit) {
+        this.pageSize = this.data.limit;
+      }
       this.enumCriteria.limit = this.pageSize;
       this.enumCriteria.skip = 0;
       this.enumCriteria.sort = {};

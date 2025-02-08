@@ -1,9 +1,7 @@
 import {ChangeDetectorRef, Component, ViewChild} from '@angular/core';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {MatTableDataSource} from '@angular/material/table';
-import {Observable, catchError, startWith, switchMap, map} from 'rxjs';
 import {MerchantsService} from 'src/app/services/merchant.service';
-import {of as observableOf} from 'rxjs';
 import {Merchant} from 'src/app/models/merchant';
 import {Router} from "@angular/router";
 import {MatDialog} from "@angular/material/dialog";
@@ -43,7 +41,7 @@ export class MerchantManagementComponent {
   // MatPaginator Inputs
   public length = 0;
   public pageSize = 10;
-  public pageSizeOptions: number[] = [5, 10, 25, 100];
+  public pageSizeOptions: number[] = [5, 10, 25, 100, 200, 500, 1000];
   @ViewChild(MatPaginator) paginator: MatPaginator;
 // MatPaginator Output
   public pageEvent: PageEvent;
@@ -51,7 +49,7 @@ export class MerchantManagementComponent {
   public lastFilterConfig: any = {};
   public criteria: any = {where: {}};
 
-  displayedColumns: string[] = ['civility', 'firstName', 'lastName', 'city', 'update', 'delete'];
+  displayedColumns: string[] = ['civility', 'lastName', 'firstName', 'taxRegistrationNumber', 'phoneNumber', 'update', 'delete'];
   dataSource = new MatTableDataSource<Merchant>();
   MerchantData: Merchant[];
   totalData: number;
@@ -60,6 +58,7 @@ export class MerchantManagementComponent {
     if (!this.gridsStateService.loadState(this.router.url, this)) {
       this.criteria.limit = this.pageSize;
       this.criteria.skip = 0;
+      this.criteria.sort = {lastName: 'ASC'};
       this.refresh();
     }
   }
@@ -96,11 +95,12 @@ export class MerchantManagementComponent {
     this.criteria.skip = 0;
   }
 
-  public filterEvent(attr: string, type: string, entity: string | null = null, label: string | null = null) {
+  public filterEvent(attr: string, type: string, entity: string | null = null, label: string | null = null, size: number | null = null) {
     this.dialog.open(FilterDialogComponent, {
       data: {
         name: attr,
         type: type,
+        limit: size,
         enumEntity: entity,
         enumLabel: label,
         lastConfig: this.lastFilterConfig[attr],

@@ -137,7 +137,10 @@ export class UpdatePaymentComponent {
     if (this.paymentId) {
       forkJoin(
         this.paymentService.getOne(this.paymentId),
-        this.genericService.find('paymentType', {where: {merchantPayment: true}, sort: {order: 'asc'}}),
+        this.genericService.find('paymentType', {
+          where: this.context == 1 ? {commissionnaryPayment: true} : {merchantPayment: true},
+          sort: {order: 'asc'}
+        }),
         this.genericService.find('consumptionInfo', {sort: {name: 'asc'}}),
         this.genericService.find('bank', {sort: {name: 'asc'}}),
       ).subscribe(([response1, response2, response3, response4]: Array<any>) => {
@@ -158,7 +161,10 @@ export class UpdatePaymentComponent {
       });
     } else {
       forkJoin(
-        this.genericService.find('paymentType', {where: {merchantPayment: true}, sort: {order: 'asc'}}),
+        this.genericService.find('paymentType', {
+          where: this.context == 1 ? {commissionnaryPayment: true} : {merchantPayment: true},
+          sort: {order: 'asc'}
+        }),
         this.genericService.find('consumptionInfo', {sort: {name: 'asc'}}),
         this.genericService.find('bank', {sort: {name: 'asc'}}),
       ).subscribe(([response1, response2, response3]: Array<any>) => {

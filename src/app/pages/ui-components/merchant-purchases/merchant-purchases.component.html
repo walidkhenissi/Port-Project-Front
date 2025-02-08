@@ -40,7 +40,7 @@
           Commerçant
           <i class="material-icons pull-left" title="filtrer"
              [ngStyle]="{visibility : showFilterIcon('merchantId')?'':'hidden'}"
-             (click)="filterEvent('merchantId','enumeration','Merchant','name');$event.stopPropagation()">search</i>
+             (click)="filterEvent('merchantId','enumeration','Merchant','name', 10);$event.stopPropagation()">search</i>
         </th>
         <td mat-cell *matCellDef="let element"> {{element.merchant ? element.merchant.name : ''}} </td>
       </ng-container>
@@ -84,7 +84,7 @@
           Article
           <i class="material-icons pull-left" title="filtrer"
              [ngStyle]="{visibility : showFilterIcon('articleId')?'':'hidden'}"
-             (click)="filterEvent('articleId','enumeration','article','name');$event.stopPropagation()">search</i>
+             (click)="filterEvent('articleId','enumeration','article','name', 10);$event.stopPropagation()">search</i>
         </th>
         <td mat-cell *matCellDef="let element"> {{element.article ? element.article.name : ''}} </td>
       </ng-container>

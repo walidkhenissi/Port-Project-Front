@@ -59,7 +59,7 @@
       <ng-container matColumnDef="recipientNumber">
         <th mat-header-cell *matHeaderCellDef mat-sort-header="salesTransactionId"
             (mouseover)="mouseOverHeader.salesTransactionId=true" (mouseout)="mouseOverHeader.salesTransactionId=false">
-          N° Quittance
+          N° Bon de vente
           <i class="material-icons pull-left" title="filtrer"
              [ngStyle]="{visibility : showFilterIcon('salesTransactionId')?'':'hidden'}"
              (click)="filterEvent('salesTransactionId','enumeration','salesTransaction','receiptNumber');$event.stopPropagation()">search</i>

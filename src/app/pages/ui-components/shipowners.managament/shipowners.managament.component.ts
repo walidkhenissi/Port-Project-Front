@@ -40,7 +40,7 @@ export class ShipownersManagamentComponent {
   public criteria: any = {where: {}};
 
 
-  displayedColumns: string[] = ['civility', 'lastName', 'firstName', 'city', 'update', 'delete'];
+  displayedColumns: string[] = ['civility', 'lastName', 'firstName', 'taxRegistrationNumber', 'phoneNumber', 'update', 'delete'];
   dataSource = new MatTableDataSource<Shipowner>();
   ShipownerData: Shipowner[];
   totalData: number;

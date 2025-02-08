@@ -398,7 +398,7 @@ export class UpdateSalesComponent {
 
   public setProducerName() {
     if (this.sale)
-      this.sale.producerName = this.selectedProducer ? (this.selectedProducer.firstName + ' ' + this.selectedProducer.lastName) : '';
+      this.sale.producerName = this.selectedProducer ? (this.selectedProducer.lastName + ' ' + this.selectedProducer.firstName) : '';
   }
 
   clearBoatSelection() {
@@ -456,4 +456,7 @@ export class UpdateSalesComponent {
     }
   }
 
+  public buildSaleTitle() {
+    return this.sale.number.concat(' : ').concat(this.sale.producerName).concat(this.sale.boatReference ? '('.concat(this.sale.boatReference, ')') : '');
+  }
 }
