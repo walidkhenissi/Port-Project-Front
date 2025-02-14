@@ -42,4 +42,10 @@ export class SaleService implements IService {
   public generateSalesReport(options: any) {
     return this.httpClient.post('/sale/generateSalesReport', options);
   }
+
+  public generateAccountReport(options: any) {
+    return this.httpClient.post('/sale/generateAccountSalesReport', options);
+  }
+
+
 }

@@ -286,7 +286,6 @@ export class MerchantPurchasesComponent implements OnInit {
     });
 
   }
-
   public openDialogAccount() {
     this.dialogRef = this.dialog.open(this.accountStatsDialg, {
       width: '500px',
