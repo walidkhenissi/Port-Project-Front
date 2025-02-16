@@ -51,7 +51,7 @@ export class UpdateSalesComponent {
   public mouseOverHeader: any = new Object();
   public length: number = 0;
   public pageSize = 5;
-  public pageSizeOptions: number[] = [5, 10, 25, 50, 100];
+  public pageSizeOptions: number[] = [5, 10, 25, 50, 100, 200, 500, 1000];
   @ViewChild(MatPaginator) paginator: MatPaginator;
   // MatPaginator Output
   public pageEvent: PageEvent;
@@ -107,7 +107,7 @@ export class UpdateSalesComponent {
       producerFormControl: new FormControl('', Validators.required),
       boatFormControl: new FormControl(''),
       totalFormControl: new FormControl({value: '', disabled: true}),
-      receiptNumberFormControl: new FormControl('', Validators.required),
+      receiptNumberFormControl: new FormControl(''),
       totalToPayFormControl: new FormControl({value: '', disabled: true})
     });
     if (!this.saleId)

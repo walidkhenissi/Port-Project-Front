@@ -33,7 +33,7 @@ export class BoxesComponent {
   public mouseOverHeader: any = new Object();
   public length: number = 0;
   public pageSize = 5;
-  public pageSizeOptions: number[] = [5, 10, 25, 50, 100];
+  public pageSizeOptions: number[] = [5, 10, 25, 50, 100, 200, 500, 1000];
   @ViewChild(MatPaginator) paginator: MatPaginator;
   // MatPaginator Output
   public pageEvent: PageEvent;

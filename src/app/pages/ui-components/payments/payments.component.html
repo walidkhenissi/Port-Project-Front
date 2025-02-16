@@ -4,12 +4,12 @@
       <mat-card-title>
         {{title}}
         <div style="display: inline">
-          <button mat-raised-button color="primary" class="pull-right" (click)="add()">
-            Ajouter un paiement
-          </button>
           <button mat-raised-button *ngIf="length" class="btn totalButton pull-right"
                   style="font-size: 18px; font-weight: bold; line-height: 12px;">Total
             : {{totalPayments | currency : 'TND' : true : '1.3-3':'fr'}}</button>
+          <button mat-raised-button color="accent" class="pull-right" (click)="add()" style="text-transform: uppercase; margin-right: 15px;">
+            Ajouter un paiement
+          </button>
         </div>
       </mat-card-title>
     </div>

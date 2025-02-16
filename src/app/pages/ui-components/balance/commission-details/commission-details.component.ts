@@ -24,7 +24,7 @@ export class CommissionDetailsComponent implements OnInit {
   // MatPaginator Inputs
   public length = 0;
   public pageSize = 10;
-  public pageSizeOptions: number[] = [5, 10, 25, 100];
+  public pageSizeOptions: number[] = [5, 10, 25, 100, 200, 500, 1000];
   @ViewChild(MatPaginator) paginator: MatPaginator;
 // MatPaginator Output
   public pageEvent: PageEvent;
@@ -32,7 +32,7 @@ export class CommissionDetailsComponent implements OnInit {
   public lastFilterConfig: any = {};
   public criteria: any = {where: {}};
 
-  displayedColumns: string[] = ['date', 'commissionName', 'commissionValue', 'recipientNumber', 'saleTransactionNumber'];
+  displayedColumns: string[] = ['date', 'commissionName', 'commissionValue', 'saleReceiptNumber', 'saleNumber', 'sateTransactionQuittance'];
   dataSource = new MatTableDataSource<any>();
   commissionValuesData: [];
   totalCommissionValues = 0;

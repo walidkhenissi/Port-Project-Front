@@ -7,10 +7,10 @@
           <button mat-raised-button *ngIf="length" class="btn totalButton pull-right" style="font-size: 18px; font-weight: bold; line-height: 12px;">Total : {{totalToPayByMerchants | currency : 'TND' : true : '1.3-3':'fr'}}</button>
         </div>
         <button mat-raised-button color="primary" class="pull-right" (click)="openDialog()" style="text-transform: uppercase; margin-right: 15px;">
-          états
+          état des achats
         </button>
-<button mat-raised-button color="primary" class="pull-right" (click)="openDialogAccount()">
-         Etat de Compte
+<button mat-raised-button color="primary" class="pull-right" (click)="openDialogAccount()" style="text-transform: uppercase; margin-right: 15px;">
+         état du Compte
         </button>
       </mat-card-title>
     </div>
@@ -327,6 +327,6 @@
   </mat-dialog-content>
   <mat-dialog-actions class="pull-right">
     <button mat-button mat-raised-button color="warn" [mat-dialog-close]="false">Annuler</button>
-    <button mat-button mat-raised-button color="primary" (click)="generateReportState()">Ok</button>
+    <button mat-button mat-raised-button color="primary" (click)="generateReportState()" [disabled]="isDisabled()">Ok</button>
   </mat-dialog-actions>
 </ng-template>

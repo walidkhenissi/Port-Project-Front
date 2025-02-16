@@ -56,29 +56,42 @@
         <td mat-cell *matCellDef="let element"> {{element.value |number:'1.3-3':'fr'}} </td>
       </ng-container>
 
-      <ng-container matColumnDef="recipientNumber">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header="salesTransactionId"
-            (mouseover)="mouseOverHeader.salesTransactionId=true" (mouseout)="mouseOverHeader.salesTransactionId=false">
+      <ng-container matColumnDef="saleReceiptNumber">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="saleReceiptNumber"
+            (mouseover)="mouseOverHeader.saleReceiptNumber=true" (mouseout)="mouseOverHeader.saleReceiptNumber=false">
           N° Bon de vente
           <i class="material-icons pull-left" title="filtrer"
-             [ngStyle]="{visibility : showFilterIcon('salesTransactionId')?'':'hidden'}"
-             (click)="filterEvent('salesTransactionId','enumeration','salesTransaction','receiptNumber');$event.stopPropagation()">search</i>
+             [ngStyle]="{visibility : showFilterIcon('saleReceiptNumber')?'':'hidden'}"
+             (click)="filterEvent('saleReceiptNumber','number');$event.stopPropagation()">search</i>
         </th>
         <td mat-cell
-            *matCellDef="let element"> {{element.salesTransaction ? element.salesTransaction.receiptNumber : ''}}</td>
+            *matCellDef="let element"> {{element.saleReceiptNumber ? element.saleReceiptNumber : ''}}</td>
       </ng-container>
 
-      <ng-container matColumnDef="saleTransactionNumber">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header="saleTransactionNumber"
-            (mouseover)="mouseOverHeader.saleTransactionNumber=true"
-            (mouseout)="mouseOverHeader.saleTransactionNumber=false">
+      <ng-container matColumnDef="saleNumber">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="saleNumber"
+            (mouseover)="mouseOverHeader.saleNumber=true"
+            (mouseout)="mouseOverHeader.saleNumber=false">
           N° Vente
           <i class="material-icons pull-left" title="filtrer"
-             [ngStyle]="{visibility : showFilterIcon('saleTransactionNumber')?'':'hidden'}"
-             (click)="filterEvent('salesTransactionId','enumeration','salesTransaction','transactionNumber');$event.stopPropagation()">search</i>
+             [ngStyle]="{visibility : showFilterIcon('saleNumber')?'':'hidden'}"
+             (click)="filterEvent('saleNumber','string');$event.stopPropagation()">search</i>
         </th>
         <td mat-cell
-            *matCellDef="let element"> {{element.salesTransaction ? element.salesTransaction.transactionNumber : ''}}</td>
+            *matCellDef="let element"> {{element.saleNumber ? element.saleNumber : ''}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="sateTransactionQuittance">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="sateTransactionQuittance"
+            (mouseover)="mouseOverHeader.sateTransactionQuittance=true"
+            (mouseout)="mouseOverHeader.sateTransactionQuittance=false">
+          N° Quittance
+          <i class="material-icons pull-left" title="filtrer"
+             [ngStyle]="{visibility : showFilterIcon('sateTransactionQuittance')?'':'hidden'}"
+             (click)="filterEvent('sateTransactionQuittance','string');$event.stopPropagation()">search</i>
+        </th>
+        <td mat-cell
+            *matCellDef="let element"> {{element.sateTransactionQuittance ? element.sateTransactionQuittance : ''}}</td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
