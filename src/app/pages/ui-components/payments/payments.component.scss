@@ -7,3 +7,13 @@
   border-radius: 30px;
   margin: 0;
 }
+
+.excel-color .mat-icon, .excel-color span{
+  color: #227447;
+  border-color: #227447;
+}
+.pdf-color .mat-icon, .pdf-color span{
+  color: #AF0B09;
+}
+.excel-color .mat-icon, .pdf-color .mat-icon{position: relative; top: 5px;}
+

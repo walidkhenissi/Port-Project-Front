@@ -34,4 +34,9 @@ export class PaymentService implements IService {
   remove(id: string | number) {
     return this.httpClient.delete('/payment/remove?id=' + id);
   }
+
+  public generatePaymentReport(options: any) {
+    return this.httpClient.post('/payment/generatePaymentReport', options);
+  }
+
 }
