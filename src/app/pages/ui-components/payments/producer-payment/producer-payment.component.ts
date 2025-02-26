@@ -192,7 +192,7 @@ export class ProducerPaymentComponent implements OnInit{
       dateRule: this.rule,
       startDate: this.formatDate(this.date1) || new Date(),
       endDate: this.rule == "equals" ? null : (this.formatDate(this.date2) || new Date()),
-      producer:this.selectedProducer ? this.selectedProducer.id : null,
+      producer:this.selectedProducer ? this.selectedProducer.name : null,
       excelType: this.excelType,
       pdfType: this.pdfType
 

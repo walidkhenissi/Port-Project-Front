@@ -34,4 +34,11 @@ export class BoxesBalanceService implements IService {
   remove(id: string | number) {
     return this.httpClient.delete('/boxesBalance/remove?id=' + id);
   }
+
+  public generateReportShipOwner(options: any) {
+    return this.httpClient.post('/boxesBalance/generateReportShipOwner', options);
+  }
+  public generateReportMerchant(options: any) {
+    return this.httpClient.post('/boxesBalance/generateReportMerchant', options);
+  }
 }

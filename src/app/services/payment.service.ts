@@ -38,5 +38,8 @@ export class PaymentService implements IService {
   public generatePaymentReport(options: any) {
     return this.httpClient.post('/payment/generatePaymentReport', options);
   }
+  public generateCommissionaireReport(options: any) {
+    return this.httpClient.post('/payment/generateCommissionaireReport', options);
+  }
 
 }

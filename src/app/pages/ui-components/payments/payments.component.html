@@ -131,7 +131,7 @@
 
 <!-- Etas de Payment   -->
 <ng-template #paymentStatusPopup>
-  <h1 mat-dialog-title>Etat de Payment</h1>
+  <h1 mat-dialog-title>{{ titlePopup }}</h1>
   <mat-dialog-content>
     <div class="col-md-12">
       <mat-form-field class="example-full-width" name="rule" required>
@@ -162,7 +162,7 @@
     </div>
     <!-- filter-->
 
-    <div class="col-md-12">
+    <div class="col-md-12" *ngIf="!commissionaryPayments">
       <mat-form-field class="example-full-width">
         <input type="text" name="searchMerchant" placeholder="Commerçant" required aria-label="Commerçant" matInput
                [matAutocomplete]="autoMerchants" (keyup)="searchMerchant(null, $event)"
@@ -175,6 +175,20 @@
         </mat-autocomplete>
       </mat-form-field>
     </div>
+    <div class="col-md-12" *ngIf="commissionaryPayments">
+      <mat-form-field class="example-full-width">
+        <input type="text" name="searchProducers" placeholder="Producteur" aria-label="Producteur" matInput
+               [matAutocomplete]="autoProducers" (keyup)="searchProducers(null, $event)"
+               [(ngModel)]="tappedProducerName" [ngModelOptions]="{standalone: true}">
+        <mat-autocomplete autoActiveFirstOption #autoProducers="matAutocomplete"
+                          (optionSelected)="setSelectedProducer($event.option.value)">
+          <mat-option *ngFor="let producer of producers" [value]="producer">
+            {{producer.name}}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </div>
+
     <!-- export-->
     <div class="row">
       <div class="col-md-6">

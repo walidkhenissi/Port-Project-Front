@@ -13,6 +13,7 @@ import {Constants} from "../../../constants";
 import {MerchantsService} from "../../../services/merchant.service";
 // @ts-ignore
 import {saveAs} from 'file-saver';
+import {ShipownersService} from "../../../services/shipowner.service";
 declare var _: any;
 
 @Component({
@@ -23,8 +24,9 @@ declare var _: any;
 export class PaymentsComponent implements OnInit{
 
   public merchants: any;
+  public producers: any;
   commercantFormControl: FormControl;
-
+  producerFormControl: FormControl;
   public mouseOvered: any = new Object();
   public mouseOverHeader: any = new Object();
 
@@ -46,6 +48,7 @@ export class PaymentsComponent implements OnInit{
   merchantPayments = false;
   commissionaryPayments = false;
   title = '';
+  titlePopup='';
 
   @ViewChild('paymentStatusPopup') paymentStatusDialg: TemplateRef<any>;
   public rule: string = 'readAll';
@@ -56,6 +59,9 @@ export class PaymentsComponent implements OnInit{
 
   selectedMerchant: any
   tappedMerchantName: string;
+
+  selectedProducer:any;
+  tappedProducerName: string;
 
   public dialogRef: any;
 
@@ -69,15 +75,19 @@ export class PaymentsComponent implements OnInit{
     private gridsStateService: GridsStateService,
     private paymentService: PaymentService,
     private merchantService: MerchantsService,
+    private shipownerService:ShipownersService,
     private cdr: ChangeDetectorRef
   ) {
     const url = this.router.url;
     this.merchantPayments = _.includes(url, 'merchantPayment');
     this.commissionaryPayments = _.includes(url, 'commissionaryPayment');
     if (this.merchantPayments)
-      this.title = 'Paiements des commerçants';
-    else
+    { this.title = 'Paiements des commerçants';
+      this.titlePopup='État de Paiements des commerçants';
+    } else{
       this.title = 'Paiements du commissionaire';
+    this.titlePopup='État de Paiements du commissionaire';
+    }
     if (this.commissionaryPayments)
       this.displayedColumns = ['date', 'value', 'type', 'number', 'dueDate', 'consumptionInfo', 'details', 'remove'];
     else
@@ -87,7 +97,7 @@ export class PaymentsComponent implements OnInit{
 
   ngOnInit() {
     this.commercantFormControl = new FormControl('', Validators.required);
-
+    this.producerFormControl = new FormControl('', Validators.required);
     if (!this.gridsStateService.loadState(this.router.url, this)) {
       this.criteria.limit = this.pageSize;
       this.criteria.skip = 0;
@@ -236,6 +246,32 @@ export class PaymentsComponent implements OnInit{
       return 2;
     return -1;
   }
+  public searchProducers(id = null, event: any = null) {
+    if (event && event.key === 'Enter')
+      return;
+    this.selectedProducer = null;
+    let value = this.tappedProducerName;
+    let criteria: any = {limit: 5, hideSpinner: true};
+    if (id !== null) {
+      criteria.where = {id: id};
+    } else {
+      criteria.where = {name: {'like': '%' + value + '%'}};
+    }
+    this.shipownerService.findProducer(criteria).subscribe((response: any) => {
+      this.producers = response.data;
+      this.producers.sort(function (producer1: any, producer2: any) {
+        return producer1.name.localeCompare(producer2.name);
+      });
+      if (id !== null) {
+        this.setSelectedProducer(response.data[0]);
+      }
+    });
+  }
+
+  public setSelectedProducer(producer: any): void {
+    this.selectedProducer = producer;
+    setTimeout(() => this.tappedProducerName = producer.name);
+  }
 
 
   public searchMerchant(id = null, event: any = null) {
@@ -271,30 +307,54 @@ export class PaymentsComponent implements OnInit{
 
 
   public generateReportState() {
-    const options = {
+    const options:any = {
       dateRule: this.rule,
       startDate: this.formatDate(this.date1) || new Date(),
       endDate: this.rule == "equals" ? null : (this.formatDate(this.date2) || new Date()),
-      merchant: this.selectedMerchant ? this.selectedMerchant.id : null,
       excelType: this.excelType,
       pdfType: this.pdfType
-
     };
-    return this.paymentService.generatePaymentReport(options).subscribe((response: any) => {
-        saveAs(Constants.API_DOWNLOAD_URL + "/" + response.data, response.data);
-        this.dialogRef.close();
-      }
-      , (response: any) => {
-        this.dialog.open(ConfirmDialogComponent, {
-          data: {
-            message: 'Une erreur s\'est produite ',
-            title: 'Attention!',
-            confirm: () => {
-            },
-            hideReject: true
-          }
+    if (this.commissionaryPayments) {
+      options.producer = this.selectedProducer ? this.selectedProducer.name: null;
+    } else {
+      options.merchant = this.selectedMerchant ? this.selectedMerchant.id : null;
+    }
+    console.log("option:",options);
+
+    if (this.commissionaryPayments) {
+      return this.paymentService.generateCommissionaireReport(options).subscribe((response: any) => {
+          saveAs(Constants.API_DOWNLOAD_URL + "/" + response.data, response.data);
+          this.dialogRef.close();
+        }
+        , (response: any) => {
+          this.dialog.open(ConfirmDialogComponent, {
+            data: {
+              message: 'Une erreur s\'est produite ',
+              title: 'Attention!',
+              confirm: () => {
+              },
+              hideReject: true
+            }
+          });
         });
-      });
+    }
+     else {
+      return this.paymentService.generatePaymentReport(options).subscribe((response: any) => {
+          saveAs(Constants.API_DOWNLOAD_URL + "/" + response.data, response.data);
+          this.dialogRef.close();
+        }
+        , (response: any) => {
+          this.dialog.open(ConfirmDialogComponent, {
+            data: {
+              message: 'Une erreur s\'est produite ',
+              title: 'Attention!',
+              confirm: () => {
+              },
+              hideReject: true
+            }
+          });
+        });
+    }
 
   }
 
