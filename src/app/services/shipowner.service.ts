@@ -19,7 +19,7 @@ export class ShipownersService implements IService {
   }
 
   public find(criteria: any) {
-    return this.httpClient.post('/shipowner/find', criteria);
+    return this.httpClient.post('/shipowner/find', criteria, {withCredentials: true});
   }
 
   public getOne(id: string | number) {
@@ -31,7 +31,7 @@ export class ShipownersService implements IService {
   }
 
   public create(shipowner: Shipowner) {
-    return this.httpClient.post('/shipowner/create', shipowner).pipe(
+    return this.httpClient.post('/shipowner/create', shipowner, {withCredentials: true}).pipe(
       map((data: any) => {
         console.log(data);
       }), catchError(res => observableThrowError(res)));
@@ -42,7 +42,7 @@ export class ShipownersService implements IService {
   }
 
   public findProducer(criteria: any) {
-    return this.httpClient.post('/shipowner/findProducer', criteria);
+    return this.httpClient.post('/shipowner/findProducer', criteria, {withCredentials: true});
   }
 
 }

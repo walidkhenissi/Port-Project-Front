@@ -21,7 +21,7 @@ export class MerchantsService implements IService {
   }
 
   public find(criteria: any) {
-    return this.httpClient.post('/merchant/find', criteria);
+    return this.httpClient.post('/merchant/find', criteria, {withCredentials: true});
   }
 
   public getOne(id: string | number) {
@@ -37,7 +37,7 @@ export class MerchantsService implements IService {
   }
 
   create(merchant: Merchant) {
-    return this.httpClient.post('/merchant/create', merchant).pipe(
+    return this.httpClient.post('/merchant/create', merchant, {withCredentials: true}).pipe(
       map((data: any) => {
         console.log(data)
       }), catchError(res => observableThrowError(res)));

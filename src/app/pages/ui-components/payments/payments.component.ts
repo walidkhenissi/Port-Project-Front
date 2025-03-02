@@ -273,7 +273,6 @@ export class PaymentsComponent implements OnInit{
     setTimeout(() => this.tappedProducerName = producer.name);
   }
 
-
   public searchMerchant(id = null, event: any = null) {
     if (event && event.key === 'Enter')
       return;
@@ -315,7 +314,7 @@ export class PaymentsComponent implements OnInit{
       pdfType: this.pdfType
     };
     if (this.commissionaryPayments) {
-      options.producer = this.selectedProducer ? this.selectedProducer.name: null;
+      options.producer = this.selectedProducer ? this.selectedProducer.id: null;
     } else {
       options.merchant = this.selectedMerchant ? this.selectedMerchant.id : null;
     }

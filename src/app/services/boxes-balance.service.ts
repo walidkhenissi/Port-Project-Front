@@ -16,7 +16,7 @@ export class BoxesBalanceService implements IService {
   }
 
   public find(criteria: any) {
-    return this.httpClient.post('/boxesBalance/find', criteria);
+    return this.httpClient.post('/boxesBalance/find', criteria, {withCredentials: true});
   }
 
   public getOne(id: string | number) {
@@ -28,7 +28,7 @@ export class BoxesBalanceService implements IService {
   }
 
   create(balance: any) {
-    return this.httpClient.post('/boxesBalance/create', balance);
+    return this.httpClient.post('/boxesBalance/create', balance, {withCredentials: true});
   }
 
   remove(id: string | number) {
@@ -36,9 +36,9 @@ export class BoxesBalanceService implements IService {
   }
 
   public generateReportShipOwner(options: any) {
-    return this.httpClient.post('/boxesBalance/generateReportShipOwner', options);
+    return this.httpClient.post('/boxesBalance/generateReportShipOwner', options, {withCredentials: true});
   }
   public generateReportMerchant(options: any) {
-    return this.httpClient.post('/boxesBalance/generateReportMerchant', options);
+    return this.httpClient.post('/boxesBalance/generateReportMerchant', options, {withCredentials: true});
   }
 }

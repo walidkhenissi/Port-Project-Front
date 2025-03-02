@@ -19,7 +19,7 @@ export class BoatActivityTypeService implements IService {
   }
 
   public find(criteria: any) {
-    return this.httpClient.post('/boatActivity/find', criteria);
+    return this.httpClient.post('/boatActivity/find', criteria, {withCredentials: true});
   }
 
   public getOne(id: string | number) {
@@ -31,7 +31,7 @@ export class BoatActivityTypeService implements IService {
   }
 
   create(boatActivityType: BoatActivityType) {
-    return this.httpClient.post('/boatActivity/create', boatActivityType).pipe(
+    return this.httpClient.post('/boatActivity/create', boatActivityType, {withCredentials: true}).pipe(
       map((data: any) => {
         console.log(data)
       }), catchError(res => observableThrowError(res)));

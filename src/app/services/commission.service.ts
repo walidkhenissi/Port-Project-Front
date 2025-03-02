@@ -16,7 +16,7 @@ export class CommissionService implements IService {
   }
 
   public find(criteria: any) {
-    return this.httpClient.post('/commission/find', criteria);
+    return this.httpClient.post('/commission/find', criteria, {withCredentials: true});
   }
 
   public getOne(id: string | number) {
@@ -28,7 +28,7 @@ export class CommissionService implements IService {
   }
 
   create(commission: any) {
-    return this.httpClient.post('/commission/create', commission);
+    return this.httpClient.post('/commission/create', commission, {withCredentials: true});
   }
 
   remove(id: string | number) {
@@ -36,7 +36,7 @@ export class CommissionService implements IService {
   }
 
   public getAvailableCommissionsAtDate(criteria: any) {
-    return this.httpClient.post('/commission/getAvailableCommissionsAtDate', criteria);
+    return this.httpClient.post('/commission/getAvailableCommissionsAtDate', criteria, {withCredentials: true});
   }
 
 }

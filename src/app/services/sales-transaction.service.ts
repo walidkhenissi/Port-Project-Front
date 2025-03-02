@@ -16,7 +16,7 @@ export class SalesTransactionService implements IService {
   }
 
   public find(criteria: any) {
-    return this.httpClient.post('/salesTransaction/find', criteria);
+    return this.httpClient.post('/salesTransaction/find', criteria, {withCredentials: true});
   }
 
   public getOne(id: string | number) {
@@ -28,7 +28,7 @@ export class SalesTransactionService implements IService {
   }
 
   create(salesTransaction: any) {
-    return this.httpClient.post('/salesTransaction/create', salesTransaction);
+    return this.httpClient.post('/salesTransaction/create', salesTransaction, {withCredentials: true});
   }
 
   remove(id: string | number) {
@@ -40,9 +40,9 @@ export class SalesTransactionService implements IService {
     return this.httpClient.get('/salesTransaction/filter');
   }
   public generateSalesTransactionReport(options: any) {
-    return this.httpClient.post('/salesTransaction/generateSalestransactionReport', options);
+    return this.httpClient.post('/salesTransaction/generateSalestransactionReport', options, {withCredentials: true});
   }
 public generateAccountReport(options: any) {
-    return this.httpClient.post('/salesTransaction/generateAccountReport', options);
+    return this.httpClient.post('/salesTransaction/generateAccountReport', options, {withCredentials: true});
   }
 }

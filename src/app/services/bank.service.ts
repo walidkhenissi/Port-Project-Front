@@ -16,7 +16,7 @@ export class BankService implements IService {
   }
 
   public find(criteria: any) {
-    return this.httpClient.post('/bank/find', criteria);
+    return this.httpClient.post('/bank/find', criteria, {withCredentials: true});
   }
 
   public getOne(id: string | number) {
@@ -28,7 +28,7 @@ export class BankService implements IService {
   }
 
   create(bank: any) {
-    return this.httpClient.post('/bank/create', bank);
+    return this.httpClient.post('/bank/create', bank, {withCredentials: true});
   }
 
   remove(id: string | number) {

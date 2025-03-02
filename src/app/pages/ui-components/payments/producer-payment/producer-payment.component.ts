@@ -192,11 +192,12 @@ export class ProducerPaymentComponent implements OnInit{
       dateRule: this.rule,
       startDate: this.formatDate(this.date1) || new Date(),
       endDate: this.rule == "equals" ? null : (this.formatDate(this.date2) || new Date()),
-      producer:this.selectedProducer ? this.selectedProducer.name : null,
+      producer:this.selectedProducer ? this.selectedProducer.id : null,
       excelType: this.excelType,
       pdfType: this.pdfType
 
     };
+    console.log("options:",options);
     return this.salePaymentService.generateSalePaymentReport(options).subscribe((response: any) => {
         saveAs(Constants.API_DOWNLOAD_URL + "/" + response.data, response.data);
         this.dialogRef.close();

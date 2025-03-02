@@ -16,7 +16,7 @@ export class BoxesTransactionService implements IService {
   }
 
   public find(criteria: any) {
-    return this.httpClient.post('/boxesTransaction/find', criteria);
+    return this.httpClient.post('/boxesTransaction/find', criteria, {withCredentials: true});
   }
 
   public getOne(id: string | number) {
@@ -28,7 +28,7 @@ export class BoxesTransactionService implements IService {
   }
 
   create(boxesTransaction: any) {
-    return this.httpClient.post('/boxesTransaction/create', boxesTransaction);
+    return this.httpClient.post('/boxesTransaction/create', boxesTransaction, {withCredentials: true});
   }
 
   remove(id: string | number) {

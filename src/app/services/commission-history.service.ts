@@ -15,7 +15,7 @@ export class CommissionHistoryService implements IService {
   }
 
   public find(criteria: any) {
-    return this.httpClient.post('/commissionHistory/find', criteria);
+    return this.httpClient.post('/commissionHistory/find', criteria, {withCredentials: true});
   }
 
   public getOne(id: string | number) {
@@ -27,7 +27,7 @@ export class CommissionHistoryService implements IService {
   }
 
   create(commission: any) {
-    return this.httpClient.post('/commissionHistory/create', commission);
+    return this.httpClient.post('/commissionHistory/create', commission, {withCredentials: true});
   }
 
   remove(id: string | number) {

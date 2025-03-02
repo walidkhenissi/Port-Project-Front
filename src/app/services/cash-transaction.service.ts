@@ -16,7 +16,7 @@ export class CashTransactionService implements IService {
   }
 
   public find(criteria: any) {
-    return this.httpClient.post('/cashTransaction/find', criteria);
+    return this.httpClient.post('/cashTransaction/find', criteria, {withCredentials: true});
   }
 
   public getOne(id: string | number) {
@@ -28,7 +28,7 @@ export class CashTransactionService implements IService {
   }
 
   create(cashTransaction: any) {
-    return this.httpClient.post('/cashTransaction/create', cashTransaction);
+    return this.httpClient.post('/cashTransaction/create', cashTransaction, {withCredentials: true});
   }
 
   remove(id: string | number) {

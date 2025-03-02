@@ -24,9 +24,12 @@ export class HttpClientService {
     return this.http.put(url, data);
   }
 
-  public post(url:string, data: any) {
+  public post(url: string, data: any, p: { withCredentials: boolean }) {
     url = this.apiUrl + url;
-    return this.http.post(url, data);
+    const options = {
+      withCredentials: p.withCredentials,
+    };
+    return this.http.post(url, data,options);
   }
 
   public delete(url:string) {

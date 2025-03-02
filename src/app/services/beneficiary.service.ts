@@ -16,7 +16,7 @@ export class BeneficiaryService implements IService {
   }
 
   public find(criteria: any) {
-    return this.httpClient.post('/beneficiary/find', criteria);
+    return this.httpClient.post('/beneficiary/find', criteria, {withCredentials: true});
   }
 
   public getOne(id: string | number) {
@@ -28,7 +28,7 @@ export class BeneficiaryService implements IService {
   }
 
   create(beneficiary: any) {
-    return this.httpClient.post('/beneficiary/create', beneficiary);
+    return this.httpClient.post('/beneficiary/create', beneficiary, {withCredentials: true});
   }
 
   remove(id: string | number) {

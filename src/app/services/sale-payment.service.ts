@@ -16,11 +16,11 @@ export class SalePaymentService implements IService {
   }
 
   public find(criteria: any) {
-    return this.httpClient.post('/salePayment/find', criteria);
+    return this.httpClient.post('/salePayment/find', criteria, {withCredentials: true});
   }
 
   public findWithDetails(criteria: any) {
-    return this.httpClient.post('/salePayment/findWithDetails', criteria);
+    return this.httpClient.post('/salePayment/findWithDetails', criteria, {withCredentials: true});
   }
 
   public getOne(id: string | number) {
@@ -32,13 +32,13 @@ export class SalePaymentService implements IService {
   }
 
   create(salePayment: any) {
-    return this.httpClient.post('/salePayment/create', salePayment);
+    return this.httpClient.post('/salePayment/create', salePayment, {withCredentials: true});
   }
 
   remove(id: string | number) {
     return this.httpClient.delete('/salePayment/remove?id=' + id);
   }
   public generateSalePaymentReport(options: any) {
-    return this.httpClient.post('/salePayment/generateSalePaymentReport', options);
+    return this.httpClient.post('/salePayment/generateSalePaymentReport', options, {withCredentials: true});
   }
 }

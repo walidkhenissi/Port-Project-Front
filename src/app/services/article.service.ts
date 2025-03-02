@@ -16,7 +16,7 @@ export class ArticleService implements IService {
   }
 
   public find(criteria: any) {
-    return this.httpClient.post('/article/find', criteria);
+    return this.httpClient.post('/article/find', criteria, {withCredentials: true});
   }
 
   public getOne(id: string | number) {
@@ -28,7 +28,7 @@ export class ArticleService implements IService {
   }
 
   create(article: any) {
-    return this.httpClient.post('/article/create', article);
+    return this.httpClient.post('/article/create', article, {withCredentials: true});
   }
 
   remove(id: string | number) {

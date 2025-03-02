@@ -15,11 +15,11 @@ export class CommissionValuesService implements IService {
   }
 
   public find(criteria: any) {
-    return this.httpClient.post('/commissionValueController/find', criteria);
+    return this.httpClient.post('/commissionValueController/find', criteria, {withCredentials: true});
   }
 
   public findWithDetails(criteria: any) {
-    return this.httpClient.post('/commissionValueController/findWithDetails', criteria);
+    return this.httpClient.post('/commissionValueController/findWithDetails', criteria, {withCredentials: true});
   }
 
   public getOne(id: string | number) {
@@ -31,7 +31,7 @@ export class CommissionValuesService implements IService {
   }
 
   create(commissionValue: any) {
-    return this.httpClient.post('/commissionValueController/create', commissionValue);
+    return this.httpClient.post('/commissionValueController/create', commissionValue, {withCredentials: true});
   }
 
   remove(id: string | number) {

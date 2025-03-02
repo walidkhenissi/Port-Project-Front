@@ -21,7 +21,7 @@ export class BoatService implements IService {
   }
 
   public find(criteria: any) {
-    return this.httpClient.post('/boat/find', criteria);
+    return this.httpClient.post('/boat/find', criteria, {withCredentials: true});
   }
 
   public getOne(id: string | number) {
@@ -33,14 +33,14 @@ export class BoatService implements IService {
   }
 
   addBoatActivityType(boatActivityType: BoatActivityType) {
-    return this.httpClient.post('/boatActivity/create', boatActivityType).pipe(
+    return this.httpClient.post('/boatActivity/create', boatActivityType, {withCredentials: true}).pipe(
       map((data: any) => {
         console.log(data)
       }), catchError(res => observableThrowError(res)));
   }
 
   getAllBoatActivityType(criteria: any): Observable<any> {
-    return this.httpClient.post('/boatActivity/find', criteria);
+    return this.httpClient.post('/boatActivity/find', criteria, {withCredentials: true});
   }
 
   getAllBoatActivityTypes(): Observable<any> {
@@ -56,7 +56,7 @@ export class BoatService implements IService {
   }
 
   create(ship: Ship) {
-    return this.httpClient.post('/boat/create', ship).pipe(
+    return this.httpClient.post('/boat/create', ship, {withCredentials: true}).pipe(
       map((data: any) => {
         console.log(data)
       }), catchError(res => observableThrowError(res)));

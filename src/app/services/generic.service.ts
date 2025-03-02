@@ -12,7 +12,7 @@ export class GenericService {
 
   public find(entity: any, criteria:any = null) {
     let param = {criteria: criteria, entity: entity};
-    return this.httpClient.post('/generic/find', param);
+    return this.httpClient.post('/generic/find', param, {withCredentials: true});
   }
 
   public remove(entity: any, id: number) {

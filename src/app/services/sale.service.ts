@@ -16,7 +16,7 @@ export class SaleService implements IService {
   }
 
   public find(criteria: any) {
-    return this.httpClient.post('/sale/find', criteria);
+    return this.httpClient.post('/sale/find', criteria, {withCredentials: true});
   }
 
   public getOne(id: string | number) {
@@ -28,7 +28,7 @@ export class SaleService implements IService {
   }
 
   create(sale: any) {
-    return this.httpClient.post('/sale/create', sale);
+    return this.httpClient.post('/sale/create', sale, {withCredentials: true});
   }
 
   remove(id: string | number) {
@@ -40,6 +40,6 @@ export class SaleService implements IService {
   }
 
   public generateSalesReport(options: any) {
-    return this.httpClient.post('/sale/generateSalesReport', options);
+    return this.httpClient.post('/sale/generateSalesReport', options, {withCredentials: true});
   }
 }

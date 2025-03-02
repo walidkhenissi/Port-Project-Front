@@ -16,11 +16,11 @@ export class SalesTransactionPaymentService implements IService {
   }
 
   public find(criteria: any) {
-    return this.httpClient.post('/salesTransactionPayment/find', criteria);
+    return this.httpClient.post('/salesTransactionPayment/find', criteria, {withCredentials: true});
   }
 
   public findWithDetails(criteria: any) {
-    return this.httpClient.post('/salesTransactionPayment/findWithDetails', criteria);
+    return this.httpClient.post('/salesTransactionPayment/findWithDetails', criteria, {withCredentials: true});
   }
 
   public getOne(id: string | number) {
@@ -32,7 +32,7 @@ export class SalesTransactionPaymentService implements IService {
   }
 
   create(salesTransactionPayment: any) {
-    return this.httpClient.post('/salesTransactionPayment/create', salesTransactionPayment);
+    return this.httpClient.post('/salesTransactionPayment/create', salesTransactionPayment, {withCredentials: true});
   }
 
   remove(id: string | number) {

@@ -16,7 +16,7 @@ export class PaymentService implements IService {
   }
 
   public find(criteria: any) {
-    return this.httpClient.post('/payment/find', criteria);
+    return this.httpClient.post('/payment/find', criteria, {withCredentials: true});
   }
 
   public getOne(id: string | number) {
@@ -28,7 +28,7 @@ export class PaymentService implements IService {
   }
 
   create(payment: any) {
-    return this.httpClient.post('/payment/create', payment);
+    return this.httpClient.post('/payment/create', payment, {withCredentials: true});
   }
 
   remove(id: string | number) {
@@ -36,10 +36,10 @@ export class PaymentService implements IService {
   }
 
   public generatePaymentReport(options: any) {
-    return this.httpClient.post('/payment/generatePaymentReport', options);
+    return this.httpClient.post('/payment/generatePaymentReport', options, {withCredentials: true});
   }
   public generateCommissionaireReport(options: any) {
-    return this.httpClient.post('/payment/generateCommissionaireReport', options);
+    return this.httpClient.post('/payment/generateCommissionaireReport', options, {withCredentials: true});
   }
 
 }

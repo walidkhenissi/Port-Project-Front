@@ -15,7 +15,7 @@ export class CommissionBeneficiaryService implements IService {
   }
 
   public find(criteria: any) {
-    return this.httpClient.post('/commissionBeneficiary/find', criteria);
+    return this.httpClient.post('/commissionBeneficiary/find', criteria, {withCredentials: true});
   }
 
   public getOne(id: string | number) {
@@ -27,7 +27,7 @@ export class CommissionBeneficiaryService implements IService {
   }
 
   create(commission: any) {
-    return this.httpClient.post('/commissionBeneficiary/create', commission);
+    return this.httpClient.post('/commissionBeneficiary/create', commission, {withCredentials: true});
   }
 
   remove(id: string | number) {
