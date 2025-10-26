@@ -4,12 +4,16 @@
   </mat-card-header>
   <mat-card-content class="b-t-1" [formGroup]="updateForm" style="margin-top: 10px; padding-top: 10px;">
     <div class="row" *ngIf="saleId">
-      <div class="col-sm-12">
+      <div class="col-sm-6">
         <h1 class="saleNumber">{{buildSaleTitle()}}</h1>
       </div>
+      <div class="col-sm-6">
+      <h2 class="pull-right">Montant net : {{sale.totalToPay|number:'1.3-3':'fr'}}</h2>
+        <h2 class="pull-right" style="margin-right: 20px;">Montant total : {{sale.total|number:'1.3-3':'fr'}}</h2>
+    </div>
     </div>
     <div class="row">
-      <div class="col-sm-12 {{saleId?'col-md-2':'col-md-3'}}">
+      <div class="col-sm-12 col-md-2">
         <mat-form-field class="full-width-field">
           <mat-label>Date</mat-label>
           <input matInput [matDatepicker]="datePicker" placeholder="Date" [(ngModel)]="sale.date"
@@ -18,7 +22,7 @@
           <mat-datepicker #datePicker></mat-datepicker>
         </mat-form-field>
       </div>
-      <div class="col-sm-12 {{saleId?'col-md-2':'col-md-3'}}">
+      <div class="col-sm-12 col-md-3">
         <mat-form-field class="full-width-field" name="producer">
           <mat-label>Producteur</mat-label>
           <input type="text" name="searchProducer" placeholder="Producteur"
@@ -33,7 +37,7 @@
           </mat-autocomplete>
         </mat-form-field>
       </div>
-      <div class="col-sm-12 {{saleId?'col-md-2':'col-md-3'}}">
+      <div class="col-sm-12 col-md-3">
         <mat-form-field class="full-width-field" name="boat">
           <mat-label>Bateau</mat-label>
           <input type="text" name="searchBoat" placeholder="Bateau"
@@ -48,27 +52,38 @@
           </mat-autocomplete>
         </mat-form-field>
       </div>
-      <div class="col-sm-12 {{saleId?'col-md-2':'col-md-3'}}">
+      <div class="col-sm-12 col-md-2">
         <mat-form-field class="full-width-field">
           <mat-label>Numéro bon de vente</mat-label>
           <input matInput placeholder="Numéro bon de vente" type="string" name="receiptNumber"
                  formControlName="receiptNumberFormControl" [(ngModel)]="sale.receiptNumber">
         </mat-form-field>
       </div>
-      <div class="col-sm-12 col-md-2" *ngIf="saleId">
+      <div class="col-md-2">
         <mat-form-field class="full-width-field">
-          <mat-label>Montant total</mat-label>
-          <input matInput placeholder="Montant total" type="number" name="total"
-                 formControlName="totalFormControl" [(ngModel)]="sale.total">
+          <mat-label>Type de caisses</mat-label>
+          <mat-select placeholder="Type de caisses" [(ngModel)]="sale.boxesTypeId" required
+                      formControlName="boxesTypeFormControl" (selectionChange)="setSelectedBoxesType($event)">
+            <mat-option *ngFor="let boxesType of boxesTypes" [value]="boxesType.id">
+              {{ boxesType.name }}
+            </mat-option>
+          </mat-select>
         </mat-form-field>
       </div>
-      <div class="col-sm-12 col-md-2" *ngIf="saleId">
-        <mat-form-field class="full-width-field">
-          <mat-label>Montant net</mat-label>
-          <input matInput placeholder="Montant total" type="number" name="total"
-                 formControlName="totalToPayFormControl" [(ngModel)]="sale.totalToPay">
-        </mat-form-field>
-      </div>
+<!--      <div class="col-sm-12 col-md-2" *ngIf="saleId">-->
+<!--        <mat-form-field class="full-width-field">-->
+<!--          <mat-label>Montant total</mat-label>-->
+<!--          <input matInput placeholder="Montant total" type="number" name="total"-->
+<!--                 formControlName="totalFormControl" [(ngModel)]="sale.total">-->
+<!--        </mat-form-field>-->
+<!--      </div>-->
+<!--      <div class="col-sm-12 col-md-2" *ngIf="saleId">-->
+<!--        <mat-form-field class="full-width-field">-->
+<!--          <mat-label>Montant net</mat-label>-->
+<!--          <input matInput placeholder="Montant total" type="number" name="total"-->
+<!--                 formControlName="totalToPayFormControl" [(ngModel)]="sale.totalToPay">-->
+<!--        </mat-form-field>-->
+<!--      </div>-->
     </div>
     <div class="row" *ngIf="totalProducerCommissions||totalMerchantCommissions">
       <ul class="col-sm-12 col-md-6">

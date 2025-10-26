@@ -32,6 +32,8 @@ export class UpdateSalesComponent {
   public availableCommissions: Array<any> = [];
   public producerCommissions: Array<any> = [];
   public merchantCommissions: Array<any> = [];
+  public boxesTypes: Array<any> = [];
+  public selectedBoxesType: any = new Object();
   public totalProducerCommissions: number;
   public totalMerchantCommissions: number;
   public updateForm: FormGroup;
@@ -105,6 +107,7 @@ export class UpdateSalesComponent {
     this.updateForm = new FormGroup({
       dateFormControl: new FormControl('', Validators.required),
       producerFormControl: new FormControl('', Validators.required),
+      boxesTypeFormControl: new FormControl('', Validators.required),
       boatFormControl: new FormControl(''),
       totalFormControl: new FormControl({value: '', disabled: true}),
       receiptNumberFormControl: new FormControl(''),
@@ -112,7 +115,14 @@ export class UpdateSalesComponent {
     });
     if (!this.saleId)
       this.sale.date = new Date();
-    this.find();
+    forkJoin(
+      this.genericService.find('boxesType', {
+        sort: {order: 'asc'}
+      })
+    ).subscribe(([response]: Array<any>) => {
+      this.boxesTypes = response.data;
+      this.find();
+    });
   }
 
   public find() {
@@ -123,6 +133,7 @@ export class UpdateSalesComponent {
         this.commissionValues = response.data.commissionValues;
         this.availableCommissions = response.data.availableCommissions;
         this.populateCommissions();
+        this.setSelectedBoxesType(null, this.sale.boxesTypeId);
         if (this.sale.shipOwner) {
           this.sale.shipOwner.isShipOwner = true;
           this.setSelectedProducer(this.sale.shipOwner);
@@ -134,6 +145,10 @@ export class UpdateSalesComponent {
           this.setSelectedBoat(this.sale.boat);
         this.switchChildTab(this.selectedTabIndex);
       });
+    } else {
+      const defaultBoxesType = _.find(this.boxesTypes, {default: true});
+      if (defaultBoxesType)
+        this.setSelectedBoxesType(null, defaultBoxesType.id);
     }
   }
 
@@ -454,6 +469,14 @@ export class UpdateSalesComponent {
       if (this.selectedBoat.serialNumber)
         this.sale.boatReference += ' | ' + this.selectedBoat.serialNumber;
     }
+  }
+
+  public setSelectedBoxesType(event: any, id = null) {
+    if (id)
+      this.selectedBoxesType = _.find(this.boxesTypes, {id: id});
+    else
+      this.selectedBoxesType = _.find(this.boxesTypes, {id: event.value});
+    this.sale.boxesTypeId = this.selectedBoxesType.id;
   }
 
   public buildSaleTitle() {

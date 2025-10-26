@@ -2,7 +2,17 @@
   <mat-card-content>
     <div style="height: 45px;">
       <mat-card-title>
-        Paiments des producteurs
+        Règlement des producteurs
+        <div style="display: inline">
+          <button mat-raised-button *ngIf="length" class="btn totalButton pull-right"
+                  style="font-size: 18px; font-weight: bold; line-height: 12px;">Total
+            : {{totalPayments | currency : 'TND' : true : '1.3-3':'fr'}}</button>
+          <button mat-raised-button color="primary" class="pull-right" (click)="openDialog()" style="text-transform: uppercase; margin-right: 10px;">
+            état des règlements
+          </button>
+        </div>
+
+
       </mat-card-title>
     </div>
     <mat-divider></mat-divider>
@@ -26,12 +36,14 @@
       </ng-container>
 
       <ng-container matColumnDef="producerName">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header="producerName"
+        <th mat-header-cell *matHeaderCellDef
             (mouseover)="mouseOverHeader.producerName=true" (mouseout)="mouseOverHeader.producerName=false">
           Producteur
           <i class="material-icons pull-left" title="filtrer"
              [ngStyle]="{visibility : showFilterIcon('producerName')?'':'hidden'}"
-             ></i>
+             >
+         </i>
+
         </th>
         <td mat-cell *matCellDef="let element"> {{element.producer ? element.producer.name : ''  }} </td>
       </ng-container>
@@ -58,15 +70,15 @@
         <td mat-cell *matCellDef="let element"> {{element.payment.name}} </td>
       </ng-container>
 
-      <ng-container matColumnDef="amount">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header="amount"
-            (mouseover)="mouseOverHeader.amount=true" (mouseout)="mouseOverHeader.amount=false">
+      <ng-container matColumnDef="value">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="value"
+            (mouseover)="mouseOverHeader.value=true" (mouseout)="mouseOverHeader.value=false">
           Montant
           <i class="material-icons pull-left" title="filtrer"
-             [ngStyle]="{visibility : showFilterIcon('amount')?'':'hidden'}"
+             [ngStyle]="{visibility : showFilterIcon('value')?'':'hidden'}"
              (click)="filterEvent('value','number');$event.stopPropagation()">search</i>
         </th>
-        <td mat-cell *matCellDef="let element"> {{element.value |number:'1.0-0':'fr'}} </td>
+        <td mat-cell *matCellDef="let element"> {{element.value |currency:'TND':true:'1.3-3':'fr'}} </td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -80,3 +92,75 @@
     </mat-paginator>
   </mat-card-content>
 </mat-card>
+
+
+<!-- Etas de Payment   -->
+<ng-template #paymentStatusPopup>
+  <h1 mat-dialog-title>Etat de Payment</h1>
+  <mat-dialog-content>
+    <div class="col-md-12">
+      <mat-form-field class="example-full-width" name="rule" required>
+        <mat-select [(ngModel)]="rule" placeholder="Règle" required [ngModelOptions]="{standalone: true}">
+          <mat-option [value]="'equals'">Egale à</mat-option>
+          <mat-option [value]="'notEquals'">Différent de</mat-option>
+          <mat-option [value]="'lowerThan'">Inférieur à</mat-option>
+          <mat-option [value]="'greaterThan'">Superieur à</mat-option>
+          <mat-option [value]="'between'">Entre</mat-option>
+          <mat-option [value]="'readAll'">Exporter tout</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="col-md-12" *ngIf="rule !== 'readAll'">
+      <mat-form-field class="example-full-width">
+        <input matInput [matDatepicker]="picker" placeholder="Date" [(ngModel)]="date1" required>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+      <ng-container *ngIf="rule === 'between'">
+        et<br/>
+        <mat-form-field class="example-full-width">
+          <input matInput [matDatepicker]="picker2" placeholder="Date" [(ngModel)]="date2" required>
+          <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+          <mat-datepicker #picker2></mat-datepicker>
+        </mat-form-field>
+      </ng-container>
+    </div>
+    <!-- filter-->
+    <div class="col-md-12">
+      <mat-form-field class="example-full-width">
+        <input type="text" name="searchProducers" placeholder="Producteur" aria-label="Producteur" matInput
+               [matAutocomplete]="autoProducers" (keyup)="searchProducers(null, $event)"
+               [(ngModel)]="tappedProducerName" [ngModelOptions]="{standalone: true}">
+        <mat-autocomplete autoActiveFirstOption #autoProducers="matAutocomplete"
+                          (optionSelected)="setSelectedProducer($event.option.value)">
+          <mat-option *ngFor="let producer of producers" [value]="producer">
+            {{producer.name}}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </div>
+    <!-- export-->
+    <div class="row">
+      <div class="col-md-6">
+        <mat-checkbox #checkboxPDF placeholder="PDF" class="pdf-color" [checked]="pdfType"
+                      (change)='togglePDFType(checkboxPDF.checked)'>
+          <mat-icon color='#AF0B09'>picture_as_pdf</mat-icon>
+          <span>PDF</span>
+        </mat-checkbox>
+      </div>
+      <div class="col-md-6">
+        <mat-checkbox #checkboxExcel placeholder="Excel" class="toolbar-checkbox excel-color" [checked]="excelType"
+                      (change)='toggleExcelType(checkboxExcel.checked)'>
+          <mat-icon color='#227447'>insert_drive_file</mat-icon>
+          <span>Excel</span>
+        </mat-checkbox>
+      </div>
+    </div>
+
+  </mat-dialog-content>
+  <mat-dialog-actions class="pull-right">
+    <button mat-button mat-raised-button color="warn" [mat-dialog-close]="false">Annuler</button>
+    <button mat-button mat-raised-button color="primary" (click)="generateReportState()" [disabled]="isDisabled()">Ok</button>
+  </mat-dialog-actions>
+</ng-template>
+

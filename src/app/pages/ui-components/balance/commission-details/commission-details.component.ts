@@ -1,13 +1,17 @@
-import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {MatPaginator, PageEvent} from "@angular/material/paginator";
 import {MatTableDataSource} from "@angular/material/table";
 import {ActivatedRoute, Router} from "@angular/router";
 import {MatDialog} from "@angular/material/dialog";
 import {GridsStateService} from "../../../../services/grids-state.service";
-import {SalesTransactionService} from "../../../../services/sales-transaction.service";
+// @ts-ignore
+import {saveAs} from 'file-saver';
 import {FilterDialogComponent} from "../../dialogs/filter-dialog/filter-dialog.component";
 import {CommissionValuesService} from "../../../../services/commission-values.service";
 import {GenericService} from "../../../../services/generic.service";
+import {Constants} from "../../../../constants";
+import {ConfirmDialogComponent} from "../../dialogs/confirm-dialog/confirm-dialog.component";
+import {CommissionService} from "../../../../services/commission.service";
 
 @Component({
   selector: 'app-commission-details',
@@ -37,12 +41,25 @@ export class CommissionDetailsComponent implements OnInit {
   commissionValuesData: [];
   totalCommissionValues = 0;
 
+  public dialogRef: any;
+  public dialogTitle: string = "Etat des commissions";
+  @ViewChild('commissionsStatsPopup') commissionsStatsPopup: TemplateRef<any>;
+  public excelType: boolean = false;  // Excel est coché par défaut
+  public pdfType: boolean = true;
+  public dateRule: string = 'readAll';
+  public date1 = new Date();
+  public date2 = new Date();
+  public recipientNumberRule: string;
+  public recipientNumberValue1: number;
+  public recipientNumberValue2: number;
+
   constructor(private route: ActivatedRoute,
               private router: Router,
               private dialog: MatDialog,
               private gridsStateService: GridsStateService,
               private genericService: GenericService,
               private commissionValuesService: CommissionValuesService,
+              private commissionService: CommissionService,
               private cdr: ChangeDetectorRef
   ) {
     this.route.params.subscribe(params => {
@@ -60,7 +77,7 @@ export class CommissionDetailsComponent implements OnInit {
     }
     if (this.beneficiaryId) {
       this.genericService.find('beneficiary', {where: {id: this.beneficiaryId}}).subscribe((response: any) => {
-        this.beneficiary = (response.data && response.data.length)? response.data[0]:undefined;
+        this.beneficiary = (response.data && response.data.length) ? response.data[0] : undefined;
       });
     }
   }
@@ -136,6 +153,58 @@ export class CommissionDetailsComponent implements OnInit {
 
   goBack() {
     this.router.navigate(["/ui-components/balance/", 2]);
+  }
+
+  public openDialog() {
+    this.dialogRef = this.dialog.open(this.commissionsStatsPopup, {
+      width: '500px',
+    });
+  }
+
+  togglePDFType(checked: boolean) {
+    this.pdfType = !this.pdfType;
+    this.excelType = false;
+  }
+
+  toggleExcelType(checked: boolean) {
+    this.excelType = !this.excelType;
+    this.pdfType = false;
+  }
+
+  public generateReport() {
+    const formatDate = (date: any) => {
+      const d = new Date(date);
+      const year = d.getFullYear();
+      const month = (d.getMonth() + 1).toString().padStart(2, '0'); // mois de 01 à 12
+      const day = d.getDate().toString().padStart(2, '0'); // jour de 01 à 31
+      return `${year}-${month}-${day}`;
+    };
+
+    const options = {
+      dateRule: this.dateRule,
+      startDate: formatDate(this.date1) || new Date(),
+      endDate: this.dateRule == "equals" ? null : (formatDate(this.date2) || new Date()),
+      recipientNumberRule: this.recipientNumberRule,
+      recipientNumberValue1: this.recipientNumberValue1,
+      recipientNumberValue2: this.recipientNumberRule == "between" ? this.recipientNumberValue2 : null,
+      beneficiaryId: this.beneficiary ? this.beneficiary.id : this.beneficiaryId,
+      excelType: this.excelType,
+      pdfType: this.pdfType
+    };
+    return this.commissionValuesService.generateCommissionsReport(options).subscribe((response: any) => {
+      saveAs(Constants.API_DOWNLOAD_URL + "/" + response.data, response.data);
+      this.dialogRef.close();
+    }, (response: any) => {
+      this.dialog.open(ConfirmDialogComponent, {
+        data: {
+          message: 'Une erreur s\'est produite ',
+          title: 'Attention!',
+          confirm: () => {
+          },
+          hideReject: true
+        }
+      });
+    });
   }
 
 }

@@ -37,4 +37,8 @@ export class CommissionValuesService implements IService {
   remove(id: string | number) {
     return this.httpClient.delete('/commissionValueController/remove?id=' + id);
   }
+
+  public generateCommissionsReport(options: any) {
+    return this.httpClient.post('/commissionValueController/generateCommissionsReport', options);
+  }
 }

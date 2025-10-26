@@ -58,6 +58,8 @@ export class UpdateBoxesMovementComponent {
       this.boxesBalanceService.getOne(this.boxesBalanceId).subscribe((response: any) => {
         this.boxesBalance = response.data;
         this.boxesTransaction.date = new Date();
+        if (this.boxesBalance)
+          this.boxesTransaction.boxesTypeId = this.boxesBalance.boxesTypeId;
         this.adaptView();
       });
     else {

@@ -38,4 +38,7 @@ export class SalePaymentService implements IService {
   remove(id: string | number) {
     return this.httpClient.delete('/salePayment/remove?id=' + id);
   }
+  public generateSalePaymentReport(options: any) {
+    return this.httpClient.post('/salePayment/generateSalePaymentReport', options);
+  }
 }

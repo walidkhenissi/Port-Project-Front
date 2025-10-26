@@ -27,12 +27,13 @@ import {JWT_OPTIONS, JwtHelperService, JwtModule} from '@auth0/angular-jwt';
 import {HttpClientService} from "./utils/http-client.service";
 import {FilterDialogComponent} from "./pages/ui-components/dialogs/filter-dialog/filter-dialog.component";
 import {GetValuePipe} from './pipes/get-value.pipe';
-import {MAT_DATE_LOCALE} from "@angular/material/core";
+import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from "@angular/material/core";
 import localeFr from '@angular/common/locales/fr';
 import {registerLocaleData} from "@angular/common";
 import {LoadingSpinnerService} from "./services/loading-spinner.service";
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 import {HttpInterceptorService} from "./utils/http-interceptor.service";
+import {MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter} from "@angular/material-moment-adapter";
 
 registerLocaleData(localeFr);
 
@@ -43,7 +44,19 @@ export function jwtOptionsFactory() {
     },
   };
 }
-
+export const MY_FORMATS = {
+  parse: {
+    //    dateInput: 'L',
+    dateInput: 'DD/MM/YYYY',
+  },
+  display: {
+    //    dateInput: 'L'
+    dateInput: 'DD/MM/YYYY',
+    monthYearLabel: 'MMM YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY',
+  },
+};
 @NgModule({
   declarations: [
     AppComponent,
@@ -79,6 +92,14 @@ export function jwtOptionsFactory() {
   providers: [JwtHelperService,
     HttpClientService,
     {provide: MAT_DATE_LOCALE, useValue: 'fr'},
+    {provide: MAT_DATE_FORMATS, useValue: MY_FORMATS},
+    {provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: {useUtc: true}},
+    {provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: {strict: true}},
+    {
+      provide: DateAdapter,
+      useClass: MomentDateAdapter,
+      deps: [MAT_DATE_LOCALE, MAT_DATE_FORMATS, MAT_MOMENT_DATE_ADAPTER_OPTIONS]
+    },
     LoadingSpinnerService,
     {provide: HTTP_INTERCEPTORS, useClass: HttpInterceptorService, multi: true},
   ],
@@ -87,3 +108,4 @@ export function jwtOptionsFactory() {
 })
 export class AppModule {
 }
+

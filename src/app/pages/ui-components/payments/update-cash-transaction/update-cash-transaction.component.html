@@ -8,9 +8,9 @@
       <div class="col-md-2">
         <mat-form-field class="full-width-field">
           <mat-select placeholder="Transaction" [(ngModel)]="transaction.accountId" required
-                      formControlName="accountFormControl">
-            <mat-option *ngFor="let transaction of transactionAccounts" [value]="transaction.id">
-              {{ transaction.name }}
+                      formControlName="accountFormControl" (selectionChange)="setSelectedAccount($event)">
+            <mat-option *ngFor="let transactionAccount of transactionAccounts" [value]="transactionAccount.id">
+              {{ transactionAccount.name }}
             </mat-option>
           </mat-select>
         </mat-form-field>
@@ -26,10 +26,23 @@
         </mat-form-field>
       </div>
       <div class="col-md-4">
-        <mat-form-field class="full-width-field">
+        <mat-form-field class="full-width-field" *ngIf="!isByAddress">
           <mat-label>Libellé</mat-label>
           <input matInput #input placeholder="Libellé" name="label" formControlName="labelFormControl"
                  [(ngModel)]="transaction.name">
+        </mat-form-field>
+        <mat-form-field class="full-width-field" name="producer" *ngIf="isByAddress">
+          <mat-label>Producteur</mat-label>
+          <input type="text" name="searchProducer" placeholder="Producteur"
+                 aria-label="producer" matInput formControlName="producerFormControl"
+                 [matAutocomplete]="autoProducers" (keyup)="searchProducers($event)"
+                 [(ngModel)]="tappedProducerName">
+          <mat-autocomplete autoActiveFirstOption #autoProducers="matAutocomplete"
+                            (optionSelected)="setSelectedProducer($event.option.value)">
+            <mat-option *ngFor="let producer of producers" [value]="producer">
+              {{producer.name}}
+            </mat-option>
+          </mat-autocomplete>
         </mat-form-field>
       </div>
       <div class="col-md-2">

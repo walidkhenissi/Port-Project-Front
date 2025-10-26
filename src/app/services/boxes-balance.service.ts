@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {IService} from "./IService";
 import {HttpClientService} from "../utils/http-client.service";
 
@@ -34,4 +34,21 @@ export class BoxesBalanceService implements IService {
   remove(id: string | number) {
     return this.httpClient.delete('/boxesBalance/remove?id=' + id);
   }
+
+  public generateReportShipOwner(options: any) {
+    return this.httpClient.post('/boxesBalance/generateReportShipOwner', options);
+  }
+
+  public generateReportMerchant(options: any) {
+    return this.httpClient.post('/boxesBalance/generateReportMerchant', options);
+  }
+
+  public generateSummaryReportMerchant() {
+    return this.httpClient.get('/boxesBalance/generateSummaryReportMerchant');
+  }
+
+  public generateSummaryReportShipOwner() {
+    return this.httpClient.get('/boxesBalance/generateSummaryReportShipOwner');
+  }
+
 }

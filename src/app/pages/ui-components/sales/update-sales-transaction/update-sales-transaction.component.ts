@@ -1,5 +1,5 @@
 import {Component, ViewChild} from '@angular/core';
-import {Observable} from "rxjs";
+import {forkJoin, Observable} from "rxjs";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {ActivatedRoute, Router} from "@angular/router";
 import {SaleService} from "../../../../services/sale.service";
@@ -36,6 +36,8 @@ export class UpdateSalesTransactionComponent {
   dataSource = new MatTableDataSource<any>();
   totalPayments = 0;
   restTopay = 0;
+  public boxesTypes: Array<any> = [];
+  public selectedBoxesType: any = new Object();
   //children
   public childrenToDisplay: any;
   public displayedChild: any;
@@ -93,6 +95,7 @@ export class UpdateSalesTransactionComponent {
     this.updateForm = new FormGroup({
       merchantFormControl: new FormControl('', Validators.required),
       articleFormControl: new FormControl('', Validators.required),
+      boxesTypeFormControl: new FormControl('', Validators.required),
       quittanceFormControl: new FormControl(''),
       totalToPayByMerchantFormControl: new FormControl({value: '', disabled: true}),
       boxesFormControl: new FormControl('', Validators.min(0)),
@@ -106,18 +109,45 @@ export class UpdateSalesTransactionComponent {
       }, Validators.compose([Validators.required, Validators.min(0)]))
     });
     if (this.salesTransactionId)
-      this.salesTransactionService.getOne(this.salesTransactionId).subscribe((response: any) => {
-        this.salesTransaction = response.data;
+      forkJoin(
+        this.salesTransactionService.getOne(this.salesTransactionId),
+        this.genericService.find('boxesType', {
+          sort: {order: 'asc'}
+        })
+      ).subscribe(([response1, response2]: Array<any>) => {
+        this.salesTransaction = response1.data;
         if (this.salesTransaction.merchant)
           this.setSelectedMerchant(this.salesTransaction.merchant);
         if (this.salesTransaction.article)
           this.setSelectedArticle(this.salesTransaction.article)
         this.switchChildTab(this.selectedTabIndex);
+        this.boxesTypes = response2.data;
+        this.setSelectedBoxesType(null, this.salesTransaction.boxesTypeId);
       });
-    else
+    else {
       this.salesTransaction.saleId = this.saleId;
+      forkJoin(
+        this.saleService.find({where: {id: this.saleId}}),
+        this.genericService.find('boxesType', {
+          sort: {order: 'asc'}
+        })
+      ).subscribe(([response1, response2]: Array<any>) => {
+        this.boxesTypes = response2.data;
+        let sale = (response1.data && response1.data.length) ? response1.data[0] : null;
+        if (sale)
+          this.setSelectedBoxesType(null, sale.boxesTypeId);
+      });
+    }
     if (this.viewContext)
       this.disableAll();
+  }
+
+  public setSelectedBoxesType(event: any, id = null) {
+    if (id)
+      this.selectedBoxesType = _.find(this.boxesTypes, {id: id});
+    else
+      this.selectedBoxesType = _.find(this.boxesTypes, {id: event.value});
+    this.salesTransaction.boxesTypeId = this.selectedBoxesType.id;
   }
 
   public tappedMerchantName: string;
@@ -146,7 +176,7 @@ export class UpdateSalesTransactionComponent {
   public setSelectedMerchant(merchant: any) {
     this.selectedMerchant = merchant;
     this.salesTransaction.merchantId = merchant.id;
-    setTimeout(() => this.tappedMerchantName = merchant. lastName+ ' ' + merchant.firstName);
+    setTimeout(() => this.tappedMerchantName = merchant.lastName + ' ' + merchant.firstName);
     this.updateForm.controls['merchantFormControl'].setErrors(null);
   }
 

@@ -3,8 +3,18 @@
     <mat-card-title>{{salesTransactionId ? (viewContext ? 'Détails d\'une opération de vente' : 'Mettre à jour une opération de vente') : 'Ajouter une opération de vente'}}</mat-card-title>
   </mat-card-header>
   <mat-card-content class="b-t-1" [formGroup]="updateForm">
-    <div mat-subheader
-         class="mat-body-2 m-y-16 f-w-600">{{salesTransactionId ? ('Vente numéro : ' + salesTransaction.transactionNumber) : 'Détails'}}</div>
+    <div class="row">
+      <div class="col-sm-6">
+        <div mat-subheader
+             class="mat-body-2 m-y-16 f-w-600">{{salesTransactionId ? ('Vente numéro : ' + salesTransaction.transactionNumber) : 'Détails'}}</div>
+      </div>
+      <div class="col-sm-6">
+<!--        <h2 *ngIf="salesTransactionId" class="pull-right">Total à payer-->
+<!--          : {{salesTransaction.totalToPayByMerchant|number:'1.3-3':'fr'}}</h2>-->
+        <h2 class="pull-right" style="margin-right: 20px;">Prix total
+          : {{(salesTransaction.totalPrice || 0)|number:'1.3-3':'fr'}}</h2>
+      </div>
+    </div>
     <div class="row">
       <div class="col-sm-12 col-md-{{salesTransactionId?'3':'4'}}">
         <mat-form-field class="full-width-field" name="merchant">
@@ -92,13 +102,24 @@
         <!--          {{updateForm.controls['unitPriceFormControl'].errors['error']}}-->
         <!--        </mat-error>-->
       </div>
-      <div class="col-sm-6 col-md-2">
+      <div class="col-md-2">
         <mat-form-field class="full-width-field">
-          <mat-label>Prix total</mat-label>
-          <input matInput placeholder="Prix total" type="number" name="totalPrice" required
-                 formControlName="totalPriceFormControl" [(ngModel)]="salesTransaction.totalPrice">
+          <mat-label>Type de caisses</mat-label>
+          <mat-select placeholder="Type de caisses" [(ngModel)]="salesTransaction.boxesTypeId" required
+                      formControlName="boxesTypeFormControl" (selectionChange)="setSelectedBoxesType($event)">
+            <mat-option *ngFor="let boxesType of boxesTypes" [value]="boxesType.id">
+              {{ boxesType.name }}
+            </mat-option>
+          </mat-select>
         </mat-form-field>
       </div>
+<!--      <div class="col-sm-6 col-md-2">-->
+<!--        <mat-form-field class="full-width-field">-->
+<!--          <mat-label>Prix total</mat-label>-->
+<!--          <input matInput placeholder="Prix total" type="number" name="totalPrice" required-->
+<!--                 formControlName="totalPriceFormControl" [(ngModel)]="salesTransaction.totalPrice">-->
+<!--        </mat-form-field>-->
+<!--      </div>-->
     </div>
     <mat-divider></mat-divider>
     <div class="row" style="margin-top: 5px;display: flow-root">

@@ -33,11 +33,14 @@ export class UpdatePaymentComponent {
   oldPayment: any = new Object();
   balance: any = new Object();
   selectedMerchant: any = new Object();
+  selectedProducer: any = new Object();
   tappedMerchantName: string;
+  tappedProducerName: string;
   paymentTypes: any = [];
   consumptionInfos: any = [];
   banks: any = [];
   merchantList: any = [];
+  producerList: any = [];
   provisionalBalance = 0;
   isCheckType = false;
   isPromissoryType = false;
@@ -117,6 +120,7 @@ export class UpdatePaymentComponent {
       tempBalanceFormControl: new FormControl({value: '', disabled: true}),
       dateFormControl: new FormControl(''),
       merchantFormControl: new FormControl(''),
+      producerFormControl: new FormControl(''),
       valueFormControl: new FormControl(''),
       consumedFormControl: new FormControl({value: '', disabled: true}),
       restFormControl: new FormControl({value: '', disabled: true}),
@@ -150,6 +154,16 @@ export class UpdatePaymentComponent {
         }
         this.loadBalance(this.payment.merchantId);
         this.searchMerchants(null, this.payment.merchantId);
+        if (this.payment.paymentType.byAddress) {
+          let producerId, isMerchant = false;
+          if (this.payment.shipOwnerId) {
+            producerId = this.payment.shipOwnerId;
+          } else if (this.payment.merchantId) {
+            producerId = this.payment.merchantId;
+            isMerchant = true;
+          }
+          this.searchProducer(null, producerId, isMerchant);
+        }
         this.paymentTypes = response2.data;
         this.consumptionInfos = response3.data;
         this.banks = response4.data;
@@ -179,6 +193,8 @@ export class UpdatePaymentComponent {
       if (this.context == 1) {
         this.payment.isCommissionnaryPayment = true;
         this.generateLabel();
+      } else {
+        this.payment.isCommissionnaryPayment = false;
       }
     }
   }
@@ -235,6 +251,18 @@ export class UpdatePaymentComponent {
         this.loadBalance(this.payment.merchantId);
       this.buildTitle();
       this.paymentId = this.payment.id;
+      if (this.payment.paymentType.byAddress) {
+        let producerId, isMerchant = false;
+        if (this.payment.shipOwnerId) {
+          producerId = this.payment.shipOwnerId;
+        } else if (this.payment.merchantId) {
+          producerId = this.payment.merchantId;
+          isMerchant = true;
+        }
+        this.searchProducer(null, producerId, isMerchant);
+      }
+      if (this.payment.paymentTypeId && !this.payment.paymentType)
+        this.payment.paymentType = _.find(this.paymentTypes, {id: this.payment.paymentTypeId});
     }, (response: any) => {
       let msg = '!';
       msg = response.error.msg;
@@ -405,6 +433,59 @@ export class UpdatePaymentComponent {
     this.loadBalance(this.payment.merchantId);
   }
 
+  public searchProducer(event: any = null, id = null, isMerchant = false) {
+    let value = this.tappedProducerName;
+    let criteria: any = {limit: 5, hideSpinner: true};
+    if (id !== null) {
+      criteria.where = {id: id};
+      if (isMerchant)
+        this.merchantService.find(criteria).subscribe((response: any) => {
+          this.producerList = response.data;
+          this.producerList.sort(function (producer1: any, producer2: any) {
+            return producer1.name.localeCompare(producer2.name);
+          });
+          if (id !== null) {
+            this.setSelectedProducer(response.data[0]);
+          }
+        });
+      else
+        this.shipownerService.find(criteria).subscribe((response: any) => {
+          this.producerList = response.data;
+          this.producerList.sort(function (producer1: any, producer2: any) {
+            return producer1.name.localeCompare(producer2.name);
+          });
+          if (id !== null) {
+            this.setSelectedProducer(response.data[0]);
+          }
+        });
+    } else {
+      this.shipownerService.findProducer({where:{name: {'like': '%' + value + '%'}}, limit: 5, hideSpinner: true}).subscribe((response: any) => {
+        this.producerList = response.data;
+        this.producerList.sort(function (producer1: any, producer2: any) {
+          return producer1.name.localeCompare(producer2.name);
+        });
+        if (id !== null) {
+          this.setSelectedProducer(response.data[0]);
+        }
+      });
+    }
+  }
+
+  public setSelectedProducer(producer: any) {
+    this.selectedProducer = producer;
+    setTimeout(() => this.tappedProducerName = producer.name);
+    if (producer.isMerchant) {
+      this.payment.merchant = producer;
+      this.payment.merchantId = producer.id;
+      this.payment.shipOwnerId = null;
+    } else {
+      this.payment.shipOwner = producer;
+      this.payment.shipOwnerId = producer.id;
+      this.payment.merchantId = null;
+    }
+    this.generateLabel();
+  }
+
   private loadBalance(merchantId: Number) {
     this.balanceService.find({where: {merchantId: merchantId}}).subscribe((response: any) => {
       this.balance = response.data[0] || {};
@@ -422,8 +503,11 @@ export class UpdatePaymentComponent {
       label += 'Ste Poissons Amich';
     if (this.payment.paymentType) {
       let type = _.find(this.paymentTypes, {id: this.payment.paymentTypeId});
-      if (type)
+      if (type) {
         label += "-" + type.name;
+        if (type.byAddress && this.payment.shipOwner)
+          label += "-" + this.payment.shipOwner.name;
+      }
     }
     if (this.payment.date) {
       label += "-" + moment(this.payment.date).format("YYYY-MM-DD");
@@ -435,8 +519,11 @@ export class UpdatePaymentComponent {
 
   public verifyAmount() {
     if (this.payment.value && this.payment.value < 0) {
-      this.updateForm.controls['valueFormControl'].setErrors({error: 'Le montant du réglement ne peut pas être négatif!'});
-      return;
+      if (this.payment.paymentType && this.payment.paymentType.reference != 'OTHER') {
+        this.updateForm.controls['valueFormControl'].setErrors({error: 'Le montant du réglement ne peut pas être négatif!'});
+        return;
+      } else
+        this.updateForm.controls['valueFormControl'].setErrors(null);
     }
     if (this.payment.value && this.payment.consumed) {
       if (this.payment.value < this.payment.consumed)
@@ -457,6 +544,11 @@ export class UpdatePaymentComponent {
     else
       this.payment.paymentType = _.find(this.paymentTypes, {id: event.value});
     this.payment.paymentTypeId = this.payment.paymentType.id;
+    if (!this.payment.paymentType.byAddress) {
+      this.payment.shipOwnerId = null;
+      this.selectedProducer = null;
+      this.tappedProducerName = '';
+    }
     this.checkPaymentTypeRequirements();
     this.generateLabel();
   }
@@ -480,6 +572,12 @@ export class UpdatePaymentComponent {
       this.updateForm.controls['dueDateFormControl'].updateValueAndValidity();
       this.updateForm.controls['signatoryFormControl'].clearValidators();
       this.updateForm.controls['signatoryFormControl'].updateValueAndValidity();
+    }
+    if (this.payment.paymentType.byAddress) {
+      this.updateForm.controls['producerFormControl'].setValidators([Validators.required]);
+    } else {
+      this.updateForm.controls['producerFormControl'].clearValidators();
+      this.updateForm.controls['producerFormControl'].updateValueAndValidity();
     }
     this.cd.detectChanges();
   }

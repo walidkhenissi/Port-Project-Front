@@ -1,6 +1,6 @@
 <mat-card class="cardWithShadow" class="b-1 shadow-none">
   <mat-card-header>
-    <mat-card-title>Transaction de mouvement de caisse</mat-card-title>
+    <mat-card-title>Transaction de mouvement de caisse : {{boxesBalance.boxesType?boxesBalance.boxesType.name:''}}</mat-card-title>
   </mat-card-header>
   <mat-card-content class="b-t-1" [formGroup]="updateForm" style="margin-top: 10px; padding-top: 10px;">
     <div class="row">
@@ -16,15 +16,17 @@
       </div>
       <div class="col-sm-12 col-md-3">
         <mat-form-field class="full-width-field">
-          <mat-label>{{isShipOwnerCase?'Caisses récupérées':'Caisses achetées'}}</mat-label>
-          <input matInput placeholder="{{isShipOwnerCase?'Caisses récupérées':'Caisses achetées'}}" type="text" name="debit"
+          <mat-label>{{isShipOwnerCase ? 'Caisses récupérées' : 'Caisses achetées'}}</mat-label>
+          <input matInput placeholder="{{isShipOwnerCase?'Caisses récupérées':'Caisses achetées'}}" type="text"
+                 name="debit"
                  formControlName="debitFormControl" [(ngModel)]="boxesTransaction.debit">
         </mat-form-field>
       </div>
       <div class="col-sm-12 col-md-3">
         <mat-form-field class="full-width-field">
-          <mat-label>{{isShipOwnerCase?'Caisses vendues':'Caisses remises'}}</mat-label>
-          <input matInput placeholder="{{isShipOwnerCase?'Caisses vendues':'Caisses remises'}}" type="text" name="credit"
+          <mat-label>{{isShipOwnerCase ? 'Caisses vendues' : 'Caisses remises'}}</mat-label>
+          <input matInput placeholder="{{isShipOwnerCase?'Caisses vendues':'Caisses remises'}}" type="text"
+                 name="credit"
                  formControlName="creditFormControl" [(ngModel)]="boxesTransaction.credit">
         </mat-form-field>
       </div>

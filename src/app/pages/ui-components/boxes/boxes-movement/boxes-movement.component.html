@@ -3,27 +3,40 @@
     <mat-card-title>{{toogleTitle()}}</mat-card-title>
   </mat-card-header>
   <mat-card-content class="b-t-1" [formGroup]="updateForm" style="margin-top: 10px; padding-top: 10px;">
+<!--    <div class="row">-->
+<!--      <div class="col-sm-12 col-md-4">-->
+<!--        <mat-form-field class="full-width-field">-->
+<!--          <mat-label>{{isShipOwnerCase ? 'Caisses récupérées' : 'Caisses achetées'}}</mat-label>-->
+<!--          <input matInput placeholder="{{isShipOwnerCase?'Caisses récupérées':'Caisses achetées'}}" type="text"-->
+<!--                 name="debit"-->
+<!--                 formControlName="debitFormControl" [(ngModel)]="boxesBalance.debit">-->
+<!--        </mat-form-field>-->
+<!--      </div>-->
+<!--      <div class="col-sm-12 col-md-4">-->
+<!--        <mat-form-field class="full-width-field">-->
+<!--          <mat-label>{{isShipOwnerCase ? 'Caisses vendues' : 'Caisses remises'}}</mat-label>-->
+<!--          <input matInput placeholder="{{isShipOwnerCase?'Caisses vendues':'Caisses remises'}}" type="text"-->
+<!--                 name="credit"-->
+<!--                 formControlName="creditFormControl" [(ngModel)]="boxesBalance.credit">-->
+<!--        </mat-form-field>-->
+<!--      </div>-->
+<!--      <div class="col-sm-12 col-md-4">-->
+<!--        <mat-form-field class="full-width-field">-->
+<!--          <mat-label>Solde de caisses</mat-label>-->
+<!--          <input matInput placeholder="Solde de caisses" type="text" name="balance"-->
+<!--                 formControlName="balanceFormControl" [(ngModel)]="boxesBalance.balance">-->
+<!--        </mat-form-field>-->
+<!--      </div>-->
+<!--    </div>-->
     <div class="row">
       <div class="col-sm-12 col-md-4">
-        <mat-form-field class="full-width-field">
-          <mat-label>{{isShipOwnerCase?'Caisses récupérées':'Caisses achetées'}}</mat-label>
-          <input matInput placeholder="{{isShipOwnerCase?'Caisses récupérées':'Caisses achetées'}}" type="text" name="debit"
-                 formControlName="debitFormControl" [(ngModel)]="boxesBalance.debit">
-        </mat-form-field>
+        <h4 style="font-style: italic">{{isShipOwnerCase ? 'Caisses récupérées' : 'Caisses achetées'}} : {{boxesBalance.debit |number:'1.0-0':'fr'}}</h4>
       </div>
       <div class="col-sm-12 col-md-4">
-        <mat-form-field class="full-width-field">
-          <mat-label>{{isShipOwnerCase?'Caisses vendues':'Caisses remises'}}</mat-label>
-          <input matInput placeholder="{{isShipOwnerCase?'Caisses vendues':'Caisses remises'}}" type="text" name="credit"
-                 formControlName="creditFormControl" [(ngModel)]="boxesBalance.credit">
-        </mat-form-field>
+        <h4 style="font-style: italic">{{isShipOwnerCase ? 'Caisses vendues' : 'Caisses remises'}} : {{boxesBalance.credit |number:'1.0-0':'fr'}}</h4>
       </div>
       <div class="col-sm-12 col-md-4">
-        <mat-form-field class="full-width-field">
-          <mat-label>Solde de caisses</mat-label>
-          <input matInput placeholder="Solde de caisses" type="text" name="balance"
-                 formControlName="balanceFormControl" [(ngModel)]="boxesBalance.balance">
-        </mat-form-field>
+        <h4 style="font-style: italic">Solde de caisses : {{boxesBalance.balance |number:'1.0-0':'fr'}}</h4>
       </div>
     </div>
     <mat-divider></mat-divider>

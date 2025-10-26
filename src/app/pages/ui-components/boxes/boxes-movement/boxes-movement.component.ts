@@ -76,9 +76,9 @@ export class BoxesMovementComponent {
       this.criteria[this.displayedChild.identifier].sort = {date: 'desc'};
     }
     this.updateForm = new FormGroup({
-      debitFormControl: new FormControl({value: '', disabled: true}),
-      creditFormControl: new FormControl({value: '', disabled: true}),
-      balanceFormControl: new FormControl({value: '', disabled: true})
+      // debitFormControl: new FormControl({value: '', disabled: true}),
+      // creditFormControl: new FormControl({value: '', disabled: true}),
+      // balanceFormControl: new FormControl({value: '', disabled: true})
     });
     if (this.boxesBalanceId) {
       this.boxesBalanceService.getOne(this.boxesBalanceId).subscribe((response: any) => {
@@ -226,6 +226,7 @@ export class BoxesMovementComponent {
       delete this.criteria[this.displayedChild.identifier].where.shipOwnerId;
       this.criteria[this.displayedChild.identifier].where.merchantId = this.boxesBalance.merchantId;
     }
+    this.criteria[this.displayedChild.identifier].where.boxesTypeId = this.boxesBalance.boxesTypeId;
     this.displayedChild.service.find(this.criteria[this.displayedChild.identifier]).subscribe((response: any) => {
       this.children[this.displayedChild.identifier] = response.data;
       this.dataSource = new MatTableDataSource(this.children[this.displayedChild.identifier]);
@@ -241,6 +242,7 @@ export class BoxesMovementComponent {
       title = title.concat(' de l\'armateur : ').concat(this.boxesBalance.shipOwner.name);
     else if (this.isMerchantCase)
       title = title.concat(' du commerçant : ').concat(this.boxesBalance.merchant.name);
+    title = title.concat(' | Type de caisses \"').concat(this.boxesBalance.boxesType.name).concat('\"');
     return title;
   }
 

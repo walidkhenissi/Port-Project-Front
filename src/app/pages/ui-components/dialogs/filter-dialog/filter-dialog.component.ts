@@ -20,7 +20,7 @@ export class FilterDialogComponent implements OnInit {
   // MatPaginator Inputs
   length = 0;
   pageSize = 5;
-  pageSizeOptions: number[] = [5,10,15];
+  pageSizeOptions: number[] = [5, 10, 15];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   // MatPaginator Output
@@ -129,7 +129,16 @@ export class FilterDialogComponent implements OnInit {
   }
 
   public findEnums() {
-    this.genericService.find(this.data.enumEntity, this.enumCriteria).subscribe((response: any) => {
+    let query;
+    if (this.data.forcedEnumFindMethod) {
+      // const filter = Object.entries(this.data.forcedEnumFindMethod)[0];
+      // this.enumCriteria.where[filter[0]] = filter[1];
+      query = this.data.forcedEnumFindMethod.service[this.data.forcedEnumFindMethod.method](this.enumCriteria);
+    } else {
+      query = this.genericService.find(this.data.enumEntity, this.enumCriteria);
+    }
+    // this.genericService.find(this.data.enumEntity, this.enumCriteria).subscribe((response: any) => {
+    query.subscribe((response: any) => {
       this.enumeration = response.data;
       this.length = response.metaData.count;
     });
@@ -166,6 +175,10 @@ export class FilterDialogComponent implements OnInit {
         x = x[0].split(':');
         this.enumCriteria.where = this.enumCriteria.where || {};
         this.enumCriteria.where[x[0]] = x[1];
+      }
+      if (this.data.forcedEnumFilter) {
+        const filter = Object.entries(this.data.forcedEnumFilter)[0];
+        this.enumCriteria.where[filter[0]] = filter[1];
       }
       //this.enumCriteria.sort[this.data.enumLabel] = 1;
       this.buildSortEnum();

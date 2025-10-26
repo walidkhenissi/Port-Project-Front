@@ -4,17 +4,20 @@ import {MatTableDataSource} from "@angular/material/table";
 import {Router} from "@angular/router";
 import {MatDialog} from "@angular/material/dialog";
 import {GridsStateService} from "../../../../services/grids-state.service";
-import {SaleService} from "../../../../services/sale.service";
 import {CashTransactionService} from "../../../../services/cash-transaction.service";
 import {FilterDialogComponent} from "../../dialogs/filter-dialog/filter-dialog.component";
 import {ConfirmDialogComponent} from "../../dialogs/confirm-dialog/confirm-dialog.component";
+import {forkJoin} from "rxjs";
+import {GenericService} from "../../../../services/generic.service";
+
+declare var _: any;
 
 @Component({
   selector: 'app-cash-transaction',
   templateUrl: './cash-transaction.component.html',
   styleUrls: ['./cash-transaction.component.scss']
 })
-export class CashTransactionComponent implements OnInit{
+export class CashTransactionComponent implements OnInit {
 
   public mouseOvered: any = new Object();
   public mouseOverHeader: any = new Object();
@@ -30,15 +33,17 @@ export class CashTransactionComponent implements OnInit{
   public lastFilterConfig: any = {};
   public criteria: any = {where: {}};
 
-  displayedColumns: string[] = ['date', 'name', 'debit', 'credit', 'balance', 'update', 'delete'];
+  displayedColumns: string[] = ['date', 'name', 'transaction', 'debit', 'credit', 'balance', 'update', 'delete'];
   dataSource = new MatTableDataSource<any>();
   transactionsData: any [];
+  cashAccounts: any [];
 
   constructor(
     private router: Router,
     private dialog: MatDialog,
     private gridsStateService: GridsStateService,
     private cashTransactionService: CashTransactionService,
+    private genericService: GenericService,
     private cdr: ChangeDetectorRef
   ) {
 
@@ -95,6 +100,7 @@ export class CashTransactionComponent implements OnInit{
         enumLabel: label,
         lastConfig: this.lastFilterConfig[attr],
         criteria: this.criteria,
+        forcedEnumFilter: entity?.toUpperCase() == 'CASHACCOUNT' ? {parentId: {'!': null}} : null,
         filterEvent: (config: any) => {
           this.lastFilterConfig[attr] = config;
           this.resetPage();
@@ -114,10 +120,21 @@ export class CashTransactionComponent implements OnInit{
   find() {
     this.gridsStateService.saveState(this.router.url, this);
     this.criteria.sort = {date: 'desc'};
-    this.cashTransactionService.find(this.criteria).subscribe((response: any) => {
-      this.length = response.metaData.count;
-      this.transactionsData = response.data;
+    forkJoin(
+      this.cashTransactionService.find(this.criteria),
+      this.genericService.find('cashAccount', {where: {parentId: {'!': null}}})
+    ).subscribe(([response1, response2]: Array<any>) => {
+      this.length = response1.metaData.count;
+      this.transactionsData = response1.data;
       this.dataSource = new MatTableDataSource(this.transactionsData);
+      this.cashAccounts = response2.data;
+      let cashAccountsByIds = _.groupBy(this.cashAccounts, 'id'), _account;
+      for (const transaction of this.transactionsData) {
+        _account = cashAccountsByIds[transaction.accountId];
+        if (_account && _account.length) {
+          transaction.cashAccount = _account[0];
+        }
+      }
     });
   }
 

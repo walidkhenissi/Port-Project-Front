@@ -6,6 +6,14 @@
     <mat-tab-group (selectedTabChange)="switchChildTab($event.index)" [selectedIndex]="selectedTabIndex">
       <mat-tab label="{{childrenToDisplay[0].label}}">
         <div class="table-responsive">
+          <button mat-raised-button color="primary" class="pull-right" (click)="openDialogArmateur()"
+                  style="text-transform: uppercase; margin-right: 15px;">
+            état du caisse
+          </button>
+          <button mat-raised-button color="primary" class="pull-right" (click)="generateSummaryReportShipOwner()"
+                  style="text-transform: uppercase; margin-right: 15px;">
+            état recap
+          </button>
           <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortEvent($event)"
                  *ngIf="selectedTabIndex==0"
                  class="mat-elevation-z8">
@@ -20,6 +28,18 @@
                    (click)="filterEvent('shipOwnerId','enumeration','Shipowner','name');$event.stopPropagation()">search</i>
               </th>
               <td mat-cell *matCellDef="let element"> {{element.shipOwner ? element.shipOwner.name : ''}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="boxesType">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header="boxesTypeId"
+                  (mouseover)="mouseOverHeader[displayedChild.identifier].boxesTypeId=true"
+                  (mouseout)="mouseOverHeader[displayedChild.identifier].boxesTypeId=false">
+                Type
+                <i class="material-icons pull-left" title="filtrer"
+                   [ngStyle]="{visibility : showFilterIcon('boxesTypeId')?'':'hidden'}"
+                   (click)="filterEvent('boxesTypeId','enumeration','boxesType','name');$event.stopPropagation()">search</i>
+              </th>
+              <td mat-cell *matCellDef="let element"> {{element.boxesType ? element.boxesType.name : ''}} </td>
             </ng-container>
 
             <ng-container matColumnDef="debit">
@@ -81,6 +101,14 @@
       </mat-tab>
       <mat-tab label="{{childrenToDisplay[1].label}}">
         <div class="table-responsive">
+          <button mat-raised-button color="primary" class="pull-right" (click)="openDialogMerchant()"
+                  style="text-transform: uppercase; margin-right: 15px;">
+            état du caisse
+          </button>
+          <button mat-raised-button color="primary" class="pull-right" (click)="generateSummaryReportMerchant()"
+                  style="text-transform: uppercase; margin-right: 15px;">
+            état recap
+          </button>
           <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortEvent($event)"
                  *ngIf="selectedTabIndex==1"
                  class="mat-elevation-z8">
@@ -95,6 +123,18 @@
                    (click)="filterEvent('merchantId','enumeration','Merchant','name');$event.stopPropagation()">search</i>
               </th>
               <td mat-cell *matCellDef="let element"> {{element.merchant ? element.merchant.name : ''}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="boxesType">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header="boxesTypeId"
+                  (mouseover)="mouseOverHeader[displayedChild.identifier].boxesTypeId=true"
+                  (mouseout)="mouseOverHeader[displayedChild.identifier].boxesTypeId=false">
+                Type
+                <i class="material-icons pull-left" title="filtrer"
+                   [ngStyle]="{visibility : showFilterIcon('boxesTypeId')?'':'hidden'}"
+                   (click)="filterEvent('boxesTypeId','enumeration','boxesType','name');$event.stopPropagation()">search</i>
+              </th>
+              <td mat-cell *matCellDef="let element"> {{element.boxesType ? element.boxesType.name : ''}} </td>
             </ng-container>
 
             <ng-container matColumnDef="debit">
@@ -185,30 +225,42 @@
               <td mat-cell *matCellDef="let element"> {{element.name ? element.name : ''}} </td>
             </ng-container>
 
+            <ng-container matColumnDef="boxesType">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header="boxesTypeId"
+                  (mouseover)="mouseOverHeader[displayedChild.identifier].boxesTypeId=true"
+                  (mouseout)="mouseOverHeader[displayedChild.identifier].boxesTypeId=false">
+                Type
+                <i class="material-icons pull-left" title="filtrer"
+                   [ngStyle]="{visibility : showFilterIcon('boxesTypeId')?'':'hidden'}"
+                   (click)="filterEvent('boxesTypeId','enumeration','boxesType','name');$event.stopPropagation()">search</i>
+              </th>
+              <td mat-cell *matCellDef="let element"> {{element.boxesType ? element.boxesType.name : ''}} </td>
+            </ng-container>
+
             <ng-container matColumnDef="debit">
               <th mat-header-cell *matHeaderCellDef mat-sort-header="debit"
                   (mouseover)="mouseOverHeader[displayedChild.identifier].debit=true"
                   (mouseout)="mouseOverHeader[displayedChild.identifier].debit=false">
-                Debit
+                Sortie
                 <i class="material-icons pull-left" title="filtrer"
                    [ngStyle]="{visibility : showFilterIcon('debit')?'':'hidden'}"
                    (click)="filterEvent('debit','number');$event.stopPropagation()">search</i>
               </th>
               <td mat-cell
-                  *matCellDef="let element"> {{element.shipOwnerId ? (element.debit |number:'1.0-0':'fr') : ''}} </td>
+                  *matCellDef="let element"> {{element.shipOwnerId ? ((element.debit || 0) |number:'1.0-0':'fr') : ''}} </td>
             </ng-container>
 
             <ng-container matColumnDef="credit">
               <th mat-header-cell *matHeaderCellDef mat-sort-header="credit"
                   (mouseover)="mouseOverHeader[displayedChild.identifier].credit=true"
                   (mouseout)="mouseOverHeader[displayedChild.identifier].credit=false">
-                Credit
+                Entré
                 <i class="material-icons pull-left" title="filtrer"
                    [ngStyle]="{visibility : showFilterIcon('credit')?'':'hidden'}"
                    (click)="filterEvent('credit','number');$event.stopPropagation()">search</i>
               </th>
               <td mat-cell
-                  *matCellDef="let element"> {{element.merchantId ? (element.credit |number:'1.0-0':'fr') : ''}} </td>
+                  *matCellDef="let element"> {{element.merchantId ? ((element.credit || 0) |number:'1.0-0':'fr') : ''}} </td>
             </ng-container>
 
             <ng-container matColumnDef="stock">
@@ -238,4 +290,175 @@
     </mat-tab-group>
   </mat-card-content>
 </mat-card>
+<!--    Caisse des Armateurs-->
+<ng-template #caisseArmateurStatsPopup>
+  <h1 mat-dialog-title>Caisse des Armateurs</h1>
+  <mat-dialog-content>
+    <div class="col-md-12">
+      <mat-form-field class="example-full-width" name="rule" required>
+        <mat-select [(ngModel)]="rule" placeholder="Règle" [ngModelOptions]="{standalone: true}">
+          <mat-option [value]="'equals'">Egale à</mat-option>
+          <mat-option [value]="'notEquals'">Différent de</mat-option>
+          <mat-option [value]="'lowerThan'">Inférieur à</mat-option>
+          <mat-option [value]="'greaterThan'">Superieur à</mat-option>
+          <mat-option [value]="'between'">Entre</mat-option>
+          <mat-option [value]="'readAll'">Exporter tout</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="col-md-12" *ngIf="rule !== 'readAll'">
+      <mat-form-field class="example-full-width">
+        <input matInput [matDatepicker]="picker" placeholder="Date" [(ngModel)]="date1" required>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+      <ng-container *ngIf="rule === 'between'">
+        et<br/>
+        <mat-form-field class="example-full-width">
+          <input matInput [matDatepicker]="picker2" placeholder="Date" [(ngModel)]="date2" required>
+          <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+          <mat-datepicker #picker2></mat-datepicker>
+        </mat-form-field>
+      </ng-container>
+    </div>
+    <!-- filter-->
+    <div class="col-md-12">
+      <mat-form-field class="example-full-width">
+        <input type="text" name="searchProducers" placeholder="Producteur" aria-label="Producteur" matInput
+               [matAutocomplete]="autoProducers" (keyup)="searchProducers(null, $event)"
+               [(ngModel)]="tappedProducerName" [ngModelOptions]="{standalone: true}">
+        <mat-autocomplete autoActiveFirstOption #autoProducers="matAutocomplete"
+                          (optionSelected)="setSelectedProducer($event.option.value)">
+          <mat-option *ngFor="let producer of producers" [value]="producer">
+            {{producer.name}}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </div>
+    <!-- export-->
+    <div class="row">
+      <div class="col-md-6">
+        <mat-checkbox #checkboxPDF placeholder="PDF" class="pdf-color" [checked]="pdfType"
+                      (change)='togglePDFType(checkboxPDF.checked)'>
+          <mat-icon>picture_as_pdf</mat-icon>
+          <span>PDF</span>
+        </mat-checkbox>
+      </div>
+      <div class="col-md-6">
+        <mat-checkbox #checkboxExcel placeholder="Excel" class="toolbar-checkbox excel-color" [checked]="excelType"
+                      (change)='toggleExcelType(checkboxExcel.checked)'>
+          <mat-icon>insert_drive_file</mat-icon>
+          <span>Excel</span>
+        </mat-checkbox>
+      </div>
+    </div>
+    <!--    <div class="row">-->
+    <!--      <div class="col-md-6">-->
+    <!--        <mat-checkbox #checkboxDetailed placeholder="Détails" [checked]="detailedReport"-->
+    <!--                      (change)='toggleDetailedReport(checkboxDetailed.checked)'>-->
+    <!--          <span>Etat détaillé</span>-->
+    <!--        </mat-checkbox>-->
+    <!--      </div>-->
+    <!--      <div class="col-md-6">-->
+    <!--        <mat-checkbox #checkboxSummary placeholder="Recap" class="toolbar-checkbox" [checked]="summaryReport"-->
+    <!--                      (change)='toggleSummaryReport(checkboxSummary.checked)'>-->
+    <!--          <span>Etat récapitulatif</span>-->
+    <!--        </mat-checkbox>-->
+    <!--      </div>-->
+    <!--    </div>-->
+
+  </mat-dialog-content>
+  <mat-dialog-actions class="pull-right">
+    <button mat-button mat-raised-button color="warn" [mat-dialog-close]="false">Annuler</button>
+    <button mat-button mat-raised-button color="primary" (click)="generateReportArmateur()">Ok</button>
+  </mat-dialog-actions>
+</ng-template>
+<!-- Caisse des Clients -->
+<ng-template #caisseMerchantStatsPopup>
+  <h1 mat-dialog-title>Caisse des Clients</h1>
+  <mat-dialog-content>
+    <div class="col-md-12">
+      <mat-form-field class="example-full-width" name="rule" required>
+        <mat-select [(ngModel)]="rule" placeholder="Règle" [ngModelOptions]="{standalone: true}">
+          <mat-option [value]="'equals'">Egale à</mat-option>
+          <mat-option [value]="'notEquals'">Différent de</mat-option>
+          <mat-option [value]="'lowerThan'">Inférieur à</mat-option>
+          <mat-option [value]="'greaterThan'">Superieur à</mat-option>
+          <mat-option [value]="'between'">Entre</mat-option>
+          <mat-option [value]="'readAll'">Exporter tout</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="col-md-12" *ngIf="rule !== 'readAll'">
+      <mat-form-field class="example-full-width">
+        <input matInput [matDatepicker]="picker" placeholder="Date" [(ngModel)]="date1" required>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+      <ng-container *ngIf="rule === 'between'">
+        et<br/>
+        <mat-form-field class="example-full-width">
+          <input matInput [matDatepicker]="picker2" placeholder="Date" [(ngModel)]="date2" required>
+          <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+          <mat-datepicker #picker2></mat-datepicker>
+        </mat-form-field>
+      </ng-container>
+    </div>
+    <!-- filter-->
+
+    <div class="col-md-12">
+      <mat-form-field class="example-full-width">
+        <input type="text" name="searchMerchant" placeholder="Commerçant" required aria-label="Commerçant" matInput
+               [matAutocomplete]="autoMerchants" (keyup)="searchMerchant(null, $event)"
+               [(ngModel)]="tappedMerchantName" [ngModelOptions]="{standalone: true}">
+        <mat-autocomplete autoActiveFirstOption #autoMerchants="matAutocomplete"
+                          (optionSelected)="setSelectedMerchant($event.option.value)">
+          <mat-option *ngFor="let merchant of merchants" [value]="merchant">
+            {{merchant.name}}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </div>
+    <!-- export-->
+    <div class="row">
+      <div class="col-md-6">
+        <mat-checkbox #checkboxPDF placeholder="PDF" class="pdf-color" [checked]="pdfType"
+                      (change)='togglePDFType(checkboxPDF.checked)'>
+          <mat-icon>picture_as_pdf</mat-icon>
+          <span>PDF</span>
+        </mat-checkbox>
+      </div>
+      <div class="col-md-6">
+        <mat-checkbox #checkboxExcel placeholder="Excel" class="toolbar-checkbox excel-color" [checked]="excelType"
+                      (change)='toggleExcelType(checkboxExcel.checked)'>
+          <mat-icon>insert_drive_file</mat-icon>
+          <span>Excel</span>
+        </mat-checkbox>
+      </div>
+    </div>
+    <!--    <div class="row">-->
+    <!--      <div class="col-md-6">-->
+    <!--        <mat-checkbox #checkboxDetailed placeholder="Détails" [checked]="detailedReport"-->
+    <!--                      (change)='toggleDetailedReport(checkboxDetailed.checked)'>-->
+    <!--          <span>Etat détaillé</span>-->
+    <!--        </mat-checkbox>-->
+    <!--      </div>-->
+    <!--      <div class="col-md-6">-->
+    <!--        <mat-checkbox #checkboxSummary placeholder="Recap" class="toolbar-checkbox" [checked]="summaryReport"-->
+    <!--                      (change)='toggleSummaryReport(checkboxSummary.checked)'>-->
+    <!--          <span>Etat récapitulatif</span>-->
+    <!--        </mat-checkbox>-->
+    <!--      </div>-->
+    <!--    </div>-->
+  </mat-dialog-content>
+  <mat-dialog-actions class="pull-right">
+    <button mat-button mat-raised-button color="warn" [mat-dialog-close]="false">Annuler</button>
+    <button mat-button mat-raised-button color="primary" (click)="generateReportMerchant()" [disabled]="isDisabled()">
+      Ok
+    </button>
+  </mat-dialog-actions>
+</ng-template>
+
+
+
 

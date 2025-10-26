@@ -5,6 +5,8 @@ import 'lodash';
 import {GenericService} from "../../../../services/generic.service";
 import {forkJoin} from "rxjs";
 import {CashTransactionService} from "../../../../services/cash-transaction.service";
+import {ShipownersService} from "../../../../services/shipowner.service";
+import * as moment from 'moment';
 
 declare var _: any;
 
@@ -18,10 +20,13 @@ export class UpdateCashTransactionComponent implements OnInit {
   updateForm: FormGroup;
   transactionAccounts: Array<any>;
   transaction: any = new Object();
+  isByAddress = false;
+  selectedCashAccount: any = new Object();
 
   constructor(
     private route: ActivatedRoute,
     private cashTransactionService: CashTransactionService,
+    private shipownerService: ShipownersService,
     private genericService: GenericService,
     private formBuilder: FormBuilder,
     private router: Router
@@ -35,10 +40,11 @@ export class UpdateCashTransactionComponent implements OnInit {
     this.updateForm = new FormGroup({
       accountFormControl: new FormControl('', Validators.required),
       dateFormControl: new FormControl('', Validators.required),
-      labelFormControl: new FormControl("", Validators.required),
+      labelFormControl: new FormControl(""),
       creditValueFormControl: new FormControl('', [Validators.min(0), Validators.required]),
       debitValueFormControl: new FormControl('', [Validators.min(0), Validators.required]),
-      noteFormControl: new FormControl('')
+      noteFormControl: new FormControl(''),
+      producerFormControl: new FormControl('')
     });
     if (this.transactionId) {
       forkJoin(
@@ -47,6 +53,12 @@ export class UpdateCashTransactionComponent implements OnInit {
       ).subscribe(([response1, response2]: Array<any>) => {
         this.transaction = response1.data;
         this.transactionAccounts = response2.data;
+        this.setSelectedAccount(null, this.transaction.accountId);
+        if (this.selectedCashAccount.byAddress) {
+          let producerId = this.transaction.shipOwnerId || this.transaction.merchantId;
+          if (producerId)
+            this.searchProducers(null, producerId);
+        }
       });
     } else {
       this.transaction.date = new Date();
@@ -105,6 +117,65 @@ export class UpdateCashTransactionComponent implements OnInit {
 
   isValidForm() {
     return this.updateForm.valid;
+  }
+
+  public setSelectedAccount(event: any, id = null) {
+    if (id)
+      this.selectedCashAccount = _.find(this.transactionAccounts, {id: id});
+    else
+      this.selectedCashAccount = _.find(this.transactionAccounts, {id: event.value});
+    this.isByAddress = this.selectedCashAccount.byAddress;
+    this.transaction.accountId = this.selectedCashAccount.id;
+    if (this.isByAddress) {
+      this.updateForm.controls['producerFormControl'].addValidators(Validators.required);
+      this.updateForm.controls['labelFormControl'].clearValidators();
+    } else {
+      delete this.transaction.shipOwnerId;
+      delete this.transaction.merchantId;
+      this.updateForm.controls['labelFormControl'].addValidators(Validators.required);
+      this.updateForm.controls['producerFormControl'].clearValidators();
+    }
+  }
+
+  public tappedProducerName: string;
+  public selectedProducer: any;
+  public producers: any;
+
+  public searchProducers(event: any = null, id = null) {
+    if (event && event.key === 'Enter')
+      return;
+    let value = this.tappedProducerName;
+    let criteria: any = {limit: 5, hideSpinner: true};
+    if (id !== null) {
+      criteria.where = {id: id};
+    } else {
+      criteria.where = {name: {'like': '%' + value + '%'}};
+    }
+    this.shipownerService.findProducer(criteria).subscribe((response: any) => {
+      this.producers = response.data;
+      this.producers.sort(function (producer1: any, producer2: any) {
+        return producer1.name.localeCompare(producer2.name);
+      });
+      if (id !== null) {
+        this.setSelectedProducer(response.data[0]);
+      }
+    });
+  }
+
+  public setSelectedProducer(producer: any) {
+    this.selectedProducer = producer;
+    this.tappedProducerName = producer.lastName + ' ' + producer.firstName + (producer.isShipOwner ? ' (Armateur)' : ' (Commerçant)');
+    this.transaction.merchantId = null;
+    this.transaction.shipOwnerId = null;
+    if (producer.isShipOwner) {
+      this.transaction.shipOwnerId = this.selectedProducer.id;
+    } else {
+      this.transaction.merchantId = this.selectedProducer.id;
+    }
+    this.transaction.name = producer.lastName + ' ' + producer.firstName;
+    if (this.selectedCashAccount)
+      this.transaction.name = this.transaction.name.concat('-').concat(this.selectedCashAccount.name);
+    this.transaction.name = this.transaction.name.concat('-').concat(moment(this.transaction.date).format('DD-MM-YYYY')).concat('-').concat(this.transaction.credit || this.transaction.debit).concat('Dt');
   }
 
 }

@@ -65,7 +65,23 @@
         </mat-form-field>
       </div>
 
-      <div class="col-sm-12 col-md-{{context==2?'2':'3'}}">
+      <div class="col-sm-12 col-md-4" *ngIf="context==1 && payment.paymentType && payment.paymentType.byAddress">
+        <mat-form-field class="full-width-field" name="producer">
+          <mat-label>Producteur</mat-label>
+          <input type="text" name="searchProducer" placeholder="Producteur"
+                 aria-label="producer" matInput required formControlName="producerFormControl"
+                 [matAutocomplete]="autoProducers" (keyup)="searchProducer($event)"
+                 [(ngModel)]="tappedProducerName">
+          <mat-autocomplete autoActiveFirstOption #autoProducers="matAutocomplete"
+                            (optionSelected)="setSelectedProducer($event.option.value)">
+            <mat-option *ngFor="let producer of producerList" [value]="producer">
+              {{producer.name}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+
+      <div class="col-sm-12 col-md-{{(context==2 || (payment.paymentType && payment.paymentType.byAddress))?'2':'3'}}">
         <mat-form-field class="full-width-field">
           <mat-label>Valeur</mat-label>
           <input matInput placeholder="Valeur" type="number"
@@ -78,7 +94,7 @@
         </mat-error>
       </div>
 
-      <div class="col-sm-12 col-md-{{context==2?'2':'3'}}">
+      <div class="col-sm-12 col-md-{{(context==2 || (payment.paymentType && payment.paymentType.byAddress))?'2':'3'}}">
         <mat-form-field class="full-width-field">
           <mat-label>Date</mat-label>
           <input matInput [matDatepicker]="datePicker" (dateChange)="generateLabel()" placeholder="Date"
@@ -89,11 +105,11 @@
         </mat-form-field>
       </div>
 
-      <div class="col-sm-12 col-md-{{context==2?'2':'3'}}">
+      <div class="col-sm-12 col-md-{{(context==2 || (payment.paymentType && payment.paymentType.byAddress))?'2':'3'}}">
         <mat-form-field class="full-width-field">
           <mat-label>Type</mat-label>
           <mat-select placeholder="Type" [(ngModel)]="payment.paymentTypeId" required
-                      formControlName="typeFormControl" (selectionChange)="setSelectedPaymentType($event)">
+                      formControlName="typeFormControl" (selectionChange)="setSelectedPaymentType($event);verifyAmount()">
             <mat-option *ngFor="let type of paymentTypes" [value]="type.id">
               {{ type.name }}
             </mat-option>
@@ -101,7 +117,7 @@
         </mat-form-field>
       </div>
 
-      <div class="col-sm-12 col-md-{{context==2?'2':'3'}}">
+      <div class="col-sm-12 col-md-{{(context==2 || (payment.paymentType && payment.paymentType.byAddress))?'2':'3'}}">
         <mat-form-field class="full-width-field">
           <mat-label>Etat</mat-label>
           <mat-select placeholder="Etat" [(ngModel)]="payment.consumptionInfoId" required

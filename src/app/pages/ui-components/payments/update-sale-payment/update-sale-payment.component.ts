@@ -177,14 +177,21 @@ export class UpdateSalePaymentComponent {
     this.consumedPayment = null;
     let criteria: any = {limit: 5, hideSpinner: true};
     if (id !== null) {
-      criteria.where = {id: id};
+      // criteria.where = {id: id};
+      criteria.id=id;
     } else {
-      criteria.where = {name: {'like': '%' + value + '%'}};
+      // criteria.where = {name: {'like': '%' + value + '%'}};
+      criteria.name=value;
     }
-    criteria.where.isCommissionnaryPayment = true;
-    if (this.consumedConsumptionInfo)
-      criteria.where.consumptionInfoId = {'!=': this.consumedConsumptionInfo.id};
-    this.paymentService.find(criteria).subscribe((response: any) => {
+    // criteria.where.isCommissionnaryPayment = true;
+    criteria.isCommissionnaryPayment=true;
+    if (this.consumedConsumptionInfo) {
+      // criteria.where.consumptionInfoId = {'!=': this.consumedConsumptionInfo.id};
+      criteria.consumptionInfoId=this.consumedConsumptionInfo.id;
+    }
+    if (this.selectedSale && this.selectedSale.shipOwnerId)
+      criteria.shipOwnerId = this.selectedSale.shipOwnerId;
+    this.paymentService.findWithAddressCondition(criteria).subscribe((response: any) => {
       this.payments = response.data;
       if (id !== null) {
         this.setSelectedPayment(response.data[0]);
@@ -211,6 +218,12 @@ export class UpdateSalePaymentComponent {
     }
     if (this.payedPaymentInfo)
       criteria.where.paymentInfoId = {'!=': this.payedPaymentInfo.id};
+    if(this.selectedPayment.paymentType && this.selectedPayment.paymentType.byAddress){
+      if(this.selectedPayment.shipOwnerId)
+        criteria.where.shipOwnerId = this.selectedPayment.shipOwnerId;
+      else if(this.selectedPayment.merchantId)
+        criteria.where.merchantId = this.selectedPayment.merchantId;
+    }
     this.saleService.find(criteria).subscribe((response: any) => {
       this.sales = response.data;
       if (id !== null) {

@@ -62,6 +62,7 @@ export class SalesComponent implements OnInit {
   public articleName: string;
   public producerName: string;
   public merchantName: string;
+  public dialogTitle: string;
   private enumCriteria: any = {where: {}};
   selectedProducer: any
   tappedProducerName: string;
@@ -70,6 +71,8 @@ export class SalesComponent implements OnInit {
   selectedArticle: any;
   tappedArticleName: string;
   public dialogRef: any;
+  public salesReport: boolean = false;
+  public accountReport: boolean = false;
 
 
   public excelType: boolean = true;  // Excel est coché par défaut
@@ -323,44 +326,70 @@ export class SalesComponent implements OnInit {
 
 
   public generateReport() {
-  const formatDate=(date: any)=>{
-    const d = new Date(date);
-    const year = d.getFullYear();
-    const month = (d.getMonth() + 1).toString().padStart(2, '0'); // mois de 01 à 12
-    const day = d.getDate().toString().padStart(2, '0'); // jour de 01 à 31
-    return `${year}-${month}-${day}`;
+    const formatDate = (date: any) => {
+      const d = new Date(date);
+      const year = d.getFullYear();
+      const month = (d.getMonth() + 1).toString().padStart(2, '0'); // mois de 01 à 12
+      const day = d.getDate().toString().padStart(2, '0'); // jour de 01 à 31
+      return `${year}-${month}-${day}`;
     };
 
-const options={
+    const options = {
       dateRule: this.rule,
       startDate: formatDate(this.date1) || new Date(),
-      endDate: this.rule == "equals"? null : (formatDate(this.date2) || new Date()),
-      article: this.selectedArticle ? this.selectedArticle.id: null,
-      producer: this.selectedProducer ? this.selectedProducer.id: null,
-      merchant: this.selectedMerchant ? this.selectedMerchant.id: null,
+      endDate: this.rule == "equals" ? null : (formatDate(this.date2) || new Date()),
+      // article: this.selectedArticle ? this.selectedArticle.id : null,
+      producer: this.selectedProducer ? this.selectedProducer.id : null,
+      producerIsMerchant : this.selectedProducer ? this.selectedProducer.isMerchant : false,
+      // merchant: this.selectedMerchant ? this.selectedMerchant.id : null,
       excelType: this.excelType,
       pdfType: this.pdfType
+    };
 
-};
-
-
-    return this.saleService.generateSalesReport(options).subscribe((response: any) => {
-      saveAs(Constants.API_DOWNLOAD_URL + "/" + response.data, response.data);
-      this.dialogRef.close();
-    }, (response: any) => {
-      this.dialog.open(ConfirmDialogComponent, {
-        data: {
-          message: 'Une erreur s\'est produite ',
-          title: 'Attention!',
-          confirm: () => {},
-          hideReject: true
-        }
+    if (this.salesReport)
+      return this.saleService.generateSalesReport(options).subscribe((response: any) => {
+        saveAs(Constants.API_DOWNLOAD_URL + "/" + response.data, response.data);
+        this.dialogRef.close();
+      }, (response: any) => {
+        this.dialog.open(ConfirmDialogComponent, {
+          data: {
+            message: 'Une erreur s\'est produite ',
+            title: 'Attention!',
+            confirm: () => {
+            },
+            hideReject: true
+          }
+        });
       });
-    });
+    else if (this.accountReport)
+      return this.saleService.generateAccountReport(options).subscribe((response: any) => {
+        saveAs(Constants.API_DOWNLOAD_URL + "/" + response.data, response.data);
+        this.dialogRef.close();
+      }, (response: any) => {
+        this.dialog.open(ConfirmDialogComponent, {
+          data: {
+            message: 'Une erreur s\'est produite ',
+            title: 'Attention!',
+            confirm: () => {
+            },
+            hideReject: true
+          }
+        });
+      });
+    else
+      return this.dialogRef.close();
   }
 
-  public openDialog() {
-    this.dialogRef=this.dialog.open(this.salesStatsDialg, {
+  public openDialog(isSalesReport: boolean = false, isAccountReport: boolean = false) {
+    this.salesReport = isSalesReport;
+    this.accountReport = isAccountReport;
+    if (this.salesReport) {
+      this.dialogTitle = "Etat des ventes";
+    }
+    if (this.accountReport) {
+      this.dialogTitle = "Etat du compte";
+    }
+    this.dialogRef = this.dialog.open(this.salesStatsDialg, {
       width: '500px',
     });
 

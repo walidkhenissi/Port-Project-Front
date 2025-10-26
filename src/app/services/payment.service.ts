@@ -19,6 +19,10 @@ export class PaymentService implements IService {
     return this.httpClient.post('/payment/find', criteria);
   }
 
+  public findWithAddressCondition(criteria: any) {
+    return this.httpClient.post('/payment/findWithAddressCondition', criteria);
+  }
+
   public getOne(id: string | number) {
     return this.httpClient.get('/payment/get?id=' + id);
   }
@@ -34,4 +38,12 @@ export class PaymentService implements IService {
   remove(id: string | number) {
     return this.httpClient.delete('/payment/remove?id=' + id);
   }
+
+  public generatePaymentReport(options: any) {
+    return this.httpClient.post('/payment/generatePaymentReport', options);
+  }
+  public generateCommissionaireReport(options: any) {
+    return this.httpClient.post('/payment/generateCommissionaireReport', options);
+  }
+
 }
